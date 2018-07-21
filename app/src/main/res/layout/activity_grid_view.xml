@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="CartoonMad"
+            android:id="@+id/button_cartoonMad"
+            android:layout_gravity="center"
+            android:onClick="goToCartoonMad"
+            android:layout_weight="0.5" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="8Comic"
+            android:id="@+id/button_8Comic"
+            android:layout_gravity="center"
+            android:onClick="goTo8Comic"
+            android:layout_weight="0.5" />
+    </LinearLayout>
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/grid_view"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:numColumns="auto_fit"
+    android:gravity="center"
+    android:stretchMode="columnWidth"
+    android:background="#000000">
+</GridView>
+</LinearLayout>

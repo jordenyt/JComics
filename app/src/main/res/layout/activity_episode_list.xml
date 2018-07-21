@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:background="@android:color/black"
+        android:weightSum="1">
+
+        <ImageView
+            android:layout_width="120sp"
+            android:layout_height="150sp"
+            android:id="@+id/book_image"
+            android:background="@android:color/black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/book_description"
+            android:background="@android:color/black"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textIsSelectable="true"
+            android:maxHeight="150sp" />
+    </LinearLayout>
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/episode_list_view"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:numColumns="auto_fit"
+    android:gravity="center"
+    android:stretchMode="columnWidth"
+    android:background="#000000">
+</GridView>
+
+</LinearLayout>
