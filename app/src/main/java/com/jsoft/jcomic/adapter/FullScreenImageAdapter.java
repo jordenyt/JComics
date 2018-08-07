@@ -23,6 +23,7 @@ import com.jsoft.jcomic.helper.TouchImageView;
 
 import java.io.InputStream;
 import java.io.BufferedInputStream;
+import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
 public class FullScreenImageAdapter extends PagerAdapter {
@@ -111,7 +112,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
             Log.e("jComic", "Start Get Image: " + urldisplay);
             Bitmap bitmap = null;
             try {
-                URLConnection conn = new java.net.URL(urldisplay).openConnection();
+                HttpURLConnection conn = (HttpURLConnection) new java.net.URL(urldisplay).openConnection();
                 conn.setReadTimeout(5000);
                 conn.setUseCaches(true);
 
@@ -131,7 +132,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     publishProgress(value);
                     //Log.e("jComic", "Percentage: " + value + "%");
                 }
-
+                in.close();
+                conn.disconnect();
             } catch (Exception e) {
                 Log.e("jComic", e.getMessage());
                 e.printStackTrace();

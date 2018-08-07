@@ -124,6 +124,7 @@ public class GridViewImageAdapter extends BaseAdapter {
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
+                in.close();
             } catch (Exception e) {
                 Log.e("jComic", "GridViewImageAdapter:doInBackground " + e.getMessage());
                 e.printStackTrace();

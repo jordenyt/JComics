@@ -8,6 +8,7 @@ import com.jsoft.jcomic.helper.EpisodeDTO;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,10 +47,12 @@ public abstract class EpisodeParser {
             for (int i = 0; i < count; i++) {
                 String readLine;
                 try {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(urls[i].openStream(), encoding));
+                    InputStream is = urls[i].openStream();
+                    BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
                     while ((readLine = in.readLine()) != null) {
                         result.add(readLine);
                     }
+                    is.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
