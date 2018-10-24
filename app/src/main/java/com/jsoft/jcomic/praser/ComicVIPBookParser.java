@@ -65,7 +65,7 @@ public class ComicVIPBookParser extends BookParser {
                 //Pattern p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(.+)\\);return false;\" id=\".+\" class=\".+\">\\s*(.+)</a>.*");
                 String baseurl = "https://m.comicbus.com";
 
-                Pattern p = Pattern.compile("<td style=\".*\">.*<a href='(.+)' class=\"(Vol|Ch)\"  id=\"(.+)\"  >\\s*(.+)</a>.*");
+                Pattern p = Pattern.compile(".*<td style=\".*\">.*<a href='(.+)' class=\"(Vol|Ch)\"  id=\"(.+)\"  >\\s*(.+)</a>.*");
                 Matcher m = p.matcher(s);
                 if (m.matches()) {
                     String episodeUrl = baseurl + m.group(1);
