@@ -36,7 +36,7 @@
                 <category android:name="android.intent.category.DEFAULT"></category>
                 <category android:name="android.intent.category.BROWSABLE"></category>
                 <data android:host="m.comicbus.com"> </data>
-                <data android:scheme="http"></data>
+                <data android:scheme="https"></data>
                 <data android:pathPattern="/comic/.*"></data>
             </intent-filter>
         </activity>

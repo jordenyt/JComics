@@ -19,8 +19,8 @@ public class ComicVIPBookParser extends BookParser {
     //Call when URL is fetched
     protected void getBookFromUrlResult(List<String> html) {
         List<EpisodeDTO> episodes = new ArrayList<EpisodeDTO>();
-        for (int i=1; i<html.size();i++) {
-            String s = html.get(i-1).trim() + html.get(i).trim();
+        for (int i=2; i<html.size();i++) {
+            String s = html.get(i-2).trim() + html.get(i-1).trim() + html.get(i).trim();
             s=s.replace("\n", "");
 
             if (book.getBookUrl().contains("www.comicbus.com")) {
@@ -28,7 +28,7 @@ public class ComicVIPBookParser extends BookParser {
                 Matcher m = p.matcher(s);
                 if (m.matches()) {
                     int catid = Integer.parseInt(m.group(3));
-                    String baseurl = "http://www.comicbus.com";
+                    String baseurl = "https://www.comicbus.com";
                     if (catid == 4 || catid == 6 || catid == 12 || catid == 22)
                         baseurl += "/show/cool-";
                     else if (catid == 1 || catid == 17 || catid == 19 || catid == 21)
@@ -59,13 +59,13 @@ public class ComicVIPBookParser extends BookParser {
                 p = Pattern.compile(".*<img src='(.+)' hspace=\"10\" vspace=\"10\" border=\"0\" style=\"border:#CCCCCC solid 1px\" />.*");
                 m = p.matcher(s);
                 if (m.matches()) {
-                    book.setBookImgUrl("http://www.comicbus.com" + m.group(1));
+                    book.setBookImgUrl("https://www.comicbus.com" + m.group(1));
                 }
             } else if (book.getBookUrl().contains("m.comicbus.com")) {
                 //Pattern p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(.+)\\);return false;\" id=\".+\" class=\".+\">\\s*(.+)</a>.*");
-                String baseurl = "http://m.comicbus.com";
+                String baseurl = "https://m.comicbus.com";
 
-                Pattern p = Pattern.compile(".*<a href='(.+)' class=\"(Vol|Ch)\"  id=\"(.+)\"  >\\s*(.+)</a>.*");
+                Pattern p = Pattern.compile("<td style=\".*\">.*<a href='(.+)' class=\"(Vol|Ch)\"  id=\"(.+)\"  >\\s*(.+)</a>.*");
                 Matcher m = p.matcher(s);
                 if (m.matches()) {
                     String episodeUrl = baseurl + m.group(1);
@@ -87,9 +87,10 @@ public class ComicVIPBookParser extends BookParser {
 
                 p = Pattern.compile(".*<td align=\"center\" bgcolor=\"fafafa\"><img src='(.+)' hspace=\"10\" vspace=\"10\" border=\"0\" />.*");
                 //<td align="center" bgcolor="fafafa"><img src='/pics/0/3654s.jpg' hspace="10" vspace="10" border="0" />
+                //<td align="center" bgcolor="fafafa"><img src='/pics/0/103s.jpg' hspace="10" vspace="10" border="0" />
                 m = p.matcher(s);
                 if (m.matches()) {
-                    book.setBookImgUrl("http://m.comicbus.com" + m.group(1).replaceAll("(\\d+)s\\.", "$1."));
+                    book.setBookImgUrl("https://m.comicbus.com" + m.group(1).replaceAll("(\\d+)s\\.", "$1."));
                 }
             }
         }

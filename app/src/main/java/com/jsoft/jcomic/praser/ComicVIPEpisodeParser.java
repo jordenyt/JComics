@@ -1,5 +1,7 @@
 package com.jsoft.jcomic.praser;
 
+import android.util.Log;
+
 import com.jsoft.jcomic.FullscreenActivity;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 
@@ -23,14 +25,14 @@ public class ComicVIPEpisodeParser extends EpisodeParser{
         String code = "";
 
         if (episode.getEpisodeUrl().contains("www.comicbus.com")) {
-            Pattern p = Pattern.compile("http://www\\.comicbus\\.com/show/([a-z-]+)(\\d+)\\.html\\?ch=(\\d+)");
+            Pattern p = Pattern.compile("https://www\\.comicbus\\.com/show/([a-z-]+)(\\d+)\\.html\\?ch=(\\d+)");
             Matcher m = p.matcher(episode.getEpisodeUrl());
             if (m.matches()) {
                 bookId = Integer.parseInt(m.group(2));
                 episodeId = Integer.parseInt(m.group(3));
             }
         } else if (episode.getEpisodeUrl().contains("m.comicbus.com")) {
-            Pattern p = Pattern.compile("http://m\\.comicbus\\.com/comic/[a-z]+_(\\d+)\\.html\\?ch=(\\d+)");
+            Pattern p = Pattern.compile("https://m\\.comicbus\\.com/comic/[a-z]+_(\\d+)\\.html\\?ch=(\\d+)");
             Matcher m = p.matcher(episode.getEpisodeUrl());
             if (m.matches()) {
                 bookId = Integer.parseInt(m.group(1));
@@ -57,7 +59,7 @@ public class ComicVIPEpisodeParser extends EpisodeParser{
             int numPage = Integer.parseInt(ss(extractCode, 7, 3, true));
             episode.setPageCount(numPage);
             for (int i = 1; i <= numPage; i++) {
-                String pageUrl = "http://img" + ss(extractCode, 4, 2, true) + ".6comic.com:99/"
+                String pageUrl = "https://img" + ss(extractCode, 4, 2, true) + ".8comic.com/"
                         + ss(extractCode, 6, 1, true) + "/" + bookId + "/" + ss(extractCode, 0, 4, true) + "/"
                         + String.format("%03d", i) + '_' + ss(extractCode, mm(i) + 10, 3, false) + ".jpg";
                 episode.getImageUrl().add(pageUrl);
