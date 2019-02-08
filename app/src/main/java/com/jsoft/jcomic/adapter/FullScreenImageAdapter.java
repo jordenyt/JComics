@@ -24,7 +24,6 @@ import com.jsoft.jcomic.helper.TouchImageView;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
 
 public class FullScreenImageAdapter extends PagerAdapter {
     private Activity _activity;
@@ -115,7 +114,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 HttpURLConnection conn = (HttpURLConnection) new java.net.URL(urldisplay).openConnection();
                 conn.setReadTimeout(5000);
                 conn.setUseCaches(true);
-
+                if (urldisplay.indexOf("cartoonmad") > -1) {
+                    conn.setRequestProperty("Referer", "https://www.cartoonmad.com");
+                }
                 /*InputStream in = conn.getInputStream();
                 bitmap = BitmapFactory.decodeStream(in);*/
 
