@@ -40,7 +40,7 @@ public class CartoonMadEpisodeParser extends EpisodeParser {
 
         List<String> imageUrlList = new ArrayList<String>();
         if (imageUrl_0 == null) {
-            imageUrl_0 = "https://www.cartoonmad.com/m/comic/";
+            imageUrl_0 = "http://www.cartoonmad.com/m/comic/";
         }
         for (int k=1; k<= episode.getPageCount(); k++) {
             String imageUrl = imageUrl_0 + imageUrl_1 + String.format("%03d", k);

@@ -115,7 +115,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 conn.setReadTimeout(5000);
                 conn.setUseCaches(true);
                 if (urldisplay.indexOf("cartoonmad") > -1) {
-                    conn.setRequestProperty("Referer", "https://www.cartoonmad.com");
+                    conn.setRequestProperty("Referer", "https://www.cartoonmad.com/m/comic/");
                 }
                 /*InputStream in = conn.getInputStream();
                 bitmap = BitmapFactory.decodeStream(in);*/
@@ -136,7 +136,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 in.close();
                 conn.disconnect();
             } catch (Exception e) {
-                Log.e("jComic", e.getMessage());
+                Log.e("jComic", "" + e.getMessage());
                 e.printStackTrace();
             }
             Log.e("jComic", "Finish Get Image: " + urldisplay);
