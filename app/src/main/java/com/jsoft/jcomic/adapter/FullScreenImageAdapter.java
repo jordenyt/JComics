@@ -114,10 +114,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 HttpURLConnection conn = (HttpURLConnection) new java.net.URL(urldisplay).openConnection();
                 conn.setReadTimeout(5000);
                 conn.setUseCaches(true);
-                //if (urldisplay.indexOf("cartoonmad") > -1) {
-                //    conn.setRequestProperty("Referer", "https://www.cartoonmad.com/m/comic/");
-                //}
-                conn.setRequestProperty("Referer", getEpisode().getEpisodeUrl());
+                if (urldisplay.indexOf("cartoonmad") > -1) {
+                    conn.setRequestProperty("Referer", "https://www.cartoonmad.com/m/comic/");
+                }
                 /*InputStream in = conn.getInputStream();
                 bitmap = BitmapFactory.decodeStream(in);*/
 

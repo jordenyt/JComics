@@ -96,10 +96,6 @@ public class GridViewActivity extends AppCompatActivity {
         goToUrl("http://m.comicbus.com/");
     }
 
-    public void goToDM5(View view) {
-        goToUrl("http://m.dm5.com/manhua-list/");
-    }
-
     private void goToUrl (String url) {
         Uri uriUrl = Uri.parse(url);
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
