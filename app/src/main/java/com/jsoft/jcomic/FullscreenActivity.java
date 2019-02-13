@@ -12,6 +12,7 @@ import com.jsoft.jcomic.helper.ComicsViewPager;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 import com.jsoft.jcomic.praser.CartoonMadEpisodeParser;
 import com.jsoft.jcomic.praser.ComicVIPEpisodeParser;
+import com.jsoft.jcomic.praser.DM5EpisodeParser;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,8 @@ public class FullscreenActivity extends AppCompatActivity  {
             new ComicVIPEpisodeParser(episode, this);
         } else if (episode.getEpisodeUrl().contains("cartoonmad")) {
             new CartoonMadEpisodeParser(episode, this);
+        } else if (episode.getEpisodeUrl().contains("dm5.com")) {
+            new DM5EpisodeParser(episode, this);
         }
         //new CartoonMadEpisodeParser(episode, this);
     }
@@ -83,6 +86,8 @@ public class FullscreenActivity extends AppCompatActivity  {
                     new ComicVIPEpisodeParser(book.getEpisodes().get(currEpisode), this);
                 } else if (book.getEpisodes().get(currEpisode).getEpisodeUrl().contains("cartoonmad")) {
                     new CartoonMadEpisodeParser(book.getEpisodes().get(currEpisode), this);
+                } else if (book.getEpisodes().get(currEpisode).getEpisodeUrl().contains("dm5.com")) {
+                    new DM5EpisodeParser(book.getEpisodes().get(currEpisode), this);
                 }
             }
         } else {

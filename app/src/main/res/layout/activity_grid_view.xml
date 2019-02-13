@@ -17,7 +17,7 @@
             android:id="@+id/button_cartoonMad"
             android:layout_gravity="center"
             android:onClick="goToCartoonMad"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.33" />
 
         <Button
             android:layout_width="0dp"
@@ -26,7 +26,15 @@
             android:id="@+id/button_8Comic"
             android:layout_gravity="center"
             android:onClick="goTo8Comic"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.33" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="DM5"
+            android:id="@+id/button_dm5"
+            android:layout_gravity="center"
+            android:onClick="goToDM5"
+            android:layout_weight="0.33" />
     </LinearLayout>
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
