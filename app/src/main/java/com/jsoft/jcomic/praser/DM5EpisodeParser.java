@@ -37,7 +37,6 @@ public class DM5EpisodeParser extends EpisodeParser {
         Matcher m = p.matcher(s);
         List<String> allMatches = new ArrayList<String>();
         while (m.find()) {
-            //Log.e("jComics", m.group(1));
 
             String s1= m.group(1);
             Pattern p1 = Pattern.compile("\\d+,\\d+,\'(.*)\'\\.split");
