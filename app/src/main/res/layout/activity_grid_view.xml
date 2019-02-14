@@ -11,39 +11,59 @@
         android:background="@android:color/black">
 
         <Button
+            android:id="@+id/button_home"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="CartoonMad"
-            android:id="@+id/button_cartoonMad"
             android:layout_gravity="center"
-            android:onClick="goToCartoonMad"
-            android:layout_weight="0.33" />
+            android:layout_weight="0.1"
+            android:onClick="goToHome"
+            android:text="X" />
 
         <Button
+            android:id="@+id/button_cartoonMad"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="8Comic"
-            android:id="@+id/button_8Comic"
             android:layout_gravity="center"
-            android:onClick="goTo8Comic"
-            android:layout_weight="0.33" />
+            android:layout_weight="0.3"
+            android:onClick="goToCartoonMad"
+            android:text="動漫狂" />
+
         <Button
+            android:id="@+id/button_8Comic"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="DM5"
-            android:id="@+id/button_dm5"
             android:layout_gravity="center"
+            android:layout_weight="0.3"
+            android:onClick="goTo8Comic"
+            android:text="無限動漫" />
+
+        <Button
+            android:id="@+id/button_dm5"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.3"
             android:onClick="goToDM5"
-            android:layout_weight="0.33" />
+            android:text="動漫屋" />
     </LinearLayout>
 
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/grid_view"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:numColumns="auto_fit"
-    android:gravity="center"
-    android:stretchMode="columnWidth"
-    android:background="#000000">
-</GridView>
+    <GridView
+        android:id="@+id/grid_view"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:visibility="visible"></GridView>
+
+    <WebView
+        android:id="@+id/web_view"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </LinearLayout>

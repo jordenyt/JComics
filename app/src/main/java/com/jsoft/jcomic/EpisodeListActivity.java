@@ -45,7 +45,7 @@ public class EpisodeListActivity extends AppCompatActivity {
         utils = new Utils(this);
 
         Intent i = getIntent();
-        Log.e("jComics", "get Intent!");
+        //Log.e("jComics", "get Intent!");
         String bookUrl;
         Uri data = i.getData();
         if (data != null) {
@@ -58,16 +58,7 @@ public class EpisodeListActivity extends AppCompatActivity {
         } else if (bookUrl.contains("cartoonmad")) {
             new CartoonMadBookParser(new BookDTO(bookUrl), this);
         } else if (bookUrl.contains("dm5.com")) {
-            if (!bookUrl.contains("from=")) {
-                Log.e("jComics", "go back to: " + bookUrl);
-                Uri uri = Uri.parse("googlechrome://navigate?url=" + bookUrl);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                //intent.setPackage("com.android.chrome");
-                startActivity(intent);
-            } else {
-                new DM5BookParser(new BookDTO(bookUrl), this);
-            }
+            new DM5BookParser(new BookDTO(bookUrl), this);
         }
 
         bookmarkDb = new BookmarkDb(this);
