@@ -127,7 +127,9 @@ public class GridViewActivity extends AppCompatActivity {
                 try {
                     Log.e("jComics", "url=" + url);
                     Uri uri = Uri.parse(url);
-                    if ((uri.getHost().contains("dm5.com") && uri.getPath().startsWith("/manhua-") && uri.getQueryParameter("from") != null)
+                    if ((uri.getHost().contains("dm5.com") && uri.getPath().startsWith("/manhua-")
+                            && !uri.getPath().startsWith("/manhua-list") && !uri.getPath().startsWith("/manhua-jpkr") && !uri.getPath().startsWith("/manhua-original")
+                            && !uri.getPath().startsWith("/manhua-new") && !uri.getPath().startsWith("/manhua-rank") && !uri.getPath().startsWith("/manhua-completed") )
                         || (uri.getHost().contains("cartoonmad.com") && uri.getPath().startsWith("/m/comic/"))
                         || (uri.getHost().contains("comicbus.com") && uri.getPath().startsWith("/comic/"))) {
                         Intent i = new Intent(gridViewActivity, EpisodeListActivity.class);
