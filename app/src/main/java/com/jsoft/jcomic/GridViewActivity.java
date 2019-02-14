@@ -50,9 +50,10 @@ public class GridViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grid_view);
 
         utils = new Utils(this);
+
+        initWebView();
+
         gridView = initGridLayout();
-        webView = (WebView) findViewById(R.id.web_view);
-        webView.setVisibility(View.INVISIBLE);
         adapter = new GridViewImageAdapter(GridViewActivity.this, columnWidth, books);
         gridView.setAdapter(adapter);
         bookmarkDb.clearDb();
@@ -64,6 +65,20 @@ public class GridViewActivity extends AppCompatActivity {
         books = bookmarkDb.getBookmarkedList();
         adapter = new GridViewImageAdapter(GridViewActivity.this, columnWidth, books);
         gridView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (webView.getVisibility() == View.VISIBLE && webView.canGoBack()) {
+            webView.goBack();
+            return;
+        } else if (webView.getVisibility() == View.VISIBLE) {
+            webView.setVisibility(View.GONE);
+            gridView.setVisibility(View.VISIBLE);
+            return;
+        }
+        // Otherwise defer to system default behavior.
+        super.onBackPressed();
     }
 
     private GridView initGridLayout() {
@@ -86,6 +101,32 @@ public class GridViewActivity extends AppCompatActivity {
         return gridView;
     }
 
+    private void initWebView() {
+        webView = (WebView) findViewById(R.id.web_view);
+        webView.setVisibility(View.INVISIBLE);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                try {
+                    Uri uri = Uri.parse(url);
+                    if ((uri.getHost().contains("dm5.com") && uri.getPath().startsWith("/manhua-") && (uri.getQueryParameter("from") != null || webView.getUrl().contains("search?title=")))
+                            || (uri.getHost().contains("cartoonmad.com") && uri.getPath().startsWith("/m/comic/"))
+                            || (uri.getHost().contains("comicbus.com") && uri.getPath().startsWith("/comic/"))) {
+                        Intent i = new Intent(gridViewActivity, EpisodeListActivity.class);
+                        i.putExtra("bookUrl", url);
+                        startActivity(i);
+                        return true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        });
+    }
+
     public void getEpisodeList(int position) {
         Intent i = new Intent(this, EpisodeListActivity.class);
         i.putExtra("bookUrl", books.get(position).getBookUrl());
@@ -106,7 +147,6 @@ public class GridViewActivity extends AppCompatActivity {
     }
 
     public void goToDM5(View view) {
-        //goToUrl("http://m.dm5.com/manhua-list/");
         openWebView("http://m.dm5.com/manhua-list/");
     }
 
@@ -118,39 +158,7 @@ public class GridViewActivity extends AppCompatActivity {
     private void openWebView(String url) {
         webView.setVisibility(View.VISIBLE);
         gridView.setVisibility(View.GONE);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        //setContentView(webView);
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                try {
-                    Log.e("jComics", "url=" + url);
-                    Log.e("jComics", "current url=" + webView.getUrl());
-                    Uri uri = Uri.parse(url);
-                    if ((uri.getHost().contains("dm5.com") && uri.getPath().startsWith("/manhua-") && (uri.getQueryParameter("from") != null || webView.getUrl().contains("search?title=")))
-                        || (uri.getHost().contains("cartoonmad.com") && uri.getPath().startsWith("/m/comic/"))
-                        || (uri.getHost().contains("comicbus.com") && uri.getPath().startsWith("/comic/"))) {
-                        Intent i = new Intent(gridViewActivity, EpisodeListActivity.class);
-                        i.putExtra("bookUrl", url);
-                        startActivity(i);
-                        return true;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return false;
-            }
-        });
         webView.loadUrl(url);
-    }
-
-    private void goToUrl (String url) {
-        //Uri uriUrl = Uri.parse(url);
-        Uri uri = Uri.parse("googlechrome://navigate?url=" + url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        //Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-        startActivity(intent);
     }
 
     private void enableHttpCaching() {
