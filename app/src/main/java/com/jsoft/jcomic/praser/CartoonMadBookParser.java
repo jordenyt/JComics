@@ -29,11 +29,10 @@ public class CartoonMadBookParser extends BookParser {
                 episodes.add(0, new EpisodeDTO(m.group(2), episodeUrl));
             }
 
-            //p=Pattern.compile(".*<title>(.+) - 動漫狂行動版</title>.*");
-            p=Pattern.compile(".*<span class=\"covertxt\"><font color=.*>(.+)</font></span>.*");
+            p=Pattern.compile(".*<input type=\"hidden\" name=\"name\" value=\"(.+?)\">.*");
             m = p.matcher(s);
             if (m.matches()) {
-                String bookTitle = m.group(1).replace("&nbsp;", " ");
+                String bookTitle = m.group(1); //.replace("&nbsp;", " ");
                 bookTitle = Html.fromHtml(bookTitle).toString();
                 book.setBookTitle(bookTitle);
             }

@@ -2,14 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="10dp" >
+    android:padding="1pt" >
 
     <TextView
         android:id="@+id/episodeTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Item name here..."
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textColor="#AAAAAA"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />

@@ -30,7 +30,7 @@ public class DM5BookParser extends BookParser {
         List<String> allMatches = new ArrayList<String>();
         while (m.find()) {
             String episodeUrl = "http://m.dm5.com" + m.group(1);
-            Log.d("jComics", episodeUrl);
+            //Log.d("jComics", episodeUrl);
             episodes.add(new EpisodeDTO(m.group(3), episodeUrl));
         }
 
