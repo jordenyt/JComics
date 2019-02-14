@@ -40,7 +40,7 @@ public class DM5BookParser extends BookParser {
             book.setBookTitle(m.group(1).replace("&nbsp;", " ").replaceAll("<.*?>", ""));
         }
 
-        p = Pattern.compile("<p class=\"detail-desc\" id=\"detail-desc\" style=\"display:none;\">(.*?)</p>");
+        p = Pattern.compile("<p class=\"detail-desc\".*?>(.*?)</p>");
         m = p.matcher(s);
         while (m.find()) {
             book.setBookSynopsis(Html.fromHtml(m.group(1)).toString());
