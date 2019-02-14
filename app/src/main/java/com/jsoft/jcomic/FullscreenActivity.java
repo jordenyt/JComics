@@ -37,7 +37,7 @@ public class FullscreenActivity extends AppCompatActivity  {
             book.setEpisodes(new ArrayList<EpisodeDTO>());
         }
         EpisodeDTO episode = book.getEpisodes().get(currEpisode);
-        Log.d("jComic", "EpisodeUrl: " + episode.getEpisodeUrl());
+        //Log.d("jComic", "EpisodeUrl: " + episode.getEpisodeUrl());
         if (episode.getEpisodeUrl().contains("comicbus")) {
             new ComicVIPEpisodeParser(episode, this);
         } else if (episode.getEpisodeUrl().contains("cartoonmad")) {
