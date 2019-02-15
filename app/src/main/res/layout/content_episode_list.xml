@@ -9,11 +9,10 @@
     <TextView
         android:id="@+id/episodeTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40sp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16sp"
-        android:layout_marginBottom="16sp"
+        android:layout_marginBottom="5sp"
         android:text="Item name here..."
         android:textColor="#AAAAAA"
         android:textSize="16sp" />
