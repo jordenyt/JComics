@@ -43,7 +43,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     @Override
     public int getCount() {
         //return this._imagePaths.size();
-        return this.episode.getPageCount();
+        return (this.episode.getPageCount() > 0 ? this.episode.getPageCount() : 1);
     }
 
     @Override
@@ -63,10 +63,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
         TextView progressText = (TextView)viewLayout.findViewById(R.id.progress_textview);
         TextView statusText = (TextView)viewLayout.findViewById(R.id.status_textview);
 
-        progressText.setText("Downloading...");
-        statusText.setText(episode.getBookTitle() + " - " + episode.getEpisodeTitle() + "    Page: " + (position + 1)  + " / " + episode.getPageCount());
-
-        executeAsyncTask(new DownloadImageTask(imgDisplay, progressText), episode.getImageUrl().get(position));
+        if (episode.getPageCount() > 0) {
+            progressText.setText("Downloading...");
+            statusText.setText(episode.getBookTitle() + " - " + episode.getEpisodeTitle() + "    Page: " + (position + 1) + " / " + episode.getPageCount());
+            executeAsyncTask(new DownloadImageTask(imgDisplay, progressText), episode.getImageUrl().get(position));
+        } else {
+            progressText.setText("No Image");
+            statusText.setText(episode.getBookTitle() + " - " + episode.getEpisodeTitle());
+        }
         imgDisplay.setPager(pager);
 
         container.addView(viewLayout);

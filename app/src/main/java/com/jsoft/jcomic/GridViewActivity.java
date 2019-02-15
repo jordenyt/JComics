@@ -204,7 +204,7 @@ public class GridViewActivity extends AppCompatActivity {
     }
 
     public void goToCartoonMad(View view) {
-        openWebView("http://www.cartoonmad.com/m/");
+        openWebView("https://www.cartoonmad.com/m/?act=2");
     }
 
     public void goTo8Comic(View view) {

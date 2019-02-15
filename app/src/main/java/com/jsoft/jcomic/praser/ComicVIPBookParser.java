@@ -69,7 +69,7 @@ public class ComicVIPBookParser extends BookParser {
                 Matcher m = p.matcher(s);
                 if (m.matches()) {
                     String episodeUrl = baseurl + m.group(1);
-                    String episodeTitle = m.group(4).replaceAll("<script>.*?</script>", "").replaceAll("<.*?>", "").replaceAll("(.*?)\\s.*", "$1");
+                    String episodeTitle = m.group(4).replaceAll("<script>.*?</script>", "").replaceAll("<.*?>", "");
                     episodes.add(0, new EpisodeDTO(episodeTitle, episodeUrl));
                 }
 
