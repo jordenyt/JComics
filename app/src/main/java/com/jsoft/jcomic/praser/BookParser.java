@@ -1,15 +1,19 @@
 package com.jsoft.jcomic.praser;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.helper.BookDTO;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,16 +42,26 @@ public abstract class BookParser {
         }
 
         protected List<String> doInBackground(URL... urls) {
+
             int count = urls.length;
             List<String> result = new ArrayList<String>();
             for (int i = 0; i < count; i++) {
                 String readLine;
+                URL url=urls[i];
+                Uri uri = Uri.parse(url.toString());
                 try {
-                    InputStream is = urls[i].openStream();
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(5000);
+                    conn.setUseCaches(true);
+                    if (uri.getHost().contains("dm5.com") && uri.getQueryParameter("from") != null) {
+                        conn.setRequestProperty("Referer", "http://m.dm5.com" + uri.getQueryParameter("from"));
+                    }
+                    InputStream is = new BufferedInputStream(conn.getInputStream());
                     BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
                     while ((readLine = in.readLine()) != null) {
                         result.add(readLine);
                     }
+                    in.close();
                     is.close();
                 } catch (MalformedURLException e) {
                     Log.e("jComics", "MalformedURLException: " + urls[i]);

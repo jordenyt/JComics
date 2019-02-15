@@ -21,7 +21,7 @@ public class DM5BookParser extends BookParser {
     protected void getBookFromUrlResult(List<String> html) {
         List<EpisodeDTO> episodes = new ArrayList<EpisodeDTO>();
         String s = "";
-        for (int i=0; i<html.size();i++) {
+        for (int i=0;i<html.size();i++) {
             s = s + html.get(i);
         }
 
@@ -31,7 +31,7 @@ public class DM5BookParser extends BookParser {
         while (m.find()) {
             String episodeUrl = "http://m.dm5.com" + m.group(1);
             //Log.d("jComics", episodeUrl);
-            episodes.add(new EpisodeDTO(m.group(3), episodeUrl));
+            episodes.add(new EpisodeDTO(m.group(3).trim() + " " + m.group(2).trim(), episodeUrl));
         }
 
         p = Pattern.compile("<a href=\"([a-zA-Z0-9/]*?)\" class=\"chapteritem\">.*?<p class=\"detail-list-2-info-title\">(.*?)</p>.+?</a>");
@@ -66,6 +66,21 @@ public class DM5BookParser extends BookParser {
         while (m.find()) {
             book.setBookImgUrl(m.group(1));
         }
+
+        List<EpisodeDTO> cleanEpisodes = new ArrayList<EpisodeDTO>();
+        for (EpisodeDTO episode: episodes) {
+            boolean found = false;
+            for (EpisodeDTO cleanEpisode: cleanEpisodes) {
+                if (cleanEpisode.getEpisodeUrl().trim().equals(episode.getEpisodeUrl().trim())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                cleanEpisodes.add(episode);
+            }
+        }
+        episodes = cleanEpisodes;
         for (EpisodeDTO episode: episodes) {
             episode.setBookTitle(book.getBookTitle());
         }

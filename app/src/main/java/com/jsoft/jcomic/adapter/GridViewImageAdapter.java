@@ -34,7 +34,7 @@ public class GridViewImageAdapter extends BaseAdapter {
         this.imageWidth = imageWidth;
         this.books = books;
         viewMap = new HashMap<Integer, View>();
-        Log.e("jComics", "GridViewAdapter constructor");
+        //Log.e("jComics", "GridViewAdapter constructor");
     }
 
     @Override
