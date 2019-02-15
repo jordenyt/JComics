@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.net.http.HttpResponseCache;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,9 +22,14 @@ import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.BookmarkDb;
 import com.jsoft.jcomic.helper.Utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,20 +117,79 @@ public class GridViewActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 try {
                     Uri uri = Uri.parse(url);
-                    if ((uri.getHost().contains("dm5.com") && uri.getPath().startsWith("/manhua-") && (uri.getQueryParameter("from") != null || webView.getUrl().contains("search?title=")))
-                            || (uri.getHost().contains("cartoonmad.com") && uri.getPath().startsWith("/m/comic/"))
+                    if (/*(uri.getHost().contains("dm5.com") && uri.getPath().startsWith("/manhua-") && (uri.getQueryParameter("from") != null || webView.getUrl().contains("search?title=")))
+                            || */(uri.getHost().contains("cartoonmad.com") && uri.getPath().startsWith("/m/comic/"))
                             || (uri.getHost().contains("comicbus.com") && uri.getPath().startsWith("/comic/"))) {
                         Intent i = new Intent(gridViewActivity, EpisodeListActivity.class);
                         i.putExtra("bookUrl", url);
                         startActivity(i);
                         return true;
+                    } else if (uri.getHost().contains("dm5.com")) {
+                        new InterceptDM5Task("UTF-8", view).execute(new URL(uri.toString()));
+                        return true;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("jComics", "Caught by shouldOverrideUrlLoading", e);
                 }
                 return false;
             }
         });
+    }
+
+    public class InterceptDM5Task extends AsyncTask<URL, Integer, List<String>> {
+        private String encoding;
+        private WebView wv;
+        private String url;
+
+        public InterceptDM5Task(String encoding, WebView wv) {
+            this.encoding = encoding;
+            this.wv = wv;
+        }
+
+        protected List<String> doInBackground(URL... urls) {
+            List<String> result = new ArrayList<String>();
+            URL urlConn = urls[0];
+            this.url = urls[0].toString();
+            try {
+                HttpURLConnection conn = (HttpURLConnection) urlConn.openConnection();
+                conn.setReadTimeout(5000);
+                conn.setUseCaches(true);
+                conn.setRequestProperty("Referer", "/manhua-list/");
+                InputStream is = new BufferedInputStream(conn.getInputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
+                String readLine;
+                while ((readLine = in.readLine()) != null) {
+                    result.add(readLine);
+                }
+                in.close();
+                is.close();
+            } catch (Exception e) {
+                Log.e("jComics", "Caught by InterceptDM5Task", e);
+            }
+
+            return result;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+
+        }
+
+        protected void onPostExecute(List<String> result) {
+            String data = "";
+            if (result.size() > 0) {
+                for (int i=0;i<result.size();i++) {
+                    data = data + "\n" + result.get(i).replaceAll("\\s{4,}", "\n");
+                }
+            }
+            if (data.contains("chapteritem")) {
+                Intent i = new Intent(gridViewActivity, EpisodeListActivity.class);
+                i.putExtra("bookUrl", url);
+                gridViewActivity.startActivity(i);
+            } else {
+                data = data.replaceAll("var tagid = \"(.*)\";", "var tagid = \"$1\"; var categoryid = \"0\"");
+                wv.loadDataWithBaseURL(url, data, "text/html; charset=utf-8", "utf-8", null);
+            }
+        }
     }
 
     public void getEpisodeList(int position) {
@@ -147,7 +212,13 @@ public class GridViewActivity extends AppCompatActivity {
     }
 
     public void goToDM5(View view) {
-        openWebView("http://m.dm5.com/manhua-list/");
+        webView.setVisibility(View.VISIBLE);
+        gridView.setVisibility(View.GONE);
+        try {
+            new InterceptDM5Task("UTF-8", webView).execute(new URL("http://m.dm5.com/manhua-list/"));
+        } catch (Exception e) {
+            Log.e("jComics", "Caught by goToDM5", e);
+        }
     }
 
     public void goToHome(View view) {
