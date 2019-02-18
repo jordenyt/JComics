@@ -12,9 +12,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import taobe.tec.jcc.JChineseConvertor;
+
+
 public class DM5BookParser extends BookParser {
     public DM5BookParser (BookDTO book, EpisodeListActivity activity) {
         super(book, activity, "UTF-8");
+    }
+
+    public String chineseS2T(String simplifiedChineseString) {
+        String result = simplifiedChineseString;
+        try {
+            JChineseConvertor jChineseConvertor = JChineseConvertor.getInstance();
+            result = jChineseConvertor.s2t(simplifiedChineseString);
+        } catch (Exception e) {
+            Log.e("jComics", "Error caught in DM5BookParser", e);
+        }
+        return result;
     }
 
     //Call when URL is fetched
@@ -31,39 +45,40 @@ public class DM5BookParser extends BookParser {
         while (m.find()) {
             String episodeUrl = "http://m.dm5.com" + m.group(1);
             //Log.d("jComics", episodeUrl);
-            episodes.add(new EpisodeDTO(m.group(3).trim() + " " + m.group(2).trim(), episodeUrl));
+            episodes.add(new EpisodeDTO(chineseS2T(m.group(3).trim() + " " + m.group(2).trim()), episodeUrl));
         }
 
         p = Pattern.compile("<a href=\"([a-zA-Z0-9/]*?)\" class=\"chapteritem\">.*?<p class=\"detail-list-2-info-title\">(.*?)</p>.+?</a>");
         m = p.matcher(s);
         while (m.find()) {
             String episodeUrl = "http://m.dm5.com" + m.group(1);
-            episodes.add(0, new EpisodeDTO(m.group(2), episodeUrl));
+            episodes.add(0, new EpisodeDTO(chineseS2T(m.group(2)), episodeUrl));
         }
 
-        p = Pattern.compile("<span class=\"normal-top-title\">(.+?)</span>");
+        p = Pattern.compile(".*<span class=\"normal-top-title\">(.+?)</span>.*");
         m = p.matcher(s);
-        while (m.find()) {
-            book.setBookTitle(m.group(1).replace("&nbsp;", " ").replaceAll("<.*?>", ""));
+        if (m.matches()) {
+            book.setBookTitle(chineseS2T(m.group(1).replace("&nbsp;", " ").replaceAll("<.*?>", "")));
         }
 
-        p = Pattern.compile("<p class=\"detail-desc\" id=\"detail-desc\".*?>(.*?)</p>");
+        p = Pattern.compile(".*<p class=\"detail-desc\" id=\"detail-desc\".*?>(.*?)</p>.*");
         m = p.matcher(s);
-        while (m.find()) {
-            book.setBookSynopsis(Html.fromHtml(m.group(1)).toString());
+        if (m.matches()) {
+            book.setBookSynopsis(chineseS2T(Html.fromHtml(m.group(1)).toString()));
         }
 
         if (book.getBookSynopsis() == null) {
-            p = Pattern.compile("<p class=\"detail-desc\".*?>(.*?)</p>");
+            p = Pattern.compile(".*<p class=\"detail-desc\".*?>(.*?)</p>.*");
             m = p.matcher(s);
-            while (m.find()) {
-                book.setBookSynopsis(Html.fromHtml(m.group(1)).toString());
+            if (m.matches()) {
+                String synopsis = Html.fromHtml(m.group(1)).toString();
+                book.setBookSynopsis(chineseS2T(synopsis));
             }
         }
 
-        p = Pattern.compile("<div class=\"detail-main-cover\"><img src=\"(.+?)\"></div>");
+        p = Pattern.compile(".*<div class=\"detail-main-cover\"><img src=\"(.+?)\"></div>.*");
         m = p.matcher(s);
-        while (m.find()) {
+        if (m.matches()) {
             book.setBookImgUrl(m.group(1));
         }
 

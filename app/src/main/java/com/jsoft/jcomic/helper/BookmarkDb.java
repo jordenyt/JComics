@@ -127,7 +127,8 @@ public class BookmarkDb {
                         + ", " + BookmarkEntry.COLUMN_NAME_BOOK_IMG_URL
                         + ", " + BookmarkEntry.COLUMN_NAME_TITLE
                         + " FROM " + BookmarkEntry.TABLE_NAME
-                        + " WHERE " + BookmarkEntry.COLUMN_NAME_IS_BOOKMARK + " = 'Y'";
+                        + " WHERE " + BookmarkEntry.COLUMN_NAME_IS_BOOKMARK + " = 'Y'"
+                        + " ORDER BY " + BookmarkEntry.COLUMN_NAME_LAST_READ_TIME + " DESC";
         Cursor c = db.rawQuery(queryString, new String[] {});
         List<BookDTO> books = new ArrayList<BookDTO>();
         while (c.moveToNext()) {

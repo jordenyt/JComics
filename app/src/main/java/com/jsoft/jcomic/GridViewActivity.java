@@ -154,7 +154,7 @@ public class GridViewActivity extends AppCompatActivity {
                 HttpURLConnection conn = (HttpURLConnection) urlConn.openConnection();
                 conn.setReadTimeout(5000);
                 conn.setUseCaches(true);
-                conn.setRequestProperty("Referer", "/manhua-list/");
+                conn.setRequestProperty("Referer", "http://m.dm5.com/manhua-list/");
                 InputStream is = new BufferedInputStream(conn.getInputStream());
                 BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
                 String readLine;
