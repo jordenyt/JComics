@@ -36,8 +36,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         //this._imagePaths = imagePaths;
         this.pager = viewPager;
         this.episode = episode;
-
-
     }
 
     @Override
@@ -157,5 +155,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
+
     }
 }

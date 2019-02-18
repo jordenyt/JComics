@@ -2,8 +2,12 @@ package com.jsoft.jcomic;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 
 import com.jsoft.jcomic.adapter.FullScreenImageAdapter;
 import com.jsoft.jcomic.helper.BookDTO;
@@ -16,12 +20,16 @@ import com.jsoft.jcomic.praser.DM5EpisodeParser;
 
 import java.util.ArrayList;
 
-
-public class FullscreenActivity extends AppCompatActivity  {
+public class FullscreenActivity extends AppCompatActivity implements
+        SeekBar.OnSeekBarChangeListener {
     private int pageTurn;
     private BookDTO book;
     private int currEpisode;
     private BookmarkDb bookmarkDb;
+    private ComicsViewPager pager;
+    private LinearLayout seekBarLayout;
+    private SeekBar seekBar;
+    private Runnable hideSeekBarTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +58,14 @@ public class FullscreenActivity extends AppCompatActivity  {
 
     public void onEpisodeFetched(EpisodeDTO episode) {
         setContentView(R.layout.activity_fullscreen);
+        this.seekBarLayout = (LinearLayout) findViewById(R.id.seekbar_layout);
+        this.seekBarLayout.setVisibility(View.GONE);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setMax(episode.getPageCount() - 1);
+        seekBar.setOnSeekBarChangeListener(this);
         ComicsViewPager viewPager = (ComicsViewPager) findViewById(R.id.pager);
         viewPager.setActivity(this);
+        this.pager = viewPager;
         if (viewPager.getAdapter() == null) {
             FullScreenImageAdapter adapter = new FullScreenImageAdapter(FullscreenActivity.this, viewPager, episode);
             viewPager.setAdapter(adapter);
@@ -71,9 +85,48 @@ public class FullscreenActivity extends AppCompatActivity  {
         if (!bookmarkDb.bookInDb(book)) {
             bookmarkDb.insertBookIntoDb(book);
         }
-        bookmarkDb.updateLastRead(book, currEpisode, currentPage);
+        updateLastRead(currentPage);
+        //bookmarkDb.updateLastRead(book, currEpisode, currentPage);
     }
 
+    public void showPageBar() {
+        if (this.seekBarLayout.getVisibility() == View.GONE) {
+            this.seekBarLayout.setVisibility(View.VISIBLE);
+            final View view = this.seekBarLayout;
+            hideSeekBarTask = new Runnable() {
+                public void run() {
+                    view.setVisibility(View.GONE);
+                }
+            };
+            view.postDelayed(hideSeekBarTask, 5000);
+        } else {
+            this.seekBarLayout.removeCallbacks(hideSeekBarTask);
+            this.seekBarLayout.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        final View view = this.seekBarLayout;
+        view.removeCallbacks(hideSeekBarTask);
+        hideSeekBarTask = new Runnable() {
+            public void run() {
+                view.setVisibility(View.GONE);
+            }
+        };
+        view.postDelayed(hideSeekBarTask, 5000);
+
+        this.pager.setCurrentItem(progress);
+        updateLastRead(progress);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
 
     public void episodeSwitch(int pageTurn) {
         currEpisode = currEpisode - pageTurn;
@@ -96,8 +149,20 @@ public class FullscreenActivity extends AppCompatActivity  {
     }
 
     public void updateLastRead(int pageNum) {
+        updateSeekBar(pageNum);
         bookmarkDb.updateLastRead(book, currEpisode, pageNum);
     }
 
+    public void updateSeekBar(int pageNum) {
+        seekBar.setProgress(pageNum);
+    }
+
+    public void goPrev(View view) {
+        episodeSwitch(-1);
+    }
+
+    public void goNext(View view) {
+        episodeSwitch(1);
+    }
 
 }

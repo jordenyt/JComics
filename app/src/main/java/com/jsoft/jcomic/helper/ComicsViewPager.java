@@ -43,6 +43,10 @@ public class ComicsViewPager extends ViewPager {
         }
     }
 
+    public void showPageBar() {
+        activity.showPageBar();
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         // Never allow swiping to switch between pages

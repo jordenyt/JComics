@@ -9,9 +9,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.ImageView;
+import android.support.v7.widget.AppCompatImageView;
 
-public class TouchImageView extends ImageView {
+public class TouchImageView extends AppCompatImageView {
     Matrix matrix;
 
     // We can be in one of these 3 states
@@ -121,6 +121,8 @@ public class TouchImageView extends ImageView {
                                     pager.turnNext();
                                 } else if (curr.x < viewWidth * 0.2) {
                                     pager.turnPrev();
+                                } else {
+                                    pager.showPageBar();
                                 }
                                 clickCount = 1;
                             } else if (System.currentTimeMillis() - lastClickDownTime > SHORT_CLICK_MAX_DURATION ) {
