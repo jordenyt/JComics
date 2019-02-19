@@ -11,10 +11,10 @@
 
     <LinearLayout
         android:id="@+id/seekbar_layout"
-        android:layout_height="50sp"
         android:layout_width="match_parent"
-        android:layout_gravity="bottom|center"
-        >
+        android:layout_height="50sp"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="20sp">
 
         <Button
             android:id="@+id/btn_prev_episode"
@@ -23,7 +23,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="0.15"
             android:onClick="goPrev"
-            android:text="Prev" />
+            android:text="&lt;" />
 
         <SeekBar
             android:id="@+id/seekBar"
@@ -38,7 +38,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="0.15"
             android:onClick="goNext"
-            android:text="Next" />
+            android:text="&gt;" />
 
 
     </LinearLayout>

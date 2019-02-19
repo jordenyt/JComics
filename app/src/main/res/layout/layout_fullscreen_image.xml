@@ -33,6 +33,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:background="#50000000"
+        android:textSize="15sp"
         android:textColor="#9f0000" />
 
 </RelativeLayout>
