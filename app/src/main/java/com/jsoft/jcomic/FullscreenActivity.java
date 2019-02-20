@@ -2,9 +2,7 @@ package com.jsoft.jcomic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -23,6 +21,7 @@ import java.util.ArrayList;
 public class FullscreenActivity extends AppCompatActivity implements
         SeekBar.OnSeekBarChangeListener {
     private int pageTurn;
+    private boolean gotoLastPage;
     private BookDTO book;
     private int currEpisode;
     private BookmarkDb bookmarkDb;
@@ -30,6 +29,7 @@ public class FullscreenActivity extends AppCompatActivity implements
     private LinearLayout seekBarLayout;
     private SeekBar seekBar;
     private Runnable hideSeekBarTask;
+    private boolean isSeeking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,6 @@ public class FullscreenActivity extends AppCompatActivity implements
         } else if (episode.getEpisodeUrl().contains("dm5.com")) {
             new DM5EpisodeParser(episode, this);
         }
-        //new CartoonMadEpisodeParser(episode, this);
     }
 
     public void onEpisodeFetched(EpisodeDTO episode) {
@@ -63,50 +62,31 @@ public class FullscreenActivity extends AppCompatActivity implements
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar.setMax(episode.getPageCount() - 1);
         seekBar.setOnSeekBarChangeListener(this);
-        ComicsViewPager viewPager = (ComicsViewPager) findViewById(R.id.pager);
-        viewPager.setActivity(this);
-        this.pager = viewPager;
-        if (viewPager.getAdapter() == null) {
-            FullScreenImageAdapter adapter = new FullScreenImageAdapter(FullscreenActivity.this, viewPager, episode);
-            viewPager.setAdapter(adapter);
+        pager = (ComicsViewPager) findViewById(R.id.pager);
+        pager.setActivity(this);
+        if (pager.getAdapter() == null) {
+            FullScreenImageAdapter adapter = new FullScreenImageAdapter(FullscreenActivity.this, pager, episode);
+            pager.setAdapter(adapter);
         } else {
-            ((FullScreenImageAdapter)viewPager.getAdapter()).setEpisode(book.getEpisodes().get(currEpisode));
+            ((FullScreenImageAdapter)pager.getAdapter()).setEpisode(book.getEpisodes().get(currEpisode));
         }
         int currentPage = 0;
         String lastEpisode = bookmarkDb.getLastEpisode(book);
         if (book.getEpisodes().get(currEpisode).getEpisodeTitle().equals(lastEpisode)) {
             currentPage = bookmarkDb.getLastEpisodePage(book);
         }
-        if (pageTurn == -1) {
+        if (pageTurn == -1 && gotoLastPage) {
             currentPage = episode.getPageCount()-1;
         }
-        viewPager.setCurrentItem(currentPage);
-        viewPager.setOffscreenPageLimit(2);
+        pager.setOffscreenPageLimit(2);
         if (!bookmarkDb.bookInDb(book)) {
             bookmarkDb.insertBookIntoDb(book);
         }
-        updateLastRead(currentPage);
-        //bookmarkDb.updateLastRead(book, currEpisode, currentPage);
+        switchPageNum(currentPage);
     }
 
     public void showPageBar() {
-        if (this.seekBarLayout.getVisibility() == View.GONE) {
-            this.seekBarLayout.setVisibility(View.VISIBLE);
-            final View view = this.seekBarLayout;
-            hideSeekBarTask = new Runnable() {
-                public void run() {
-                    view.setVisibility(View.GONE);
-                }
-            };
-            view.postDelayed(hideSeekBarTask, 5000);
-        } else {
-            this.seekBarLayout.removeCallbacks(hideSeekBarTask);
-            this.seekBarLayout.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        this.seekBarLayout.setVisibility(View.VISIBLE);
         final View view = this.seekBarLayout;
         view.removeCallbacks(hideSeekBarTask);
         hideSeekBarTask = new Runnable() {
@@ -115,22 +95,43 @@ public class FullscreenActivity extends AppCompatActivity implements
             }
         };
         view.postDelayed(hideSeekBarTask, 5000);
+    }
 
-        this.pager.setCurrentItem(progress);
-        updateLastRead(progress);
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (!isSeeking) {
+            switchPageNum(progress);
+        }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
+        final View view = this.seekBarLayout;
+        view.removeCallbacks(hideSeekBarTask);
+        isSeeking = true;
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        isSeeking = false;
+        switchPageNum(seekBar.getProgress());
+        final View view = this.seekBarLayout;
+        hideSeekBarTask = new Runnable() {
+            public void run() {
+                view.setVisibility(View.GONE);
+            }
+        };
+        view.postDelayed(hideSeekBarTask, 5000);
     }
 
     public void episodeSwitch(int pageTurn) {
+        episodeSwitch(pageTurn, true);
+    }
+
+    public void episodeSwitch(int pageTurn, boolean gotoLastPage) {
         currEpisode = currEpisode - pageTurn;
         this.pageTurn = pageTurn;
+        this.gotoLastPage = gotoLastPage;
         if (currEpisode >=0 && currEpisode < book.getEpisodes().size()) {
             if (book.getEpisodes().get(currEpisode).getPageCount() > 0) {
                 onEpisodeFetched(book.getEpisodes().get(currEpisode));
@@ -148,17 +149,14 @@ public class FullscreenActivity extends AppCompatActivity implements
         }
     }
 
-    public void updateLastRead(int pageNum) {
-        updateSeekBar(pageNum);
+    public void switchPageNum(int pageNum) {
+        pager.setCurrentItem(pageNum);
+        seekBar.setProgress(pageNum);
         bookmarkDb.updateLastRead(book, currEpisode, pageNum);
     }
 
-    public void updateSeekBar(int pageNum) {
-        seekBar.setProgress(pageNum);
-    }
-
     public void goPrev(View view) {
-        episodeSwitch(-1);
+        episodeSwitch(-1, false);
     }
 
     public void goNext(View view) {

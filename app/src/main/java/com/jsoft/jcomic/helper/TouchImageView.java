@@ -59,12 +59,12 @@ public class TouchImageView extends AppCompatImageView {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mScaleDetector.onTouchEvent(event);
-                mGestureDetector.onTouchEvent(event);
+            mScaleDetector.onTouchEvent(event);
+            mGestureDetector.onTouchEvent(event);
 
-                setImageMatrix(matrix);
-                invalidate();
-                return true; // indicate event was handled
+            setImageMatrix(matrix);
+            invalidate();
+            return true; // indicate event was handled
             }
 
         });
@@ -120,6 +120,7 @@ public class TouchImageView extends AppCompatImageView {
             if (Math.abs(diffX) > viewWidth * 0.2 || Math.abs(diffY) > viewHeight * 0.2) {
                 if (diffY / Math.abs(diffX) < -ratio) {
                     //Fling Up
+                    pager.exitActivity();
                 } else if (diffY / Math.abs(diffX) > ratio) {
                     //Fling Down
                     pager.showPageBar();
@@ -180,8 +181,7 @@ public class TouchImageView extends AppCompatImageView {
         float transY = m[Matrix.MTRANS_Y];
 
         float fixTransX = getFixTrans(transX, viewWidth, origWidth * saveScale);
-        float fixTransY = getFixTrans(transY, viewHeight, origHeight
-                * saveScale);
+        float fixTransY = getFixTrans(transY, viewHeight, origHeight * saveScale);
 
         if (fixTransX != 0 || fixTransY != 0)
             matrix.postTranslate(fixTransX, fixTransY);

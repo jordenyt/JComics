@@ -3,10 +3,15 @@
     xmlns:myapp="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_item_add_bookmark"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="Add to Collection"
+        android:title="Add to Bookmark"
         myapp:showAsAction="ifRoom" />
     <item android:id="@+id/menu_item_delete_bookmark"
         android:icon="@android:drawable/ic_menu_delete"
-        android:title="Add to Collection"
+        android:title="Delete Bookmark"
+        myapp:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_play_book"
+        android:icon="@android:drawable/ic_media_play"
+        android:title="Read Book"
         myapp:showAsAction="ifRoom" />
 </menu>

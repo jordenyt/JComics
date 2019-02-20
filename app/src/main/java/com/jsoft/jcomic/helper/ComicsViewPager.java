@@ -27,8 +27,7 @@ public class ComicsViewPager extends ViewPager {
         if (this.getCurrentItem() == 0) {
             activity.episodeSwitch(-1);
         } else {
-            this.setCurrentItem(this.getCurrentItem() - 1);
-            activity.updateLastRead(this.getCurrentItem());
+            activity.switchPageNum(this.getCurrentItem() - 1);
         }
     }
 
@@ -39,7 +38,7 @@ public class ComicsViewPager extends ViewPager {
         if (currentPageNum == this.getCurrentItem()) {
             activity.episodeSwitch(1);
         } else {
-            activity.updateLastRead(this.getCurrentItem());
+            activity.switchPageNum(this.getCurrentItem());
         }
     }
 
@@ -57,5 +56,9 @@ public class ComicsViewPager extends ViewPager {
     public boolean onTouchEvent(MotionEvent event) {
         // Never allow swiping to switch between pages
         return false;
+    }
+
+    public void exitActivity() {
+        activity.onBackPressed();
     }
 }

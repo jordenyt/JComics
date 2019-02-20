@@ -102,7 +102,7 @@ public class EpisodeListActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_item_add_bookmark:
-                Log.e("jComics", "Add Bookmark");
+                //Log.e("jComics", "Add Bookmark");
                 if (!bookmarkDb.bookInDb(book)) {
                     bookmarkDb.insertBookIntoDb(book);
                 }
@@ -110,12 +110,27 @@ public class EpisodeListActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
                 return true;
             case R.id.menu_item_delete_bookmark:
-                Log.e("jComics", "Delete Bookmark");
+                //Log.e("jComics", "Delete Bookmark");
                 if (!bookmarkDb.bookInDb(book)) {
                     bookmarkDb.insertBookIntoDb(book);
                 }
                 bookmarkDb.updateIsBookmark(book, "N");
                 invalidateOptionsMenu();
+                return true;
+            case R.id.menu_play_book:
+                if (!bookmarkDb.bookInDb(book)) {
+                    bookmarkDb.insertBookIntoDb(book);
+                }
+                String lastEpisode = bookmarkDb.getLastEpisode(book);
+                if (lastEpisode != null) {
+                    for (int i = 0; i < book.getEpisodes().size(); i++) {
+                        if (lastEpisode.equals(book.getEpisodes().get(i).getEpisodeTitle())) {
+                            startReading(i);
+                            return true;
+                        }
+                    }
+                }
+                startReading(book.getEpisodes().size() - 1);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
