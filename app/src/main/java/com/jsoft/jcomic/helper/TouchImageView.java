@@ -2,10 +2,10 @@ package com.jsoft.jcomic.helper;
 
 import android.content.Context;
 import android.graphics.Matrix;
-import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -14,35 +14,20 @@ import android.support.v7.widget.AppCompatImageView;
 public class TouchImageView extends AppCompatImageView {
     Matrix matrix;
 
-    // We can be in one of these 3 states
-    static final int NONE = 0;
-    static final int DRAG = 1;
-    static final int ZOOM = 2;
-    int mode = NONE;
-
     // Remember some things for zooming
-    PointF last = new PointF();
-    PointF start = new PointF();
     float minScale = 1f;
     float maxScale = 3f;
     float[] m;
 
     int viewWidth, viewHeight;
-    static final int CLICK = 20;
     float saveScale = 1f;
     protected float origWidth, origHeight;
     int oldMeasuredWidth, oldMeasuredHeight;
     ComicsViewPager pager;
 
-    int clickCount = 0;
-    long lastClickDuration;
-    long lastClickDownTime;
-    long lastClickUpTime;
-    static final int DOUBLE_CLICK_MAX_DURATION = 200;
-    static final int SHORT_CLICK_MAX_DURATION = 200;
-    static final int SWIPE_MAX_DURATION = 200;
-
     ScaleGestureDetector mScaleDetector;
+    GestureDetector mGestureDetector;
+
 
     Context context;
 
@@ -64,6 +49,7 @@ public class TouchImageView extends AppCompatImageView {
         super.setClickable(true);
         this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+        mGestureDetector = new GestureDetector(context, new GestureListener());
         matrix = new Matrix();
         m = new float[9];
         setImageMatrix(matrix);
@@ -74,78 +60,7 @@ public class TouchImageView extends AppCompatImageView {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mScaleDetector.onTouchEvent(event);
-                PointF curr = new PointF(event.getX(), event.getY());
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        last.set(curr);
-                        start.set(last);
-                        mode = DRAG;
-                        lastClickDownTime = System.currentTimeMillis();
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        if (mode == DRAG) {
-                            float deltaX = curr.x - last.x;
-                            float deltaY = curr.y - last.y;
-                            float fixTransX = getFixDragTrans(deltaX, viewWidth,
-                                    origWidth * saveScale);
-                            float fixTransY = getFixDragTrans(deltaY, viewHeight,
-                                    origHeight * saveScale);
-                            matrix.postTranslate(fixTransX, fixTransY);
-                            fixTrans();
-                            last.set(curr.x, curr.y);
-                        }
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        mode = NONE;
-                        int xDiff = (int) Math.abs(curr.x - start.x);
-                        int yDiff = (int) Math.abs(curr.y - start.y);
-                        if (xDiff < CLICK && yDiff < CLICK) {
-                            //performClick();
-                            if (System.currentTimeMillis() - lastClickDownTime < SHORT_CLICK_MAX_DURATION
-                                    &&  lastClickDownTime - lastClickUpTime < DOUBLE_CLICK_MAX_DURATION
-                                    && lastClickDuration < SHORT_CLICK_MAX_DURATION
-                                    && clickCount == 1) {
-                                //Log.e("jComic", "Double Click Capture " + viewHeight + ", " + viewWidth);
-                                if (saveScale < maxScale) {
-                                    scaleImage(2f, curr.x, curr.y);
-                                } else {
-                                    scaleImage(0.1f, curr.x, curr.y);
-                                }
-                                clickCount = 0;
-                            } else if (System.currentTimeMillis() - lastClickDownTime < SHORT_CLICK_MAX_DURATION ) {
-                                //Log.e("jComic", "Single Click Capture");
-                                if (curr.x > viewWidth * 0.8) {
-                                    pager.turnNext();
-                                } else if (curr.x < viewWidth * 0.2) {
-                                    pager.turnPrev();
-                                } else {
-                                    pager.showPageBar();
-                                }
-                                clickCount = 1;
-                            } else if (System.currentTimeMillis() - lastClickDownTime > SHORT_CLICK_MAX_DURATION ) {
-                                //Log.e("jComic", "Long Click Capture");
-                            }
-                        } else if (System.currentTimeMillis() - lastClickDownTime < SWIPE_MAX_DURATION) {
-                            if (yDiff < viewHeight * 0.1
-                                    && xDiff >  viewWidth * 0.2) {
-                                if (curr.x < start.x) {
-                                    pager.turnNext();
-                                } else {
-                                    pager.turnPrev();
-                                }
-                            }
-                        }
-                        lastClickUpTime = System.currentTimeMillis();
-                        lastClickDuration = lastClickUpTime - lastClickDownTime;
-                        break;
-
-                    case MotionEvent.ACTION_POINTER_UP:
-                        mode = NONE;
-                        break;
-                }
+                mGestureDetector.onTouchEvent(event);
 
                 setImageMatrix(matrix);
                 invalidate();
@@ -163,13 +78,76 @@ public class TouchImageView extends AppCompatImageView {
             ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            mode = ZOOM;
             return true;
         }
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             scaleImage(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
+            return true;
+        }
+    }
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            if (saveScale < maxScale) {
+                scaleImage(2f, e.getX(), e.getY());
+                return true;
+            } else {
+                scaleImage(0.1f, e.getX(), e.getY());
+                return true;
+            }
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (e.getX() > viewWidth * 0.8) {
+                pager.turnNext();
+                return true;
+            } else if (e.getX() < viewWidth * 0.2) {
+                pager.turnPrev();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            double ratio = 5;
+            double diffX = e2.getX() - e1.getX();
+            double diffY = e2.getY() - e1.getY();
+            if (Math.abs(diffX) > viewWidth * 0.2 || Math.abs(diffY) > viewHeight * 0.2) {
+                if (diffY / Math.abs(diffX) < -ratio) {
+                    //Fling Up
+                } else if (diffY / Math.abs(diffX) > ratio) {
+                    //Fling Down
+                    pager.showPageBar();
+                } else if (diffX / Math.abs(diffY) < -ratio) {
+                    //Fling Left
+                    pager.turnNext();
+                } else if (diffX / Math.abs(diffY) > ratio) {
+                    //Fling Right
+                    pager.turnPrev();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            Log.e("jComics", "onLongPress");
+            //return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            float fixTransX = getFixDragTrans(-distanceX, viewWidth,
+                    origWidth * saveScale);
+            float fixTransY = getFixDragTrans(-distanceY, viewHeight,
+                    origHeight * saveScale);
+            matrix.postTranslate(fixTransX, fixTransY);
+            fixTrans();
             return true;
         }
     }
