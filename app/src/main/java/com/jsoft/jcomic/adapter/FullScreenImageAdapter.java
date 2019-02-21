@@ -142,7 +142,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 Log.e("jComic", "" + e.getMessage());
                 e.printStackTrace();
             }
-            Log.e("jComic", "Finish Get Image: " + urldisplay);
+            //Log.e("jComic", "Finish Get Image: " + urldisplay);
             return bitmap;
         }
 
@@ -154,6 +154,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
+            progressText.setText("");
         }
 
     }

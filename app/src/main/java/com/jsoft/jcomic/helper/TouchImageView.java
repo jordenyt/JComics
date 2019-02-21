@@ -114,10 +114,10 @@ public class TouchImageView extends AppCompatImageView {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            double ratio = 5;
+            double ratio = 2;
             double diffX = e2.getX() - e1.getX();
             double diffY = e2.getY() - e1.getY();
-            if (Math.abs(diffX) > viewWidth * 0.2 || Math.abs(diffY) > viewHeight * 0.2) {
+            if (saveScale == 1f) {
                 if (diffY / Math.abs(diffX) < -ratio) {
                     //Fling Up
                     pager.exitActivity();
