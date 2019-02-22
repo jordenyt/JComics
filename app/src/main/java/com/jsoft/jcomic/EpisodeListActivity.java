@@ -23,6 +23,7 @@ import com.jsoft.jcomic.adapter.EpisodeListAdapter;
 import com.jsoft.jcomic.helper.AppConstant;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.BookmarkDb;
+import com.jsoft.jcomic.helper.Downloader;
 import com.jsoft.jcomic.helper.Utils;
 import com.jsoft.jcomic.praser.BookParser;
 import com.jsoft.jcomic.praser.BookParserListener;
@@ -206,7 +207,7 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
     }
 
     public void downloadEpisode(int position) {
-
+        new Downloader(book).downloadEpisode(position);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.jsoft.jcomic.helper;
 
 import java.io.File;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -113,9 +115,10 @@ public class Utils {
     public static String getHashCode(String s, int length) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            messageDigest.update(s.getBytes());
-            String encryptedString = new String(messageDigest.digest());
-            return encryptedString.substring(0, length);
+            messageDigest.update(s.getBytes(StandardCharsets.UTF_8));
+            byte[] digest = messageDigest.digest();
+            String hex = String.format("%064x", new BigInteger(1, digest));
+            return hex.substring(0, length);
         } catch (Exception e) {
             Log.e("jComics", "Error in getHashCode", e);
         }

@@ -20,7 +20,6 @@ import java.util.Random;
 
 public class Downloader implements EpisodeParserListener {
     BookDTO book;
-    int threadSize = 5;
 
     public Downloader(BookDTO book) {
         this.book = book;
@@ -34,7 +33,9 @@ public class Downloader implements EpisodeParserListener {
     }
 
     public void onEpisodeFetched(EpisodeDTO episode) {
-
+        for (int i=0;i<episode.getImageUrl().size();i++) {
+            new DownloadImageTask(book, episode).execute(episode.getImageUrl().get(i));
+        }
     }
 
     private class DownloadImageTask extends AsyncTask<String, Integer, Bitmap> {
@@ -55,6 +56,7 @@ public class Downloader implements EpisodeParserListener {
                 conn.setReadTimeout(5000);
                 conn.setUseCaches(true);
                 conn.setRequestProperty("Referer", episode.getEpisodeUrl());
+                Log.e("jComics", "Downloading "+this.imgUrl);
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 bitmap= BitmapFactory.decodeStream(in);
 
@@ -88,18 +90,30 @@ public class Downloader implements EpisodeParserListener {
         private void saveImage(Bitmap finalBitmap) {
 
             String root = Environment.getExternalStorageDirectory().toString();
-            File myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
+
+            File myDir = new File(root + "/jComics");
             myDir.mkdirs();
-            Random generator = new Random();
+            myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()));
+            myDir.mkdirs();
+            myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
+            myDir.mkdirs();
+
             int pageNum = 0;
             for (int i=0; i<episode.getImageUrl().size(); i++) {
-                if (episode.getImageUrl().equals(this.imgUrl)) {
+                if (episode.getImageUrl().get(i).equals(this.imgUrl)) {
                     pageNum = i;
                     break;
                 }
             }
+            try {
+                File nomediafile = new File(myDir, ".nomedia");
+                nomediafile.createNewFile();
+            } catch (Exception e) {
+                Log.e("jComics", "Write .noMedia File Error", e);
+            }
             String fname = String.format("%04d", pageNum) + ".jpg";
             File file = new File (myDir, fname);
+            Log.e("jComics", "Saving to " + myDir + "/" + fname);
             if (file.exists ()) file.delete ();
             try {
                 FileOutputStream out = new FileOutputStream(file);
@@ -108,7 +122,7 @@ public class Downloader implements EpisodeParserListener {
                 out.close();
 
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("jComics", "Write File Error", e);
             }
         }
 

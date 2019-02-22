@@ -60,7 +60,7 @@ public class FullscreenActivity extends AppCompatActivity implements
         pager = (ComicsViewPager) findViewById(R.id.pager);
         pager.setActivity(this);
         if (pager.getAdapter() == null) {
-            FullScreenImageAdapter adapter = new FullScreenImageAdapter(FullscreenActivity.this, pager, episode);
+            FullScreenImageAdapter adapter = new FullScreenImageAdapter(FullscreenActivity.this, pager, episode, book);
             pager.setAdapter(adapter);
         } else {
             ((FullScreenImageAdapter)pager.getAdapter()).setEpisode(book.getEpisodes().get(currEpisode));

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +18,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jsoft.jcomic.R;
+import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.ComicsViewPager;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 import com.jsoft.jcomic.helper.TouchImageView;
+import com.jsoft.jcomic.helper.Utils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
@@ -29,13 +33,15 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private Activity _activity;
     private ComicsViewPager pager;
     private EpisodeDTO episode;
+    private BookDTO book;
 
     // constructor
-    public FullScreenImageAdapter(Activity activity, ComicsViewPager viewPager, EpisodeDTO episode) {
+    public FullScreenImageAdapter(Activity activity, ComicsViewPager viewPager, EpisodeDTO episode, BookDTO book) {
         this._activity = activity;
         //this._imagePaths = imagePaths;
         this.pager = viewPager;
         this.episode = episode;
+        this.book = book;
     }
 
     @Override
@@ -108,12 +114,29 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
+            String imgUrl = urls[0];
 
-            Log.e("jComic", "Start Get Image: " + urldisplay);
+            int pageNum = 0;
+            for (int i=0; i<episode.getImageUrl().size(); i++) {
+                if (episode.getImageUrl().get(i).equals(imgUrl)) {
+                    pageNum = i;
+                    break;
+                }
+            }
+            String root = Environment.getExternalStorageDirectory().toString();
+            File myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
+            String fname = String.format("%04d", pageNum) + ".jpg";
+            File file = new File (myDir, fname);
+
+            if (myDir.exists() && file.exists()) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+            }
+
             Bitmap bitmap = null;
             try {
-                HttpURLConnection conn = (HttpURLConnection) new java.net.URL(urldisplay).openConnection();
+                HttpURLConnection conn = (HttpURLConnection) new java.net.URL(imgUrl).openConnection();
                 conn.setReadTimeout(5000);
                 conn.setUseCaches(true);
                 //if (urldisplay.indexOf("cartoonmad") > -1) {

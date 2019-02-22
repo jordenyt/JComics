@@ -1,12 +1,15 @@
 package com.jsoft.jcomic;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,6 +47,7 @@ public class GridViewActivity extends AppCompatActivity {
     private List<BookDTO> books;
     private BookmarkDb bookmarkDb;
     private GridViewActivity gridViewActivity;
+    String TAG = "jComics";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,8 @@ public class GridViewActivity extends AppCompatActivity {
         adapter = new GridViewImageAdapter(GridViewActivity.this, columnWidth, books);
         gridView.setAdapter(adapter);
         bookmarkDb.clearDb();
+        isReadStoragePermissionGranted();
+        isWriteStoragePermissionGranted();
     }
 
     @Override
@@ -242,9 +248,7 @@ public class GridViewActivity extends AppCompatActivity {
             } catch (IOException e) {
 
             }
-        }
-        else
-        {
+        } else {
             File httpCacheDir = new File(getApplicationContext().getCacheDir()
                     , "http");
             try {
@@ -252,6 +256,32 @@ public class GridViewActivity extends AppCompatActivity {
             } catch (IOException e) {
 
             }
+        }
+    }
+
+    public  boolean isReadStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
+    }
+
+    public  boolean isWriteStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            return true;
         }
     }
 }
