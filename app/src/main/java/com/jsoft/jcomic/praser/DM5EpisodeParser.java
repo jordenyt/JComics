@@ -11,8 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DM5EpisodeParser extends EpisodeParser {
-    public DM5EpisodeParser(EpisodeDTO episode, FullscreenActivity activity) {
-        super(episode, activity, "UTF-8");
+    public DM5EpisodeParser(EpisodeDTO episode, EpisodeParserListener listener) {
+        super(episode, listener, "UTF-8");
     }
 
     private String intCode(int i) {
@@ -68,6 +68,5 @@ public class DM5EpisodeParser extends EpisodeParser {
         }
         episode.setPageCount(imageUrlList.size());
         episode.setImageUrl(imageUrlList);
-        activity.onEpisodeFetched(episode);
     }
 }

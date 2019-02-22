@@ -1,12 +1,16 @@
 package com.jsoft.jcomic.helper;
 
 import java.io.File;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Point;
+import android.net.Uri;
+import android.util.Log;
+import android.util.Xml;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -100,5 +104,21 @@ public class Utils {
         }
         columnWidth = point.x;
         return columnWidth;
+    }
+
+    public String getHashCode(String s) {
+        return getHashCode(s, 16);
+    }
+
+    public String getHashCode(String s, int length) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(s.getBytes());
+            String encryptedString = new String(messageDigest.digest());
+            return encryptedString.substring(0, length);
+        } catch (Exception e) {
+            Log.e("jComics", "Error in getHashCode", e);
+        }
+        return "error";
     }
 }

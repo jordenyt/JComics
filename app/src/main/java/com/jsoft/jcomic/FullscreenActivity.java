@@ -15,11 +15,13 @@ import com.jsoft.jcomic.helper.EpisodeDTO;
 import com.jsoft.jcomic.praser.CartoonMadEpisodeParser;
 import com.jsoft.jcomic.praser.ComicVIPEpisodeParser;
 import com.jsoft.jcomic.praser.DM5EpisodeParser;
+import com.jsoft.jcomic.praser.EpisodeParser;
+import com.jsoft.jcomic.praser.EpisodeParserListener;
 
 import java.util.ArrayList;
 
 public class FullscreenActivity extends AppCompatActivity implements
-        SeekBar.OnSeekBarChangeListener {
+        SeekBar.OnSeekBarChangeListener, EpisodeParserListener {
     private int pageTurn;
     private boolean gotoLastPage;
     private BookDTO book;
@@ -44,15 +46,8 @@ public class FullscreenActivity extends AppCompatActivity implements
             book = new BookDTO("");
             book.setEpisodes(new ArrayList<EpisodeDTO>());
         }
-        EpisodeDTO episode = book.getEpisodes().get(currEpisode);
         //Log.d("jComic", "EpisodeUrl: " + episode.getEpisodeUrl());
-        if (episode.getEpisodeUrl().contains("comicbus")) {
-            new ComicVIPEpisodeParser(episode, this);
-        } else if (episode.getEpisodeUrl().contains("cartoonmad")) {
-            new CartoonMadEpisodeParser(episode, this);
-        } else if (episode.getEpisodeUrl().contains("dm5.com")) {
-            new DM5EpisodeParser(episode, this);
-        }
+        EpisodeParser.parseEpisode(book.getEpisodes().get(currEpisode), this);
     }
 
     public void onEpisodeFetched(EpisodeDTO episode) {

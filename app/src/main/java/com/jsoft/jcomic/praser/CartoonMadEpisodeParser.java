@@ -11,8 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CartoonMadEpisodeParser extends EpisodeParser {
-    public CartoonMadEpisodeParser(EpisodeDTO episode, FullscreenActivity activity) {
-        super(episode, activity, "BIG5");
+    public CartoonMadEpisodeParser(EpisodeDTO episode, EpisodeParserListener listener) {
+        super(episode, listener, "BIG5");
     }
     protected void getEpisodeFromUrlResult(List<String> result) {
         episode.setImageUrl(new ArrayList<String>());
@@ -54,6 +54,5 @@ public class CartoonMadEpisodeParser extends EpisodeParser {
             imageUrlList.add(imageUrl);
         }
         episode.setImageUrl(imageUrlList);
-        activity.onEpisodeFetched(episode);
     }
 }

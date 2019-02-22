@@ -24,6 +24,8 @@ import com.jsoft.jcomic.helper.AppConstant;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.BookmarkDb;
 import com.jsoft.jcomic.helper.Utils;
+import com.jsoft.jcomic.praser.BookParser;
+import com.jsoft.jcomic.praser.BookParserListener;
 import com.jsoft.jcomic.praser.CartoonMadBookParser;
 import com.jsoft.jcomic.praser.ComicVIPBookParser;
 import com.jsoft.jcomic.praser.DM5BookParser;
@@ -31,7 +33,7 @@ import com.jsoft.jcomic.praser.DM5BookParser;
 import java.io.InputStream;
 
 
-public class EpisodeListActivity extends AppCompatActivity {
+public class EpisodeListActivity extends AppCompatActivity implements BookParserListener {
 
     private GridView gridView;
     private TextView textView;
@@ -53,14 +55,7 @@ public class EpisodeListActivity extends AppCompatActivity {
         } else {
             bookUrl = i.getStringExtra("bookUrl");
         }
-        if (bookUrl.contains("comicbus")) {
-            new ComicVIPBookParser(new BookDTO(bookUrl), this);
-        } else if (bookUrl.contains("cartoonmad")) {
-            new CartoonMadBookParser(new BookDTO(bookUrl), this);
-        } else if (bookUrl.contains("dm5.com")) {
-            new DM5BookParser(new BookDTO(bookUrl), this);
-        }
-
+        BookParser.parseBook(bookUrl, this);
         bookmarkDb = new BookmarkDb(this);
     }
 
@@ -208,6 +203,10 @@ public class EpisodeListActivity extends AppCompatActivity {
         b.putSerializable("book", book);
         intent.putExtras(b);
         this.startActivityForResult(intent, 0);
+    }
+
+    public void downloadEpisode(int position) {
+
     }
 
     @Override

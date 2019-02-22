@@ -12,8 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ComicVIPBookParser extends BookParser {
-    public ComicVIPBookParser (BookDTO book, EpisodeListActivity activity) {
-        super(book, activity, "BIG5");
+    public ComicVIPBookParser (BookDTO book, BookParserListener listener) {
+        super(book, listener, "BIG5");
     }
 
     //Call when URL is fetched
@@ -98,6 +98,5 @@ public class ComicVIPBookParser extends BookParser {
             episode.setBookTitle(book.getBookTitle());
         }
         book.setEpisodes(episodes);
-        activity.onBookFetched(book);
     }
 }

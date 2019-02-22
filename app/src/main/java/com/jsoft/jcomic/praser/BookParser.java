@@ -21,11 +21,11 @@ import java.util.List;
 public abstract class BookParser {
 
     protected BookDTO book;
-    protected EpisodeListActivity activity;
+    protected BookParserListener listener;
 
-    public BookParser(BookDTO book, EpisodeListActivity activity, String encoding) {
+    public BookParser(BookDTO book, BookParserListener listener, String encoding) {
         this.book = book;
-        this.activity = activity;
+        this.listener = listener;
         try {
             new DownloadFilesTask(encoding).execute(new URL(book.getBookUrl()));
         } catch (MalformedURLException e) {
@@ -78,8 +78,19 @@ public abstract class BookParser {
 
         protected void onPostExecute(List<String> result) {
             getBookFromUrlResult(result);
+            listener.onBookFetched(book);
         }
     }
 
     protected void getBookFromUrlResult(List<String> html) {};
+
+    public static void parseBook(String bookUrl, BookParserListener listener) {
+        if (bookUrl.contains("comicbus")) {
+            new ComicVIPBookParser(new BookDTO(bookUrl), listener);
+        } else if (bookUrl.contains("cartoonmad")) {
+            new CartoonMadBookParser(new BookDTO(bookUrl), listener);
+        } else if (bookUrl.contains("dm5.com")) {
+            new DM5BookParser(new BookDTO(bookUrl), listener);
+        }
+    }
 }

@@ -117,8 +117,7 @@ public class GridViewActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 try {
                     Uri uri = Uri.parse(url);
-                    if (/*(uri.getHost().contains("dm5.com") && uri.getPath().startsWith("/manhua-") && (uri.getQueryParameter("from") != null || webView.getUrl().contains("search?title=")))
-                            || */(uri.getHost().contains("cartoonmad.com") && uri.getPath().startsWith("/m/comic/"))
+                    if ((uri.getHost().contains("cartoonmad.com") && uri.getPath().startsWith("/m/comic/"))
                             || (uri.getHost().contains("comicbus.com") && uri.getPath().startsWith("/comic/"))) {
                         Intent i = new Intent(gridViewActivity, EpisodeListActivity.class);
                         i.putExtra("bookUrl", url);

@@ -16,8 +16,8 @@ import taobe.tec.jcc.JChineseConvertor;
 
 
 public class DM5BookParser extends BookParser {
-    public DM5BookParser (BookDTO book, EpisodeListActivity activity) {
-        super(book, activity, "UTF-8");
+    public DM5BookParser (BookDTO book, BookParserListener listener) {
+        super(book, listener, "UTF-8");
     }
 
     public String chineseS2T(String simplifiedChineseString) {
@@ -100,6 +100,5 @@ public class DM5BookParser extends BookParser {
             episode.setBookTitle(book.getBookTitle());
         }
         book.setEpisodes(episodes);
-        activity.onBookFetched(book);
     }
 }

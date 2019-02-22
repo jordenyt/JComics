@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 
 public class CartoonMadBookParser extends BookParser {
 
-    public CartoonMadBookParser(BookDTO book, EpisodeListActivity activity) {
-        super(book, activity, "BIG5");
+    public CartoonMadBookParser(BookDTO book, BookParserListener listener) {
+        super(book, listener, "BIG5");
     }
 
     //Call when URL is fetched
@@ -54,6 +54,5 @@ public class CartoonMadBookParser extends BookParser {
             episode.setBookTitle(book.getBookTitle());
         }
         book.setEpisodes(episodes);
-        activity.onBookFetched(book);
     }
 }

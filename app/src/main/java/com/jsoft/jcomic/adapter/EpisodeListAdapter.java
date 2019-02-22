@@ -1,11 +1,15 @@
 package com.jsoft.jcomic.adapter;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.R;
@@ -52,7 +56,9 @@ public class EpisodeListAdapter extends BaseAdapter {
             textViewItem.setTextColor(Color.WHITE);
         }
 
-        convertView.setOnClickListener(new OnEpisodeClickListener(position));
+        EpisodeClickListener episodeClickListener = new EpisodeClickListener(position);
+        convertView.setOnClickListener(episodeClickListener);
+        convertView.setOnLongClickListener(episodeClickListener);
 
         return convertView;
     }
@@ -67,13 +73,14 @@ public class EpisodeListAdapter extends BaseAdapter {
         return this.book.getEpisodes().get(position);
     }
 
-    class OnEpisodeClickListener implements View.OnClickListener {
+    class EpisodeClickListener implements View.OnClickListener, View.OnLongClickListener {
 
         int position;
 
         // constructor
-        public OnEpisodeClickListener(int position) {
+        public EpisodeClickListener(int position) {
             this.position = position;
+
         }
 
         @Override
@@ -81,5 +88,19 @@ public class EpisodeListAdapter extends BaseAdapter {
             activity.startReading(position);
         }
 
+        @Override
+        public boolean onLongClick(View view) {
+            new AlertDialog.Builder(activity)
+                    .setTitle("要下載嗎?")
+                    .setMessage("下載後, 離線時可看")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            activity.downloadEpisode(position);
+                            Toast.makeText(activity, "下載中", Toast.LENGTH_SHORT).show();
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
+            return true;
+        }
     }
 }

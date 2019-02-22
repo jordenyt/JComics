@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
  * Created by 01333855 on 05/10/2015.
  */
 public class ComicVIPEpisodeParser extends EpisodeParser{
-    public ComicVIPEpisodeParser(EpisodeDTO episode, FullscreenActivity activity) {
-        super(episode, activity, "BIG5");
+    public ComicVIPEpisodeParser(EpisodeDTO episode, EpisodeParserListener listener) {
+        super(episode, listener, "BIG5");
     }
 
     protected void getEpisodeFromUrlResult(List<String> result) {
@@ -65,7 +65,6 @@ public class ComicVIPEpisodeParser extends EpisodeParser{
                 episode.getImageUrl().add(pageUrl);
             }
         }
-        activity.onEpisodeFetched(episode);
     }
 
     private String ss(String code,int position,int size, boolean integerOnly) {

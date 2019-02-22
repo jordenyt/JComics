@@ -21,11 +21,11 @@ import java.util.List;
 public abstract class EpisodeParser {
 
     protected EpisodeDTO episode;
-    protected FullscreenActivity activity;
+    protected EpisodeParserListener listener;
 
-    public EpisodeParser(EpisodeDTO episode, FullscreenActivity activity, String encoding) {
+    public EpisodeParser(EpisodeDTO episode, EpisodeParserListener listener, String encoding) {
         this.episode = episode;
-        this.activity = activity;
+        this.listener = listener;
         try {
             new DownloadFilesTask(encoding).execute(new URL(episode.getEpisodeUrl()));
         } catch (MalformedURLException e) {
@@ -66,10 +66,21 @@ public abstract class EpisodeParser {
 
         protected void onPostExecute(List<String> result) {
             getEpisodeFromUrlResult(result);
+            listener.onEpisodeFetched(episode);
         }
     }
 
     protected void getEpisodeFromUrlResult(List<String> result) {
 
     };
+
+    public static void parseEpisode(EpisodeDTO episode, EpisodeParserListener listener) {
+        if (episode.getEpisodeUrl().contains("comicbus")) {
+            new ComicVIPEpisodeParser(episode, listener);
+        } else if (episode.getEpisodeUrl().contains("cartoonmad")) {
+            new CartoonMadEpisodeParser(episode, listener);
+        } else if (episode.getEpisodeUrl().contains("dm5.com")) {
+            new DM5EpisodeParser(episode, listener);
+        }
+    }
 }
