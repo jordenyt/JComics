@@ -106,11 +106,11 @@ public class Utils {
         return columnWidth;
     }
 
-    public String getHashCode(String s) {
+    public static String getHashCode(String s) {
         return getHashCode(s, 16);
     }
 
-    public String getHashCode(String s, int length) {
+    public static String getHashCode(String s, int length) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             messageDigest.update(s.getBytes());
