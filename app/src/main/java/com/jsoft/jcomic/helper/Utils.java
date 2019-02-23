@@ -1,24 +1,24 @@
 package com.jsoft.jcomic.helper;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Point;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
-import android.util.Xml;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
-import android.os.Environment;
-
-import com.jsoft.jcomic.helper.AppConstant;
 
 /**
  * Created by Jorden on 1/10/15.
@@ -123,5 +123,61 @@ public class Utils {
             Log.e("jComics", "Error in getHashCode", e);
         }
         return "error";
+    }
+
+    public static boolean isInternetAvailable() {
+        try {
+            InetAddress address = getInetAddressByName("www.google.com");
+            return (address!= null);
+        } catch (Exception e) {
+            Log.e("jComics", "Exception caught by isInternetAvailable", e);
+        }
+        return false;
+    }
+
+    public static InetAddress getInetAddressByName(String name)
+    {
+        AsyncTask<String, Void, InetAddress> task = new AsyncTask<String, Void, InetAddress>() {
+            @Override
+            protected InetAddress doInBackground(String... params){
+                try{
+                    return InetAddress.getByName(params[0]);
+                }catch (Exception e){
+                    return null;
+                }
+            }
+        };
+        try{
+            return task.execute(name).get();
+        }catch (InterruptedException e){
+            return null;
+        }catch (ExecutionException e){
+            return null;
+        }
+    }
+
+    public static void writeToFile(String data, File path, String filename)
+    {
+        // Get the directory for the user's public pictures directory.
+        final File file = new File(path, filename);
+
+        // Save your stream, don't forget to flush() it before closing it.
+
+        try
+        {
+            file.createNewFile();
+            FileOutputStream fOut = new FileOutputStream(file);
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+            myOutWriter.append(data);
+
+            myOutWriter.close();
+
+            fOut.flush();
+            fOut.close();
+        }
+        catch (Exception e)
+        {
+            Log.e("jComics", "File write failed: " + e.toString());
+        }
     }
 }

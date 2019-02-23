@@ -9,6 +9,7 @@ import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -39,7 +40,6 @@ import java.util.List;
 public class GridViewActivity extends AppCompatActivity {
 
     private Utils utils;
-    private ArrayList<String> imagePaths = new ArrayList<>();
     private GridViewImageAdapter adapter;
     private GridView gridView;
     private WebView webView;
@@ -53,8 +53,7 @@ public class GridViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bookmarkDb = new BookmarkDb(this);
-        books = bookmarkDb.getBookmarkedList();
-        //books = new ArrayList<BookDTO>();
+
         enableHttpCaching();
         gridViewActivity = this;
         setContentView(R.layout.activity_grid_view);
@@ -64,9 +63,7 @@ public class GridViewActivity extends AppCompatActivity {
         initWebView();
 
         gridView = initGridLayout();
-        adapter = new GridViewImageAdapter(GridViewActivity.this, columnWidth, books);
-        gridView.setAdapter(adapter);
-        bookmarkDb.clearDb();
+        //bookmarkDb.clearDb();
         isReadStoragePermissionGranted();
         isWriteStoragePermissionGranted();
     }
@@ -75,6 +72,20 @@ public class GridViewActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         books = bookmarkDb.getBookmarkedList();
+        List<BookDTO> allBooks = bookmarkDb.getBookmarkedList();
+
+        if (Utils.isInternetAvailable()) {
+            books = allBooks;
+        } else {
+            books = new ArrayList<BookDTO>();
+            for (int i=0;i<allBooks.size();i++) {
+                BookDTO book = allBooks.get(i);
+                File bookFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/book.json");
+                if (bookFile.exists()) {
+                    books.add(book);
+                }
+            }
+        }
         adapter = new GridViewImageAdapter(GridViewActivity.this, columnWidth, books);
         gridView.setAdapter(adapter);
     }

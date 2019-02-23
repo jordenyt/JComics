@@ -3,7 +3,6 @@ package com.jsoft.jcomic.praser;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.jsoft.jcomic.FullscreenActivity;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 
 import java.io.BufferedReader;

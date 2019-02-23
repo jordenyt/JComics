@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
@@ -19,19 +20,21 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.jsoft.jcomic.adapter.EpisodeListAdapter;
 import com.jsoft.jcomic.helper.AppConstant;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.BookmarkDb;
 import com.jsoft.jcomic.helper.Downloader;
+import com.jsoft.jcomic.helper.EpisodeDTO;
 import com.jsoft.jcomic.helper.Utils;
 import com.jsoft.jcomic.praser.BookParser;
 import com.jsoft.jcomic.praser.BookParserListener;
-import com.jsoft.jcomic.praser.CartoonMadBookParser;
-import com.jsoft.jcomic.praser.ComicVIPBookParser;
-import com.jsoft.jcomic.praser.DM5BookParser;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 
 public class EpisodeListActivity extends AppCompatActivity implements BookParserListener {
@@ -56,8 +59,27 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         } else {
             bookUrl = i.getStringExtra("bookUrl");
         }
-        BookParser.parseBook(bookUrl, this);
         bookmarkDb = new BookmarkDb(this);
+        if (Utils.isInternetAvailable()) {
+            BookParser.parseBook(bookUrl, this);
+        } else {
+            try {
+                File bookFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(bookUrl) + "/book.json");
+                if (bookFile.exists()) {
+                    Gson gson = new Gson();
+                    BookDTO savedBook = gson.fromJson(new FileReader(bookFile.getAbsolutePath()), BookDTO.class);
+                    onBookFetched(savedBook);
+                } else {
+                    BookDTO newBook = new BookDTO(bookUrl);
+                    newBook.setEpisodes(new ArrayList<EpisodeDTO>());
+                    newBook.setBookTitle("No Internet");
+                    onBookFetched(newBook);
+                }
+            } catch (Exception e) {
+                Log.e("jComics", "Error caught in reading saved book.", e);
+            }
+        }
+
     }
 
     @Override
@@ -78,7 +100,7 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (book != null) {
+        if (book != null && book.getEpisodes().size() > 0) {
             if (!bookmarkDb.bookIsBookmarked(book)) {
                 menu.getItem(1).setVisible(false);
                 menu.getItem(0).setVisible(true);
@@ -89,6 +111,7 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         } else {
             menu.getItem(0).setVisible(false);
             menu.getItem(1).setVisible(false);
+            menu.getItem(2).setVisible(false);
         }
         return true;
     }

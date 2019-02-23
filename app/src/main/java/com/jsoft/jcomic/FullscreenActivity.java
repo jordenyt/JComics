@@ -2,22 +2,28 @@ package com.jsoft.jcomic;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import com.google.gson.Gson;
 import com.jsoft.jcomic.adapter.FullScreenImageAdapter;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.BookmarkDb;
 import com.jsoft.jcomic.helper.ComicsViewPager;
 import com.jsoft.jcomic.helper.EpisodeDTO;
+import com.jsoft.jcomic.helper.Utils;
 import com.jsoft.jcomic.praser.CartoonMadEpisodeParser;
 import com.jsoft.jcomic.praser.ComicVIPEpisodeParser;
 import com.jsoft.jcomic.praser.DM5EpisodeParser;
 import com.jsoft.jcomic.praser.EpisodeParser;
 import com.jsoft.jcomic.praser.EpisodeParserListener;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 public class FullscreenActivity extends AppCompatActivity implements
@@ -47,7 +53,23 @@ public class FullscreenActivity extends AppCompatActivity implements
             book.setEpisodes(new ArrayList<EpisodeDTO>());
         }
         //Log.d("jComic", "EpisodeUrl: " + episode.getEpisodeUrl());
-        EpisodeParser.parseEpisode(book.getEpisodes().get(currEpisode), this);
+        EpisodeDTO episode = book.getEpisodes().get(currEpisode);
+        if (Utils.isInternetAvailable()) {
+            EpisodeParser.parseEpisode(episode, this);
+        } else {
+            try {
+                File episodeFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()) + "/episode.json");
+                if (episodeFile.exists()) {
+                    Gson gson = new Gson();
+                    EpisodeDTO savedEpisode = gson.fromJson(new FileReader(episodeFile.getAbsolutePath()), EpisodeDTO.class);
+                    onEpisodeFetched(savedEpisode);
+                } else {
+                    onEpisodeFetched(episode);
+                }
+            } catch (Exception e) {
+                Log.e("jComics", "Error caught in reading saved episode.", e);
+            }
+        }
     }
 
     public void onEpisodeFetched(EpisodeDTO episode) {

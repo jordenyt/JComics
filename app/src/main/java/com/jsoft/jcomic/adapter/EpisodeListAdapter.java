@@ -1,9 +1,9 @@
 package com.jsoft.jcomic.adapter;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +16,9 @@ import com.jsoft.jcomic.R;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.BookmarkDb;
 import com.jsoft.jcomic.helper.EpisodeDTO;
+import com.jsoft.jcomic.helper.Utils;
+
+import java.io.File;
 
 public class EpisodeListAdapter extends BaseAdapter {
 
@@ -56,9 +59,19 @@ public class EpisodeListAdapter extends BaseAdapter {
             textViewItem.setTextColor(Color.WHITE);
         }
 
-        EpisodeClickListener episodeClickListener = new EpisodeClickListener(position);
-        convertView.setOnClickListener(episodeClickListener);
-        convertView.setOnLongClickListener(episodeClickListener);
+        boolean offlineAvailable = false;
+        File episodeFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()) + "/episode.json");
+        if (episodeFile.exists()) {
+            offlineAvailable = true;
+        }
+
+        if (Utils.isInternetAvailable() || offlineAvailable) {
+            EpisodeClickListener episodeClickListener = new EpisodeClickListener(position);
+            convertView.setOnClickListener(episodeClickListener);
+            convertView.setOnLongClickListener(episodeClickListener);
+        } else {
+            textViewItem.setTextColor(Color.DKGRAY);
+        }
 
         return convertView;
     }

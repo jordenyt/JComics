@@ -5,8 +5,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.jsoft.jcomic.praser.EpisodeParser;
 import com.jsoft.jcomic.praser.EpisodeParserListener;
@@ -14,9 +12,13 @@ import com.jsoft.jcomic.praser.EpisodeParserListener;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import com.google.gson.Gson;
 
 public class Downloader implements EpisodeParserListener {
     BookDTO book;
@@ -33,8 +35,35 @@ public class Downloader implements EpisodeParserListener {
     }
 
     public void onEpisodeFetched(EpisodeDTO episode) {
+        Gson gson = new Gson();
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/jComics");
+        myDir.mkdirs();
+        myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()));
+        myDir.mkdirs();
+
+        try {
+            File nomediaFile = new File(myDir, ".nomedia");
+            nomediaFile.createNewFile();
+            Utils.writeToFile(gson.toJson(book), myDir, "book.json");
+        } catch (Exception e) {
+            Log.e("jComics", "Create book Folder Error", e);
+        }
+
+        myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
+        myDir.mkdirs();
+
+        try {
+            File nomediaFile = new File(myDir, ".nomedia");
+            nomediaFile.createNewFile();
+            Utils.writeToFile(gson.toJson(episode), myDir, "episode.json");
+        } catch (Exception e) {
+            Log.e("jComics", "Create episode Folder Error", e);
+        }
+
+        Executor downloadImageTaskExecutor = Executors.newFixedThreadPool(3);
         for (int i=0;i<episode.getImageUrl().size();i++) {
-            new DownloadImageTask(book, episode).execute(episode.getImageUrl().get(i));
+            new DownloadImageTask(book, episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
         }
     }
 
@@ -88,16 +117,8 @@ public class Downloader implements EpisodeParserListener {
         }
 
         private void saveImage(Bitmap finalBitmap) {
-
             String root = Environment.getExternalStorageDirectory().toString();
-
-            File myDir = new File(root + "/jComics");
-            myDir.mkdirs();
-            myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()));
-            myDir.mkdirs();
-            myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
-            myDir.mkdirs();
-
+            File myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
             int pageNum = 0;
             for (int i=0; i<episode.getImageUrl().size(); i++) {
                 if (episode.getImageUrl().get(i).equals(this.imgUrl)) {
@@ -105,22 +126,16 @@ public class Downloader implements EpisodeParserListener {
                     break;
                 }
             }
-            try {
-                File nomediafile = new File(myDir, ".nomedia");
-                nomediafile.createNewFile();
-            } catch (Exception e) {
-                Log.e("jComics", "Write .noMedia File Error", e);
-            }
             String fname = String.format("%04d", pageNum) + ".jpg";
             File file = new File (myDir, fname);
-            Log.e("jComics", "Saving to " + myDir + "/" + fname);
+
+            //Log.e("jComics", "Saving to " + myDir + "/" + fname);
             if (file.exists ()) file.delete ();
             try {
                 FileOutputStream out = new FileOutputStream(file);
                 finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
                 out.flush();
                 out.close();
-
             } catch (Exception e) {
                 Log.e("jComics", "Write File Error", e);
             }
