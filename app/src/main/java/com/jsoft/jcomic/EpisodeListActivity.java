@@ -1,6 +1,5 @@
 package com.jsoft.jcomic;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -172,9 +171,6 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         invalidateOptionsMenu();
     }
 
-
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB) // API 11
     public static <T> void executeAsyncTask(AsyncTask<T, ?, ?> asyncTask, T... params) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
             asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
@@ -230,7 +226,7 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
     }
 
     public void downloadEpisode(int position) {
-        new Downloader(book).downloadEpisode(position);
+        new Downloader(book, this).downloadEpisode(position);
     }
 
     @Override

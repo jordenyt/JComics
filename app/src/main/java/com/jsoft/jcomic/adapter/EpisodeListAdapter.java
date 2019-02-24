@@ -3,6 +3,7 @@ package com.jsoft.jcomic.adapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,25 +54,34 @@ public class EpisodeListAdapter extends BaseAdapter {
         textViewItem.setText(episode.getEpisodeTitle());
         textViewItem.setTag(episode.getEpisodeUrl());
         String lastEpisode = bookmarkDb.getLastEpisode(book);
-        if (episode.getEpisodeTitle().equals(lastEpisode)) {
-            textViewItem.setTextColor(Color.RED);
-        } else {
-            textViewItem.setTextColor(Color.WHITE);
-        }
+
 
         boolean offlineAvailable = false;
         File episodeFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()) + "/episode.json");
         if (episodeFile.exists()) {
             offlineAvailable = true;
         }
+        boolean isOnline = Utils.isInternetAvailable();
 
-        if (Utils.isInternetAvailable() || offlineAvailable) {
+        if (episode.getEpisodeTitle().equals(lastEpisode)) {
+            textViewItem.setTextColor(Color.RED);
+        } else {
+            if (isOnline || offlineAvailable) {
+                textViewItem.setTextColor(Color.WHITE);
+            } else {
+                textViewItem.setTextColor(Color.DKGRAY);
+            }
+        }
+        if (isOnline || offlineAvailable) {
             EpisodeClickListener episodeClickListener = new EpisodeClickListener(position);
             convertView.setOnClickListener(episodeClickListener);
             convertView.setOnLongClickListener(episodeClickListener);
-        } else {
-            textViewItem.setTextColor(Color.DKGRAY);
+            if (offlineAvailable) {
+                textViewItem.setTypeface(textViewItem.getTypeface(), Typeface.BOLD);
+            }
         }
+
+
 
         return convertView;
     }
@@ -103,17 +113,21 @@ public class EpisodeListAdapter extends BaseAdapter {
 
         @Override
         public boolean onLongClick(View view) {
-            new AlertDialog.Builder(activity)
-                    .setTitle("要下載嗎?")
-                    .setMessage("下載後, 離線時可看")
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            activity.downloadEpisode(position);
-                            Toast.makeText(activity, "下載中", Toast.LENGTH_SHORT).show();
-                        }})
-                    .setNegativeButton(android.R.string.no, null).show();
-            return true;
+            if (Utils.isInternetAvailable()) {
+                new AlertDialog.Builder(activity)
+                        .setTitle("要下載嗎?")
+                        .setMessage("下載後, 離線時可看")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                activity.downloadEpisode(position);
+                                Toast.makeText(activity, "下載中", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null).show();
+                return true;
+            }
+            return false;
         }
     }
 }

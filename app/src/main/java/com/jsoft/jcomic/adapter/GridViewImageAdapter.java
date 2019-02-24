@@ -3,8 +3,10 @@ package com.jsoft.jcomic.adapter;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +19,9 @@ import android.widget.TextView;
 import com.jsoft.jcomic.GridViewActivity;
 import com.jsoft.jcomic.R;
 import com.jsoft.jcomic.helper.BookDTO;
+import com.jsoft.jcomic.helper.Utils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -63,17 +67,23 @@ public class GridViewImageAdapter extends BaseAdapter {
 
         ImageView imageView = (ImageView) convertView.findViewById(R.id.bookImage);
 
-        /*if (!viewMap.containsKey(position)) {
-            imageView = new ImageView(activity);
-            viewMap.put(position, imageView);
-        } else {
-            return viewMap.get(position);
-        }*/
+        boolean offlineAvailable = false;
+        File bookFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(books.get(position).getBookUrl()) + "/book.json");
+        if (bookFile.exists()) {
+            offlineAvailable = true;
+        }
 
         // get screen dimensions
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        imageView.setOnClickListener(new OnImageClickListener(position));
+        if (Utils.isInternetAvailable() || offlineAvailable) {
+            imageView.setOnClickListener(new OnImageClickListener(position));
+        }
         textViewItem.setText(books.get(position).getBookTitle());
+        if (!Utils.isInternetAvailable() && !offlineAvailable) {
+            textViewItem.setTextColor(Color.DKGRAY);
+            //imageView.setBackgroundColor(Color.WHITE);
+            imageView.setAlpha(0.5f);
+        }
         if (books.get(position).getBookImg() == null) {
             executeAsyncTask(new DownloadImageTask(imageView, books.get(position), position), books.get(position).getBookImgUrl());
         } else {

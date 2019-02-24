@@ -1,20 +1,29 @@
 package com.jsoft.jcomic.helper;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.praser.EpisodeParser;
 import com.jsoft.jcomic.praser.EpisodeParserListener;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -22,19 +31,62 @@ import com.google.gson.Gson;
 
 public class Downloader implements EpisodeParserListener {
     BookDTO book;
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+    private Context activity;
+    private int pageTotal;
+    private int pageDownloaded;
+    private int notificationID;
 
-    public Downloader(BookDTO book) {
+    public Downloader(BookDTO book, Context activity) {
         this.book = book;
+        this.activity = activity;
     }
 
     public void downloadEpisode(int position) {
         Log.d("jComics", "downloadEpisode");
         if (book != null && book.getEpisodes().size() > position) {
             EpisodeParser.parseEpisode(book.getEpisodes().get(position), this);
+
+            setNotification(activity);
+            pageDownloaded = 0;
         }
     }
 
+    public void setNotification(Context mContext) {
+        mBuilder =
+                new NotificationCompat.Builder(mContext.getApplicationContext(), "notify_001");
+        Intent ii = new Intent(mContext.getApplicationContext(), EpisodeListActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, ii, 0);
+
+        mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
+
+        mNotifyManager =
+                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = "DOWNLOAD_EPISODE";
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "Downloading Episode",
+                    NotificationManager.IMPORTANCE_LOW);
+            mNotifyManager.createNotificationChannel(channel);
+            mBuilder.setChannelId(channelId);
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
+        notificationID = Integer.parseInt(sdf.format(new Date()));
+
+        mNotifyManager.notify(notificationID, mBuilder.build());
+    }
+
     public void onEpisodeFetched(EpisodeDTO episode) {
+        pageTotal = episode.getImageUrl().size();
+        mBuilder.setContentTitle("正在下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
+        mBuilder.setContentText("0%");
+        mBuilder.setProgress(100, 0, false);
+        mNotifyManager.notify(notificationID, mBuilder.build());
+
         Gson gson = new Gson();
         String root = Environment.getExternalStorageDirectory().toString();
         File myDir = new File(root + "/jComics");
@@ -60,6 +112,8 @@ public class Downloader implements EpisodeParserListener {
         } catch (Exception e) {
             Log.e("jComics", "Create episode Folder Error", e);
         }
+
+
 
         Executor downloadImageTaskExecutor = Executors.newFixedThreadPool(3);
         for (int i=0;i<episode.getImageUrl().size();i++) {
@@ -100,6 +154,7 @@ public class Downloader implements EpisodeParserListener {
                 }
                 in.close();
                 conn.disconnect();
+                Thread.sleep(500);
             } catch (Exception e) {
                 Log.e("jComic", "Exception caught in Downloader.DownloadImageTask", e);
             }
@@ -114,6 +169,19 @@ public class Downloader implements EpisodeParserListener {
 
         protected void onPostExecute(Bitmap result) {
             saveImage(result);
+            pageDownloaded += 1;
+
+            if (pageDownloaded == pageTotal) {
+                mBuilder.setContentTitle("已完成下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
+                mBuilder.setContentText("");
+                mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
+                mBuilder.setProgress(0,0,false);
+                mNotifyManager.notify(notificationID, mBuilder.build());
+            } else {
+                mBuilder.setContentText(pageDownloaded * 100 / pageTotal + "%");
+                mBuilder.setProgress(pageTotal, pageDownloaded, false);
+                mNotifyManager.notify(notificationID, mBuilder.build());
+            }
         }
 
         private void saveImage(Bitmap finalBitmap) {

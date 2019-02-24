@@ -9,7 +9,6 @@ import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
 import android.webkit.WebView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 
 import com.jsoft.jcomic.adapter.GridViewImageAdapter;
 import com.jsoft.jcomic.helper.AppConstant;
@@ -47,7 +47,6 @@ public class GridViewActivity extends AppCompatActivity {
     private List<BookDTO> books;
     private BookmarkDb bookmarkDb;
     private GridViewActivity gridViewActivity;
-    String TAG = "jComics";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,19 +71,12 @@ public class GridViewActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         books = bookmarkDb.getBookmarkedList();
-        List<BookDTO> allBooks = bookmarkDb.getBookmarkedList();
-
-        if (Utils.isInternetAvailable()) {
-            books = allBooks;
+        Resources r = getResources();
+        LinearLayout view = (LinearLayout) findViewById(R.id.button_list_link);
+        if (!Utils.isInternetAvailable()) {
+            view.setVisibility(View.GONE);
         } else {
-            books = new ArrayList<BookDTO>();
-            for (int i=0;i<allBooks.size();i++) {
-                BookDTO book = allBooks.get(i);
-                File bookFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/book.json");
-                if (bookFile.exists()) {
-                    books.add(book);
-                }
-            }
+            view.setVisibility(View.VISIBLE);
         }
         adapter = new GridViewImageAdapter(GridViewActivity.this, columnWidth, books);
         gridView.setAdapter(adapter);
