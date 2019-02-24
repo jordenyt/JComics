@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 
 public class Downloader implements EpisodeParserListener {
     BookDTO book;
+    EpisodeDTO episode;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private Context activity;
@@ -82,6 +83,7 @@ public class Downloader implements EpisodeParserListener {
 
     public void onEpisodeFetched(EpisodeDTO episode) {
         pageTotal = episode.getImageUrl().size();
+        this.episode = episode;
         mBuilder.setContentTitle("正在下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
         mBuilder.setContentText("0%");
         mBuilder.setProgress(100, 0, false);
@@ -168,7 +170,7 @@ public class Downloader implements EpisodeParserListener {
         }
 
         protected void onPostExecute(Bitmap result) {
-            saveImage(result);
+            saveImage(episode, result);
             pageDownloaded += 1;
 
             if (pageDownloaded == pageTotal) {
@@ -184,7 +186,7 @@ public class Downloader implements EpisodeParserListener {
             }
         }
 
-        private void saveImage(Bitmap finalBitmap) {
+        private void saveImage(EpisodeDTO episode, Bitmap finalBitmap) {
             String root = Environment.getExternalStorageDirectory().toString();
             File myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
             int pageNum = 0;
