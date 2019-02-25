@@ -10,3 +10,5 @@ A simple Android client app to read comics under:
 2. 100MB image cache
 3. Support fling and pinch/stretch gestures
 4. Auto bookmark for last page read 
+5. Download episode to phone for offline reading
+6. Manage download content
