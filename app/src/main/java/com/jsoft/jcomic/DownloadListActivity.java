@@ -3,7 +3,6 @@ package com.jsoft.jcomic;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,7 +36,7 @@ public class DownloadListActivity extends AppCompatActivity {
         super.onResume();
         List<DownloadItemDTO> items = new ArrayList<DownloadItemDTO>();
         Gson gson = new Gson();
-        File rootFolder = new File(Environment.getExternalStorageDirectory().toString() + "/jComics");
+        File rootFolder = Utils.getRootFile();
         if (rootFolder.isDirectory()) {
             File[] rootFolderList = rootFolder.listFiles();
             for (File rootFile : rootFolderList) {
@@ -93,11 +92,11 @@ public class DownloadListActivity extends AppCompatActivity {
     }
 
     public void deleteEpisode(DownloadItemDTO item) {
-        File dir = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(item.book.getBookUrl()) + "/" + Utils.getHashCode(item.episode.getEpisodeUrl()));
+        File dir = Utils.getEpisodeFile(item.book, item.episode);
         if (dir.isDirectory()) {
             deleteRecursive(dir);
         }
-        dir = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(item.book.getBookUrl()));
+        dir = Utils.getBookFile(item.book);
         int episodeCount = 0;
         for (File f: dir.listFiles()) {
             if (f.isDirectory()) {

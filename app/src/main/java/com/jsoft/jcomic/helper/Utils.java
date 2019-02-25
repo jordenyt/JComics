@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -179,5 +180,18 @@ public class Utils {
         {
             Log.e("jComics", "File write failed: " + e.toString());
         }
+    }
+
+    public static File getRootFile() {
+        String root = Environment.getExternalStorageDirectory().toString();
+        return new File(root + "/jComics");
+    }
+
+    public static File getBookFile(BookDTO book) {
+        return new File(getRootFile(), Utils.getHashCode(book.getBookUrl()));
+    }
+
+    public static File getEpisodeFile(BookDTO book, EpisodeDTO episode) {
+        return new File(getBookFile(book), Utils.getHashCode(episode.getEpisodeUrl()));
     }
 }

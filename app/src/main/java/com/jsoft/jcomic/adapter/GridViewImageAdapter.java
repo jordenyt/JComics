@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +67,7 @@ public class GridViewImageAdapter extends BaseAdapter {
         ImageView imageView = (ImageView) convertView.findViewById(R.id.bookImage);
 
         boolean offlineAvailable = false;
-        File bookFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(books.get(position).getBookUrl()) + "/book.json");
+        File bookFile = new File(Utils.getBookFile(books.get(position)),"book.json");
         if (bookFile.exists()) {
             offlineAvailable = true;
         }

@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +56,7 @@ public class EpisodeListAdapter extends BaseAdapter {
 
 
         boolean offlineAvailable = false;
-        File episodeFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()) + "/episode.json");
+        File episodeFile = new File(Utils.getEpisodeFile(book, episode), "episode.json");
         if (episodeFile.exists()) {
             offlineAvailable = true;
         }

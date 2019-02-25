@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
@@ -63,12 +62,12 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
             BookParser.parseBook(bookUrl, this);
         } else {
             try {
-                File bookFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(bookUrl) + "/book.json");
+                File bookFile = new File(Utils.getBookFile(new BookDTO(bookUrl)), "book.json");
                 if (bookFile.exists()) {
                     Gson gson = new Gson();
                     BookDTO savedBook = gson.fromJson(new FileReader(bookFile.getAbsolutePath()), BookDTO.class);
 
-                    File bookImgFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(bookUrl) + "/book.jpg");
+                    File bookImgFile = new File(Utils.getBookFile(new BookDTO(bookUrl)),"book.jpg");
                     if (bookImgFile.exists()) {
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inPreferredConfig = Bitmap.Config.ARGB_8888;

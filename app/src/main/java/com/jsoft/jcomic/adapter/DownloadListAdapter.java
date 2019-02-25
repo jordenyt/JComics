@@ -1,9 +1,5 @@
 package com.jsoft.jcomic.adapter;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +7,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jsoft.jcomic.DownloadListActivity;
 import com.jsoft.jcomic.R;
-import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.DownloadItemDTO;
-import com.jsoft.jcomic.helper.Utils;
 
 import java.util.List;
 

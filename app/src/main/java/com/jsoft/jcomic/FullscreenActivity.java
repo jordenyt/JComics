@@ -2,7 +2,6 @@ package com.jsoft.jcomic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -58,7 +57,7 @@ public class FullscreenActivity extends AppCompatActivity implements
             EpisodeParser.parseEpisode(episode, this);
         } else {
             try {
-                File episodeFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()) + "/episode.json");
+                File episodeFile = new File(Utils.getEpisodeFile(book, episode) + "episode.json");
                 if (episodeFile.exists()) {
                     Gson gson = new Gson();
                     EpisodeDTO savedEpisode = gson.fromJson(new FileReader(episodeFile.getAbsolutePath()), EpisodeDTO.class);

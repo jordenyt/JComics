@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -123,8 +122,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     break;
                 }
             }
-            String root = Environment.getExternalStorageDirectory().toString();
-            File myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
+            File myDir = Utils.getEpisodeFile(book,episode);
             String fname = String.format("%04d", pageNum) + ".jpg";
             File file = new File (myDir, fname);
 

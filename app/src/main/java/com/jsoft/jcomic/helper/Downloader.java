@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -96,10 +95,9 @@ public class Downloader implements EpisodeParserListener {
         mNotifyManager.notify(notificationID, mBuilder.build());
 
         Gson gson = new Gson();
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/jComics");
+        File myDir = Utils.getRootFile();
         myDir.mkdirs();
-        myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()));
+        myDir = Utils.getBookFile(book);
         myDir.mkdirs();
 
         try {
@@ -118,7 +116,7 @@ public class Downloader implements EpisodeParserListener {
             Log.e("jComics", "Create book Folder Error", e);
         }
 
-        myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
+        myDir = Utils.getEpisodeFile(book, episode);
         myDir.mkdirs();
 
         try {
@@ -223,8 +221,7 @@ public class Downloader implements EpisodeParserListener {
     }
 
     private void saveImage(String imgUrl, EpisodeDTO episode, Bitmap finalBitmap) {
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
+        File myDir = Utils.getEpisodeFile(book, episode);
         int pageNum = 0;
         for (int i=0; i<episode.getImageUrl().size(); i++) {
             if (episode.getImageUrl().get(i).equals(imgUrl)) {
@@ -235,7 +232,6 @@ public class Downloader implements EpisodeParserListener {
         String fname = String.format("%04d", pageNum) + ".jpg";
         File file = new File (myDir, fname);
 
-        //Log.e("jComics", "Saving to " + myDir + "/" + fname);
         saveImage(file, finalBitmap);
     }
 
