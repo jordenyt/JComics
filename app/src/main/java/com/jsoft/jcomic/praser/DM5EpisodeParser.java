@@ -18,7 +18,7 @@ public class DM5EpisodeParser extends EpisodeParser {
     private String intCode(int i) {
         String s = "";
         String characters="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        if (i > characters.length()) {
+        if (i >= characters.length()) {
             s = s + characters.charAt(i/characters.length());
         }
         s = s + characters.charAt(i % characters.length());
@@ -44,9 +44,9 @@ public class DM5EpisodeParser extends EpisodeParser {
             String[] replaceStrArray= new String[0];
             while (m1.find()) {
                 String s3=m1.group(1);
-                //Log.e("jComics 1", s3);
                 replaceStrArray = s3.split("\\|");
             }
+
             String s2= m.group(1);
             Pattern p2 = Pattern.compile("=\\[(.+?)\\];");
             Matcher m2 = p2.matcher(s2);
