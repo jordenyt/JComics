@@ -38,6 +38,7 @@ public class Downloader implements EpisodeParserListener {
     private int pageTotal;
     private int pageDownloaded;
     private int notificationID;
+    private int numMissingPage;
 
     public Downloader(BookDTO book, Context activity) {
         this.book = book;
@@ -83,6 +84,7 @@ public class Downloader implements EpisodeParserListener {
 
     public void onEpisodeFetched(EpisodeDTO episode) {
         pageTotal = episode.getImageUrl().size();
+        numMissingPage = 0;
         this.episode = episode;
         mBuilder.setContentTitle("正在下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
         mBuilder.setContentText("0%");
@@ -117,7 +119,7 @@ public class Downloader implements EpisodeParserListener {
 
 
 
-        Executor downloadImageTaskExecutor = Executors.newFixedThreadPool(3);
+        Executor downloadImageTaskExecutor = Executors.newFixedThreadPool(5);
         for (int i=0;i<episode.getImageUrl().size();i++) {
             new DownloadImageTask(book, episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
         }
@@ -156,7 +158,7 @@ public class Downloader implements EpisodeParserListener {
                 }
                 in.close();
                 conn.disconnect();
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (Exception e) {
                 Log.e("jComic", "Exception caught in Downloader.DownloadImageTask", e);
             }
@@ -170,13 +172,22 @@ public class Downloader implements EpisodeParserListener {
         }
 
         protected void onPostExecute(Bitmap result) {
-            saveImage(episode, result);
+            if (result != null) {
+                saveImage(episode, result);
+            } else {
+                numMissingPage += 1;
+            }
             pageDownloaded += 1;
 
             if (pageDownloaded == pageTotal) {
                 mBuilder.setContentTitle("已完成下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
                 mBuilder.setContentText("");
                 mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
+                if (numMissingPage > 0) {
+                    mBuilder.setContentText("有" + numMissingPage + "/" + pageTotal + "部份未能下載");
+                    mBuilder.setSmallIcon(android.R.drawable.stat_sys_warning);
+                }
+
                 mBuilder.setProgress(0,0,false);
                 mNotifyManager.notify(notificationID, mBuilder.build());
             } else {

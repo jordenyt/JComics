@@ -60,7 +60,6 @@ public class EpisodeListAdapter extends BaseAdapter {
         boolean offlineAvailable = false;
         File episodeFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()) + "/episode.json");
         if (episodeFile.exists()) {
-            Log.e("jComics debug", episode.getEpisodeTitle() + " " + episode.getEpisodeUrl());
             offlineAvailable = true;
         }
         boolean isOnline = Utils.isInternetAvailable();
@@ -78,6 +77,15 @@ public class EpisodeListAdapter extends BaseAdapter {
             EpisodeClickListener episodeClickListener = new EpisodeClickListener(position);
             convertView.setOnClickListener(episodeClickListener);
             convertView.setOnLongClickListener(episodeClickListener);
+        } else {
+            convertView.setOnClickListener(null);
+            convertView.setOnLongClickListener(null);
+        }
+
+        if (isOnline && offlineAvailable) {
+            textViewItem.setTypeface(null, Typeface.BOLD);
+        } else {
+            textViewItem.setTypeface(null, Typeface.NORMAL);
         }
 
         return convertView;

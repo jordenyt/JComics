@@ -77,12 +77,16 @@ public class GridViewImageAdapter extends BaseAdapter {
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         if (Utils.isInternetAvailable() || offlineAvailable) {
             imageView.setOnClickListener(new OnImageClickListener(position));
+        } else {
+            imageView.setOnClickListener(null);
         }
         textViewItem.setText(books.get(position).getBookTitle());
         if (!Utils.isInternetAvailable() && !offlineAvailable) {
             textViewItem.setTextColor(Color.DKGRAY);
-            //imageView.setBackgroundColor(Color.WHITE);
             imageView.setAlpha(0.5f);
+        } else {
+            textViewItem.setTextColor(Color.WHITE);
+            imageView.setAlpha(1f);
         }
         if (books.get(position).getBookImg() == null) {
             executeAsyncTask(new DownloadImageTask(imageView, books.get(position), position), books.get(position).getBookImgUrl());

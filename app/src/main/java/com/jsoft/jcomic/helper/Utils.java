@@ -109,7 +109,7 @@ public class Utils {
     }
 
     public static String getHashCode(String s) {
-        return getHashCode(s, 50);
+        return getHashCode(s, 16);
     }
 
     public static String getHashCode(String s, int length) {
