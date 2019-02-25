@@ -63,7 +63,7 @@ public class GridViewImageAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.content_book_list, parent, false);
         }
 
-        TextView textViewItem = (TextView) convertView.findViewById(R.id.bookTitle);
+        TextView textViewItem = (TextView) convertView.findViewById(R.id.downloadBookTitle);
 
         ImageView imageView = (ImageView) convertView.findViewById(R.id.bookImage);
 

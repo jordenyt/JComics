@@ -13,6 +13,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
@@ -94,6 +97,31 @@ public class GridViewActivity extends AppCompatActivity {
         }
         // Otherwise defer to system default behavior.
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.book_list_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_download:
+                Intent intent = new Intent(this, DownloadListActivity.class);
+                this.startActivityForResult(intent, 0);
+                invalidateOptionsMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private GridView initGridLayout() {

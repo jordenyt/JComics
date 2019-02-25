@@ -67,6 +67,14 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
                 if (bookFile.exists()) {
                     Gson gson = new Gson();
                     BookDTO savedBook = gson.fromJson(new FileReader(bookFile.getAbsolutePath()), BookDTO.class);
+
+                    File bookImgFile = new File(Environment.getExternalStorageDirectory().toString() + "/jComics/" + Utils.getHashCode(bookUrl) + "/book.jpg");
+                    if (bookImgFile.exists()) {
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                        Bitmap bookImg =  BitmapFactory.decodeFile(bookImgFile.getAbsolutePath(), options);
+                        savedBook.setBookImg(bookImg);
+                    }
                     onBookFetched(savedBook);
                 } else {
                     BookDTO newBook = new BookDTO(bookUrl);
@@ -167,7 +175,13 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         textView = (TextView) findViewById(R.id.book_description);
         textView.setText(book.getBookSynopsis());
         imageView = (ImageView) findViewById(R.id.book_image);
-        executeAsyncTask(new DownloadImageTask(), book.getBookImgUrl());
+        if (Utils.isInternetAvailable()) {
+            executeAsyncTask(new DownloadImageTask(), book.getBookImgUrl());
+        } else {
+            if (book.getBookImg() != null) {
+                imageView.setImageBitmap(book.getBookImg());
+            }
+        }
         invalidateOptionsMenu();
     }
 
@@ -196,6 +210,7 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         }
 
         protected void onPostExecute(Bitmap result) {
+            book.setBookImg(result);
             imageView.setImageBitmap(result);
         }
     }
@@ -220,7 +235,7 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         Intent intent = new Intent(this, FullscreenActivity.class);
         intent.putExtra("position", position);
         Bundle b = new Bundle();
-        b.putSerializable("book", book);
+        b.putSerializable("book", book.getSerializable());
         intent.putExtras(b);
         this.startActivityForResult(intent, 0);
     }

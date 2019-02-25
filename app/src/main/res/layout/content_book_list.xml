@@ -17,7 +17,7 @@
         android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:layout_gravity="center_horizontal"
-        android:id="@+id/bookTitle"
+        android:id="@+id/downloadBookTitle"
         android:textAlignment="center" />
 
 </LinearLayout>

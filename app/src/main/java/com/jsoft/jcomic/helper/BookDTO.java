@@ -3,10 +3,11 @@ package com.jsoft.jcomic.helper;
 import android.graphics.Bitmap;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BookDTO implements Serializable {
+public class BookDTO implements Serializable, Cloneable {
     private String bookUrl;
     private String bookTitle;
     private String bookSynopsis;
@@ -16,6 +17,27 @@ public class BookDTO implements Serializable {
     private List<EpisodeDTO> episodes;
     private String bookImgUrl;
     private Bitmap bookImg;
+
+    public BookDTO clone()
+    {
+        try {
+            BookDTO cloneBook = (BookDTO) super.clone();
+            List<EpisodeDTO> episodeList = new ArrayList<EpisodeDTO>();
+            for (EpisodeDTO episode: this.getEpisodes()) {
+                episodeList.add(episode.clone());
+            }
+            cloneBook.setEpisodes(episodeList);
+            return cloneBook;
+        } catch( CloneNotSupportedException e ) {
+            return null;
+        }
+    }
+
+    public BookDTO getSerializable() {
+        BookDTO cloneBook = this.clone();
+        cloneBook.setBookImg(null);
+        return cloneBook;
+    }
 
     public BookDTO(String bookUrl) {
         this.bookUrl = bookUrl;

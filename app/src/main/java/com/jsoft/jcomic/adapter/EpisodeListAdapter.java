@@ -108,7 +108,6 @@ public class EpisodeListAdapter extends BaseAdapter {
         // constructor
         public EpisodeClickListener(int position) {
             this.position = position;
-
         }
 
         @Override

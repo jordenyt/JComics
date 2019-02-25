@@ -101,7 +101,15 @@ public class Downloader implements EpisodeParserListener {
         try {
             File nomediaFile = new File(myDir, ".nomedia");
             nomediaFile.createNewFile();
-            Utils.writeToFile(gson.toJson(book), myDir, "book.json");
+            BookDTO cloneBook = book.clone();
+            for (int i=0; i< cloneBook.getEpisodes().size(); i++) {
+                cloneBook.getEpisodes().get(i).setImageUrl(null);
+            }
+            cloneBook.setBookImg(null);
+            Utils.writeToFile(gson.toJson(cloneBook), myDir, "book.json");
+
+            File bookImg = new File(myDir, "book.jpg");
+            saveImage(bookImg, book.getBookImg());
         } catch (Exception e) {
             Log.e("jComics", "Create book Folder Error", e);
         }
@@ -173,7 +181,7 @@ public class Downloader implements EpisodeParserListener {
 
         protected void onPostExecute(Bitmap result) {
             if (result != null) {
-                saveImage(episode, result);
+                saveImage(this.imgUrl, episode, result);
             } else {
                 numMissingPage += 1;
             }
@@ -196,32 +204,35 @@ public class Downloader implements EpisodeParserListener {
                 mNotifyManager.notify(notificationID, mBuilder.build());
             }
         }
+    }
 
-        private void saveImage(EpisodeDTO episode, Bitmap finalBitmap) {
-            String root = Environment.getExternalStorageDirectory().toString();
-            File myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
-            int pageNum = 0;
-            for (int i=0; i<episode.getImageUrl().size(); i++) {
-                if (episode.getImageUrl().get(i).equals(this.imgUrl)) {
-                    pageNum = i;
-                    break;
-                }
-            }
-            String fname = String.format("%04d", pageNum) + ".jpg";
-            File file = new File (myDir, fname);
+    private void saveImage(File file, Bitmap finalBitmap) {
+        if (file.exists ()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            Log.e("jComics", "Write File Error", e);
+        }
+    }
 
-            //Log.e("jComics", "Saving to " + myDir + "/" + fname);
-            if (file.exists ()) file.delete ();
-            try {
-                FileOutputStream out = new FileOutputStream(file);
-                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-                out.flush();
-                out.close();
-            } catch (Exception e) {
-                Log.e("jComics", "Write File Error", e);
+    private void saveImage(String imgUrl, EpisodeDTO episode, Bitmap finalBitmap) {
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/jComics/" + Utils.getHashCode(book.getBookUrl()) + "/" + Utils.getHashCode(episode.getEpisodeUrl()));
+        int pageNum = 0;
+        for (int i=0; i<episode.getImageUrl().size(); i++) {
+            if (episode.getImageUrl().get(i).equals(imgUrl)) {
+                pageNum = i;
+                break;
             }
         }
+        String fname = String.format("%04d", pageNum) + ".jpg";
+        File file = new File (myDir, fname);
 
+        //Log.e("jComics", "Saving to " + myDir + "/" + fname);
+        saveImage(file, finalBitmap);
     }
 
 }
