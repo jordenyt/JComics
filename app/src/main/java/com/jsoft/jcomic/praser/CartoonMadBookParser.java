@@ -25,7 +25,7 @@ public class CartoonMadBookParser extends BookParser {
             Matcher m = p.matcher(s);
             List<String> allMatches = new ArrayList<String>();
             while (m.find()) {
-                String episodeUrl = "http://www.cartoonmad.com" + m.group(1);
+                String episodeUrl = "https://www.cartoonmad.com" + m.group(1);
                 episodes.add(0, new EpisodeDTO(m.group(2), episodeUrl));
             }
 

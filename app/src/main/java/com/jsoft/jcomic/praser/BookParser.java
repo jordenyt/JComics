@@ -4,16 +4,18 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.jsoft.jcomic.EpisodeListActivity;
+import com.google.gson.Gson;
 import com.jsoft.jcomic.helper.BookDTO;
+import com.jsoft.jcomic.helper.Utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,9 +65,8 @@ public abstract class BookParser {
                     }
                     in.close();
                     is.close();
-                } catch (MalformedURLException e) {
-                    Log.e("jComics", "MalformedURLException: " + urls[i]);
                 } catch (Exception e) {
+                    result = new ArrayList<String>();
                     Log.e("jComics", "Exception when getting file: " + urls[i]);
                 }
             }
@@ -77,7 +78,17 @@ public abstract class BookParser {
         }
 
         protected void onPostExecute(List<String> result) {
-            getBookFromUrlResult(result);
+            if (result.size()==0) {
+                File bookFile = new File(Utils.getBookFile(book), "book.json");
+                try {
+                    Gson gson = new Gson();
+                    book = gson.fromJson(new FileReader(bookFile.getAbsolutePath()), BookDTO.class);
+                } catch (Exception e) {
+                    book.setBookTitle("Error");
+                }
+            } else {
+                getBookFromUrlResult(result);
+            }
             listener.onBookFetched(book);
         }
     }
