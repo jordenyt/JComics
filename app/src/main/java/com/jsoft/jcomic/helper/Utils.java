@@ -127,7 +127,7 @@ public class Utils {
 
     public static boolean isInternetAvailable() {
         try {
-            InetAddress address = getInetAddressByName("www.google.com");
+            InetAddress address = getInetAddressByName("baidu.com");
             return (address!= null);
         } catch (Exception e) {
             Log.e("jComics", "Exception caught by isInternetAvailable", e);

@@ -39,10 +39,14 @@ public class Downloader implements EpisodeParserListener {
     private int pageDownloaded;
     private int notificationID;
     private int numMissingPage;
+    private static Executor downloadImageTaskExecutor;
 
     public Downloader(BookDTO book, Context activity) {
         this.book = book;
         this.activity = activity;
+        if (downloadImageTaskExecutor == null) {
+            downloadImageTaskExecutor = Executors.newFixedThreadPool(5);
+        }
     }
 
     public void downloadEpisode(int position) {
@@ -127,7 +131,7 @@ public class Downloader implements EpisodeParserListener {
 
 
 
-        Executor downloadImageTaskExecutor = Executors.newFixedThreadPool(5);
+
         for (int i=0;i<episode.getImageUrl().size();i++) {
             new DownloadImageTask(book, episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
         }
