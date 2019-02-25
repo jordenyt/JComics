@@ -57,7 +57,7 @@ public class FullscreenActivity extends AppCompatActivity implements
             EpisodeParser.parseEpisode(episode, this);
         } else {
             try {
-                File episodeFile = new File(Utils.getEpisodeFile(book, episode) + "episode.json");
+                File episodeFile = new File(Utils.getEpisodeFile(book, episode), "episode.json");
                 if (episodeFile.exists()) {
                     Gson gson = new Gson();
                     EpisodeDTO savedEpisode = gson.fromJson(new FileReader(episodeFile.getAbsolutePath()), EpisodeDTO.class);
