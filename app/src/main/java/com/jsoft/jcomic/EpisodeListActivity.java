@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,8 +23,6 @@ import com.jsoft.jcomic.adapter.EpisodeListAdapter;
 import com.jsoft.jcomic.helper.AppConstant;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.BookmarkDb;
-import com.jsoft.jcomic.helper.DownloadImageTask;
-import com.jsoft.jcomic.helper.DownloadTaskListener;
 import com.jsoft.jcomic.helper.Downloader;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 import com.jsoft.jcomic.helper.Utils;
@@ -31,6 +31,7 @@ import com.jsoft.jcomic.praser.BookParserListener;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 
@@ -173,21 +174,44 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         textView = (TextView) findViewById(R.id.book_description);
         textView.setText(book.getBookSynopsis());
         imageView = (ImageView) findViewById(R.id.book_image);
-        final BookDTO bookRef = book;
         if (Utils.isInternetAvailable()) {
-            DownloadImageTask task = new DownloadImageTask(new DownloadTaskListener() {
-                public void onDownloadImagePostExecute(String imgUrl, Bitmap result) {
-                    bookRef.setBookImg(result);
-                    imageView.setImageBitmap(result);
-                }
-            }, null);
-            task.execute(book.getBookImgUrl());
+            executeAsyncTask(new DownloadImageTask(), book.getBookImgUrl());
         } else {
             if (book.getBookImg() != null) {
                 imageView.setImageBitmap(book.getBookImg());
             }
         }
         invalidateOptionsMenu();
+    }
+
+    public static <T> void executeAsyncTask(AsyncTask<T, ?, ?> asyncTask, T... params) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
+        else
+            asyncTask.execute(params);
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        public DownloadImageTask() {
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+                in.close();
+            } catch (Exception e) {
+                Log.e("jComic", "Failed in getting book cover: " + urldisplay);
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            book.setBookImg(result);
+            imageView.setImageBitmap(result);
+        }
     }
 
     private void InitilizeGridLayout() {
