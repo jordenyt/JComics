@@ -183,8 +183,7 @@ public class Utils {
     }
 
     public static File getRootFile() {
-        String root = Environment.getExternalStorageDirectory().toString();
-        return new File(root + "/jComics");
+        return new File(Environment.getExternalStorageDirectory().toString() + "/jComics");
     }
 
     public static File getBookFile(BookDTO book) {
@@ -193,5 +192,9 @@ public class Utils {
 
     public static File getEpisodeFile(BookDTO book, EpisodeDTO episode) {
         return new File(getBookFile(book), Utils.getHashCode(episode.getEpisodeUrl()));
+    }
+
+    public static File getImgFile(BookDTO book, EpisodeDTO episode, int pageNum) {
+        return new File(getEpisodeFile(book, episode), String.format("%04d", pageNum) + ".jpg");
     }
 }

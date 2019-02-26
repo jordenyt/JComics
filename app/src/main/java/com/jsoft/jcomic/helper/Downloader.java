@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -16,11 +16,8 @@ import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.praser.EpisodeParser;
 import com.jsoft.jcomic.praser.EpisodeParserListener;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executor;
@@ -28,7 +25,7 @@ import java.util.concurrent.Executors;
 
 import com.google.gson.Gson;
 
-public class Downloader implements EpisodeParserListener {
+public class Downloader implements EpisodeParserListener{
     BookDTO book;
     EpisodeDTO episode;
     private NotificationManager mNotifyManager;
@@ -127,112 +124,64 @@ public class Downloader implements EpisodeParserListener {
             Log.e("jComics", "Create episode Folder Error", e);
         }
 
-
-
-
         for (int i=0;i<episode.getImageUrl().size();i++) {
-            new DownloadImageTask(book, episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
+            File file = Utils.getImgFile(book, episode, i);
+            if (file !=null && file.exists()) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                onImageDownloaded(episode.getEpisodeUrl(), BitmapFactory.decodeFile(file.getAbsolutePath(), options));
+            } else {
+                new DownloadImageTask(new DownloadTaskListener() {
+                    public void onDownloadImagePostExecute(String imgUrl, Bitmap result) {
+                        onImageDownloaded(imgUrl, result);
+                    }
+                }, episode.getEpisodeUrl())
+                        .executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
+            }
         }
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Integer, Bitmap> {
-        EpisodeDTO episode;
-        BookDTO book;
-        String imgUrl;
-
-        public DownloadImageTask(BookDTO book, EpisodeDTO episode) {
-            this.book = book;
-            this.episode = episode;
+    public void onImageDownloaded(String imgUrl, Bitmap result) {
+        if (result != null) {
+            saveImage(imgUrl, episode, result);
+        } else {
+            numMissingPage += 1;
         }
+        pageDownloaded += 1;
 
-        protected Bitmap doInBackground(String... urls) {
-            this.imgUrl = urls[0];
-            Bitmap bitmap = null;
+        if (pageDownloaded == pageTotal) {
+            mBuilder.setContentTitle("已完成下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
+            mBuilder.setContentText("");
+            mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
+            if (numMissingPage > 0) {
+                mBuilder.setContentText("有" + numMissingPage + "/" + pageTotal + "部份未能下載");
+                mBuilder.setSmallIcon(android.R.drawable.stat_sys_warning);
+            }
+
+            mBuilder.setProgress(0,0,false);
+            mNotifyManager.notify(notificationID, mBuilder.build());
+        } else {
+            mBuilder.setContentText(pageDownloaded * 100 / pageTotal + "%");
+            mBuilder.setProgress(pageTotal, pageDownloaded, false);
+            mNotifyManager.notify(notificationID, mBuilder.build());
+        }
+    }
+
+    private void saveImage(@NonNull File file, Bitmap finalBitmap) {
+        if (!file.exists ()) {
             try {
-                HttpURLConnection conn = (HttpURLConnection) new java.net.URL(this.imgUrl).openConnection();
-                conn.setReadTimeout(5000);
-                conn.setUseCaches(true);
-                conn.setRequestProperty("Referer", episode.getEpisodeUrl());
-                Log.e("jComics", "Downloading "+this.imgUrl);
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                bitmap= BitmapFactory.decodeStream(in);
-
-                int length=conn.getContentLength();
-                int len=0,total_length=0,value=0;
-                byte[] data=new byte[1024];
-
-                while((len = in.read(data)) != -1){
-                    total_length += len;
-                    value = (int)((total_length/(float)length)*100);
-                    publishProgress(value);
-                }
-                in.close();
-                conn.disconnect();
-                Thread.sleep(1000);
+                FileOutputStream out = new FileOutputStream(file);
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
             } catch (Exception e) {
-                Log.e("jComic", "Exception caught in Downloader.DownloadImageTask", e);
+                Log.e("jComics", "Write File Error", e);
             }
-            //Log.e("jComic", "Finish Get Image: " + urldisplay);
-            return bitmap;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            super.onProgressUpdate(progress);
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                saveImage(this.imgUrl, episode, result);
-            } else {
-                numMissingPage += 1;
-            }
-            pageDownloaded += 1;
-
-            if (pageDownloaded == pageTotal) {
-                mBuilder.setContentTitle("已完成下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
-                mBuilder.setContentText("");
-                mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
-                if (numMissingPage > 0) {
-                    mBuilder.setContentText("有" + numMissingPage + "/" + pageTotal + "部份未能下載");
-                    mBuilder.setSmallIcon(android.R.drawable.stat_sys_warning);
-                }
-
-                mBuilder.setProgress(0,0,false);
-                mNotifyManager.notify(notificationID, mBuilder.build());
-            } else {
-                mBuilder.setContentText(pageDownloaded * 100 / pageTotal + "%");
-                mBuilder.setProgress(pageTotal, pageDownloaded, false);
-                mNotifyManager.notify(notificationID, mBuilder.build());
-            }
-        }
-    }
-
-    private void saveImage(File file, Bitmap finalBitmap) {
-        if (file.exists ()) file.delete ();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            Log.e("jComics", "Write File Error", e);
         }
     }
 
     private void saveImage(String imgUrl, EpisodeDTO episode, Bitmap finalBitmap) {
-        File myDir = Utils.getEpisodeFile(book, episode);
-        int pageNum = 0;
-        for (int i=0; i<episode.getImageUrl().size(); i++) {
-            if (episode.getImageUrl().get(i).equals(imgUrl)) {
-                pageNum = i;
-                break;
-            }
-        }
-        String fname = String.format("%04d", pageNum) + ".jpg";
-        File file = new File (myDir, fname);
-
-        saveImage(file, finalBitmap);
+        saveImage(Utils.getImgFile(book, episode, episode.getPageNumByURL(imgUrl)), finalBitmap);
     }
 
 }
