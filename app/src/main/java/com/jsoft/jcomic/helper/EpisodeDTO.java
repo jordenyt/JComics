@@ -24,6 +24,17 @@ public class EpisodeDTO implements Serializable, Cloneable {
         this.episodeTitle = episodeTitle;
     }
 
+    public int getPageNumByURL(String imgUrl) {
+        int pageNum = -1;
+        for (int i=0; i<this.getImageUrl().size(); i++) {
+            if (this.getImageUrl().get(i).equals(imgUrl)) {
+                pageNum = i;
+                break;
+            }
+        }
+        return pageNum;
+    }
+
     public String getBookTitle() {
         return bookTitle;
     }

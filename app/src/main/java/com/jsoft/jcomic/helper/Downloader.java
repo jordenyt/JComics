@@ -131,7 +131,16 @@ public class Downloader implements EpisodeParserListener {
 
 
         for (int i=0;i<episode.getImageUrl().size();i++) {
-            new DownloadImageTask(book, episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
+            File file = Utils.getImgFile(book, episode, i);
+            if (file != null && file.exists()) {
+                Log.e("jComics", "Found "+episode.getImageUrl().get(i));
+                pageDownloaded += 1;
+            } else {
+                new DownloadImageTask(book, episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
+            }
+        }
+        if (pageDownloaded > 0) {
+            updateDownloadNotification();
         }
     }
 
@@ -149,6 +158,8 @@ public class Downloader implements EpisodeParserListener {
             this.imgUrl = urls[0];
             Bitmap bitmap = null;
             try {
+
+
                 HttpURLConnection conn = (HttpURLConnection) new java.net.URL(this.imgUrl).openConnection();
                 conn.setReadTimeout(5000);
                 conn.setUseCaches(true);
@@ -188,50 +199,45 @@ public class Downloader implements EpisodeParserListener {
                 numMissingPage += 1;
             }
             pageDownloaded += 1;
+            updateDownloadNotification();
+        }
+    }
 
-            if (pageDownloaded == pageTotal) {
-                mBuilder.setContentTitle("已完成下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
-                mBuilder.setContentText("");
-                mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
-                if (numMissingPage > 0) {
-                    mBuilder.setContentText("有" + numMissingPage + "/" + pageTotal + "部份未能下載");
-                    mBuilder.setSmallIcon(android.R.drawable.stat_sys_warning);
-                }
-
-                mBuilder.setProgress(0,0,false);
-                mNotifyManager.notify(notificationID, mBuilder.build());
-            } else {
-                mBuilder.setContentText(pageDownloaded * 100 / pageTotal + "%");
-                mBuilder.setProgress(pageTotal, pageDownloaded, false);
-                mNotifyManager.notify(notificationID, mBuilder.build());
+    private void updateDownloadNotification() {
+        if (pageDownloaded == pageTotal) {
+            mBuilder.setContentTitle("已完成下載" + book.getBookTitle() + "-" + episode.getEpisodeTitle());
+            mBuilder.setContentText("");
+            mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
+            if (numMissingPage > 0) {
+                mBuilder.setContentText("有" + numMissingPage + "/" + pageTotal + "部份未能下載");
+                mBuilder.setSmallIcon(android.R.drawable.stat_sys_warning);
             }
+
+            mBuilder.setProgress(0,0,false);
+            mNotifyManager.notify(notificationID, mBuilder.build());
+        } else {
+            mBuilder.setContentText(pageDownloaded * 100 / pageTotal + "%");
+            mBuilder.setProgress(pageTotal, pageDownloaded, false);
+            mNotifyManager.notify(notificationID, mBuilder.build());
         }
     }
 
     private void saveImage(File file, Bitmap finalBitmap) {
-        if (file.exists ()) file.delete ();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            Log.e("jComics", "Write File Error", e);
+        if (!file.exists ()) {
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                Log.e("jComics", "Write File Error", e);
+            }
         }
     }
 
     private void saveImage(String imgUrl, EpisodeDTO episode, Bitmap finalBitmap) {
-        File myDir = Utils.getEpisodeFile(book, episode);
-        int pageNum = 0;
-        for (int i=0; i<episode.getImageUrl().size(); i++) {
-            if (episode.getImageUrl().get(i).equals(imgUrl)) {
-                pageNum = i;
-                break;
-            }
-        }
-        String fname = String.format("%04d", pageNum) + ".jpg";
-        File file = new File (myDir, fname);
-
+        int pageNum = episode.getPageNumByURL(imgUrl);
+        File file = Utils.getImgFile(book, episode, pageNum);
         saveImage(file, finalBitmap);
     }
 

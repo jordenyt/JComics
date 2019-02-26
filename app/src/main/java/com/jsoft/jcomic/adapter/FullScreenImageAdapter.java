@@ -115,18 +115,10 @@ public class FullScreenImageAdapter extends PagerAdapter {
         protected Bitmap doInBackground(String... urls) {
             String imgUrl = urls[0];
 
-            int pageNum = 0;
-            for (int i=0; i<episode.getImageUrl().size(); i++) {
-                if (episode.getImageUrl().get(i).equals(imgUrl)) {
-                    pageNum = i;
-                    break;
-                }
-            }
-            File myDir = Utils.getEpisodeFile(book,episode);
-            String fname = String.format("%04d", pageNum) + ".jpg";
-            File file = new File (myDir, fname);
+            int pageNum = episode.getPageNumByURL(imgUrl);
+            File file = Utils.getImgFile(book, episode, pageNum);
 
-            if (myDir.exists() && file.exists()) {
+            if (file != null && file.exists()) {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                 return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
