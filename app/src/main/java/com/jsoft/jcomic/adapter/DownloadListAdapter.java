@@ -1,5 +1,6 @@
 package com.jsoft.jcomic.adapter;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 import com.jsoft.jcomic.DownloadListActivity;
 import com.jsoft.jcomic.R;
 import com.jsoft.jcomic.helper.DownloadItemDTO;
+import com.jsoft.jcomic.helper.Utils;
 
+import java.io.File;
 import java.util.List;
 
 public class DownloadListAdapter extends BaseAdapter {
@@ -36,13 +39,27 @@ public class DownloadListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.content_download_list, parent, false);
         }
 
-        TextView textViewBookTitle = (TextView) convertView.findViewById(R.id.downloadBookTitle);
-        TextView textViewEpisodeTitle = (TextView) convertView.findViewById(R.id.downloadEpisodeTitle);
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.downloadBookImage);
+        TextView textViewBookTitle = convertView.findViewById(R.id.downloadBookTitle);
+        TextView textViewEpisodeTitle = convertView.findViewById(R.id.downloadEpisodeTitle);
+        ImageView imageView = convertView.findViewById(R.id.downloadBookImage);
+        TextView textViewPageStatus = convertView.findViewById(R.id.page_status);
+        TextView textViewEpisodeSize = convertView.findViewById(R.id.episode_size);
+
+
 
         DownloadItemDTO item = items.get(position);
+        int jpgCount = 0;
+        File episodeFile = Utils.getEpisodeFile(item.book, item.episode);
+        for (File file : episodeFile.listFiles()) {
+            if (file.isFile() && file.getName().endsWith(".jpg"))
+                jpgCount += 1;
+        }
 
+        textViewEpisodeSize.setText(Utils.formatSize(Utils.calFolderSize(episodeFile)));
+        textViewEpisodeSize.setTypeface(null, Typeface.BOLD);
+        textViewPageStatus.setText(jpgCount + " / " + item.episode.getImageUrl().size());
         textViewBookTitle.setText(item.book.getBookTitle());
+        textViewBookTitle.setTypeface(null, Typeface.BOLD);
         textViewEpisodeTitle.setText(item.episode.getEpisodeTitle());
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         if (item.book.getBookImg() != null) {

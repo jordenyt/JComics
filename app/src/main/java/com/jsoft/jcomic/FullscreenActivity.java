@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -138,6 +139,18 @@ public class FullscreenActivity extends AppCompatActivity implements
             }
         };
         view.postDelayed(hideSeekBarTask, 5000);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
+            pager.turnNext();
+            return true;
+        } else if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)){
+            pager.turnPrev();
+            return true;
+        }
+        return false;
     }
 
     public void episodeSwitch(int pageTurn) {
