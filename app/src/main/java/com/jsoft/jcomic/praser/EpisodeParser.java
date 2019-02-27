@@ -41,7 +41,7 @@ public abstract class EpisodeParser {
         }
 
         protected List<String> doInBackground(URL... urls) {
-            List<String> result = new ArrayList<String>();
+            List<String> result = new ArrayList<>();
             for (URL url : urls) {
                 String readLine;
                 try {

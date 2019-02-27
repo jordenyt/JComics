@@ -17,7 +17,7 @@ public class ComicVIPBookParser extends BookParser {
 
     //Call when URL is fetched
     protected void getBookFromUrlResult(List<String> html) {
-        List<EpisodeDTO> episodes = new ArrayList<EpisodeDTO>();
+        List<EpisodeDTO> episodes = new ArrayList<>();
         for (int i=2; i<html.size();i++) {
             String s = html.get(i-2).trim() + html.get(i-1).trim() + html.get(i).trim();
             s=s.replace("\n", "");

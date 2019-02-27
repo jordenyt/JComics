@@ -1,14 +1,13 @@
-<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <com.jsoft.jcomic.helper.ComicsViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@android:color/black"></com.jsoft.jcomic.helper.ComicsViewPager>
+        android:background="@android:color/black" />
 
     <LinearLayout
         android:id="@+id/seekbar_layout"
@@ -18,7 +17,6 @@
         android:layout_marginTop="20sp">
 
         <Button
-            android:id="@+id/btn_prev_episode"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -35,7 +33,6 @@
             android:layout_weight=".7" />
 
         <Button
-            android:id="@+id/btn_next_episode"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="fill_parent"

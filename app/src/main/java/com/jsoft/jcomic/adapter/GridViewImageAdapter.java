@@ -17,9 +17,7 @@ import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.Utils;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GridViewImageAdapter extends BaseAdapter {
     private GridViewActivity activity;

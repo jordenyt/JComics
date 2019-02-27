@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
 import android.webkit.WebView;
@@ -148,13 +149,13 @@ public class GridViewActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 try {
-                    Uri uri = Uri.parse(url);
+                    Uri uri = request.getUrl();
                     if ((uri.getHost().contains("cartoonmad.com") && uri.getPath().startsWith("/m/comic/"))
                             || (uri.getHost().contains("comicbus.com") && uri.getPath().startsWith("/comic/"))) {
                         Intent i = new Intent(gridViewActivity, EpisodeListActivity.class);
-                        i.putExtra("bookUrl", url);
+                        i.putExtra("bookUrl", uri.toString());
                         startActivity(i);
                         return true;
                     } else if (uri.getHost().contains("dm5.com")) {
@@ -180,7 +181,7 @@ public class GridViewActivity extends AppCompatActivity {
         }
 
         protected List<String> doInBackground(URL... urls) {
-            List<String> result = new ArrayList<String>();
+            List<String> result = new ArrayList<>();
             URL urlConn = urls[0];
             this.url = urls[0].toString();
             try {

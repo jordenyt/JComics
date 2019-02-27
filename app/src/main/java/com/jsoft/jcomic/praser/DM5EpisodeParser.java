@@ -28,7 +28,7 @@ public class DM5EpisodeParser extends EpisodeParser {
             s = s + result.get(i);
         }
 
-        List<String> imageUrlList = new ArrayList<String>();
+        List<String> imageUrlList = new ArrayList<>();
 
         Pattern p = Pattern.compile("eval\\(function\\(p,a,c,k,e,d\\)\\{.+\\}\\((.+)\\)\\s*</script>");
         Matcher m = p.matcher(s);

@@ -124,7 +124,7 @@ public class BookmarkDb {
                         + " WHERE " + BookmarkEntry.COLUMN_NAME_IS_BOOKMARK + " = 'Y'"
                         + " ORDER BY " + BookmarkEntry.COLUMN_NAME_LAST_READ_TIME + " DESC";
         Cursor c = db.rawQuery(queryString, new String[] {});
-        List<BookDTO> books = new ArrayList<BookDTO>();
+        List<BookDTO> books = new ArrayList<>();
         while (c.moveToNext()) {
             BookDTO book = new BookDTO(c.getString(c.getColumnIndexOrThrow(BookmarkEntry.COLUMN_NAME_BOOK_URL)));
             book.setBookImgUrl(c.getString(c.getColumnIndexOrThrow(BookmarkEntry.COLUMN_NAME_BOOK_IMG_URL)));

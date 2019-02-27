@@ -38,7 +38,7 @@ public class CartoonMadEpisodeParser extends EpisodeParser {
         }
         episode.setPageCount(numPage);
 
-        List<String> imageUrlList = new ArrayList<String>();
+        List<String> imageUrlList = new ArrayList<>();
         if (imageUrl_0 == null) {
             imageUrl_0 = "https://www.cartoonmad.com/m/comic/";
         }

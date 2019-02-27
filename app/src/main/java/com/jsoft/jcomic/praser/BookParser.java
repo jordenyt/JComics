@@ -45,7 +45,7 @@ public abstract class BookParser {
 
         protected List<String> doInBackground(URL... urls) {
 
-            List<String> result = new ArrayList<String>();
+            List<String> result = new ArrayList<>();
             for (URL url : urls) {
                 String readLine;
                 Uri uri = Uri.parse(url.toString());
@@ -64,7 +64,7 @@ public abstract class BookParser {
                     in.close();
                     is.close();
                 } catch (Exception e) {
-                    result = new ArrayList<String>();
+                    result = new ArrayList<>();
                     Log.e("jComics", "Exception when getting file: " + url);
                 }
             }

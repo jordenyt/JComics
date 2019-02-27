@@ -22,7 +22,7 @@ public class BookDTO implements Serializable, Cloneable {
     {
         try {
             BookDTO cloneBook = (BookDTO) super.clone();
-            List<EpisodeDTO> episodeList = new ArrayList<EpisodeDTO>();
+            List<EpisodeDTO> episodeList = new ArrayList<>();
             for (EpisodeDTO episode: this.getEpisodes()) {
                 episodeList.add(episode.clone());
             }

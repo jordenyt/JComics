@@ -40,7 +40,7 @@ public class DownloadListActivity extends AppCompatActivity {
     }
 
     private List<DownloadItemDTO> getDownloadItemList() {
-        List<DownloadItemDTO> items = new ArrayList<DownloadItemDTO>();
+        List<DownloadItemDTO> items = new ArrayList<>();
         Gson gson = new Gson();
         File rootFolder = Utils.getRootFile();
         if (rootFolder.isDirectory()) {

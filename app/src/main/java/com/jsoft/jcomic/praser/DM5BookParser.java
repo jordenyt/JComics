@@ -32,7 +32,7 @@ public class DM5BookParser extends BookParser {
 
     //Call when URL is fetched
     protected void getBookFromUrlResult(List<String> html) {
-        List<EpisodeDTO> episodes = new ArrayList<EpisodeDTO>();
+        List<EpisodeDTO> episodes = new ArrayList<>();
         String s = "";
         for (int i=0;i<html.size();i++) {
             s = s + html.get(i);
@@ -80,7 +80,7 @@ public class DM5BookParser extends BookParser {
             book.setBookImgUrl(m.group(1));
         }
 
-        List<EpisodeDTO> cleanEpisodes = new ArrayList<EpisodeDTO>();
+        List<EpisodeDTO> cleanEpisodes = new ArrayList<>();
         for (EpisodeDTO episode: episodes) {
             boolean found = false;
             for (EpisodeDTO cleanEpisode: cleanEpisodes) {

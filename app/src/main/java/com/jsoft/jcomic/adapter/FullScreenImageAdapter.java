@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,12 +48,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         TouchImageView imgDisplay;
 
         LayoutInflater inflater = (LayoutInflater) _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -67,7 +69,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
             statusText.setText(episode.getBookTitle() + " - " + episode.getEpisodeTitle() + "    Page: " + (position + 1) + " / " + episode.getPageCount());
 
             File file = Utils.getImgFile(book, episode, episode.getPageNumByURL(episode.getImageUrl().get(position)));
-            if (file != null && file.exists()) {
+            if (file.exists()) {
                 imgDisplay.setImageBitmap(Utils.imageFromFile(file));
                 progressText.setText("");
             } else {
@@ -85,7 +87,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((RelativeLayout) object);
 
     }

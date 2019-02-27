@@ -10,12 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,7 +22,6 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 /**
  * Created by Jorden on 1/10/15.

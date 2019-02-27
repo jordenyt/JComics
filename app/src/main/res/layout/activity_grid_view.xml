@@ -12,7 +12,6 @@
         android:background="@android:color/black">
 
         <Button
-            android:id="@+id/button_home"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -22,7 +21,6 @@
             android:text="X" />
 
         <Button
-            android:id="@+id/button_cartoonMad"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -32,7 +30,6 @@
             android:text="動漫狂" />
 
         <Button
-            android:id="@+id/button_8Comic"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -42,7 +39,6 @@
             android:text="無限動漫" />
 
         <Button
-            android:id="@+id/button_dm5"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -60,7 +56,7 @@
         android:gravity="center"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:visibility="visible"></GridView>
+        android:visibility="visible" />
 
     <WebView
         android:id="@+id/web_view"

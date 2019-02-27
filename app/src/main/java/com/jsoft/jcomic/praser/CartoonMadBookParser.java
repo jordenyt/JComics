@@ -18,7 +18,7 @@ public class CartoonMadBookParser extends BookParser {
 
     //Call when URL is fetched
     protected void getBookFromUrlResult(List<String> html) {
-        List<EpisodeDTO> episodes = new ArrayList<EpisodeDTO>();
+        List<EpisodeDTO> episodes = new ArrayList<>();
         for (String s: html) {
             Pattern p = Pattern.compile("<td>.*?<a href=(.+?)>(.+?)</a></td>");
             Matcher m = p.matcher(s);

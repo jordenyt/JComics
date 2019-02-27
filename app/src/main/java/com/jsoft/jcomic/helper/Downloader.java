@@ -124,7 +124,7 @@ public class Downloader implements EpisodeParserListener {
 
         for (int i=0;i<episode.getImageUrl().size();i++) {
             File file = Utils.getImgFile(book, episode, i);
-            if (file != null && file.exists()) {
+            if (file.exists()) {
                 Log.e("jComics", "Found "+episode.getImageUrl().get(i));
                 pageDownloaded += 1;
             } else {
