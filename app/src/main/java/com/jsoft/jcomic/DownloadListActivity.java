@@ -47,10 +47,7 @@ public class DownloadListActivity extends AppCompatActivity {
                             BookDTO book = gson.fromJson(new FileReader(bookFile.getAbsolutePath()), BookDTO.class);
                             File bookImgFile = new File(rootFile, "book.jpg");
                             if (bookImgFile.exists()) {
-                                BitmapFactory.Options options = new BitmapFactory.Options();
-                                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                                Bitmap bookImg =  BitmapFactory.decodeFile(bookImgFile.getAbsolutePath(), options);
-                                book.setBookImg(bookImg);
+                                book.setBookImg(Utils.imageFromFile(bookImgFile));
                             }
 
                             File[] bookFolderList = rootFile.listFiles();

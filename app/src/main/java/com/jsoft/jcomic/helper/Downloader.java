@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.jsoft.jcomic.DownloadListActivity;
 import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.praser.EpisodeParser;
 import com.jsoft.jcomic.praser.EpisodeParserListener;
@@ -59,9 +60,8 @@ public class Downloader implements EpisodeParserListener {
     }
 
     public void setNotification(Context mContext) {
-        mBuilder =
-                new NotificationCompat.Builder(mContext.getApplicationContext(), "notify_001");
-        Intent ii = new Intent(mContext.getApplicationContext(), EpisodeListActivity.class);
+        mBuilder = new NotificationCompat.Builder(mContext.getApplicationContext(), "notify_001");
+        Intent ii = new Intent(mContext.getApplicationContext(), DownloadListActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, ii, 0);
 
         mBuilder.setContentIntent(pendingIntent);
@@ -127,9 +127,6 @@ public class Downloader implements EpisodeParserListener {
             Log.e("jComics", "Create episode Folder Error", e);
         }
 
-
-
-
         for (int i=0;i<episode.getImageUrl().size();i++) {
             File file = Utils.getImgFile(book, episode, i);
             if (file != null && file.exists()) {
@@ -158,27 +155,7 @@ public class Downloader implements EpisodeParserListener {
             this.imgUrl = urls[0];
             Bitmap bitmap = null;
             try {
-
-
-                HttpURLConnection conn = (HttpURLConnection) new java.net.URL(this.imgUrl).openConnection();
-                conn.setReadTimeout(5000);
-                conn.setUseCaches(true);
-                conn.setRequestProperty("Referer", episode.getEpisodeUrl());
-                Log.e("jComics", "Downloading "+this.imgUrl);
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                bitmap= BitmapFactory.decodeStream(in);
-
-                int length=conn.getContentLength();
-                int len=0,total_length=0,value=0;
-                byte[] data=new byte[1024];
-
-                while((len = in.read(data)) != -1){
-                    total_length += len;
-                    value = (int)((total_length/(float)length)*100);
-                    publishProgress(value);
-                }
-                in.close();
-                conn.disconnect();
+                bitmap = Utils.downloadImage(imgUrl, episode.getEpisodeUrl());
                 Thread.sleep(1000);
             } catch (Exception e) {
                 Log.e("jComic", "Exception caught in Downloader.DownloadImageTask", e);

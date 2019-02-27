@@ -69,10 +69,7 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
 
                     File bookImgFile = new File(Utils.getBookFile(new BookDTO(bookUrl)),"book.jpg");
                     if (bookImgFile.exists()) {
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                        Bitmap bookImg =  BitmapFactory.decodeFile(bookImgFile.getAbsolutePath(), options);
-                        savedBook.setBookImg(bookImg);
+                        savedBook.setBookImg(Utils.imageFromFile(bookImgFile));
                     }
                     onBookFetched(savedBook);
                 } else {
@@ -175,7 +172,7 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         textView.setText(book.getBookSynopsis());
         imageView = (ImageView) findViewById(R.id.book_image);
         if (Utils.isInternetAvailable()) {
-            executeAsyncTask(new DownloadImageTask(), book.getBookImgUrl());
+            (new DownloadImageTask()).execute(book.getBookImgUrl());
         } else {
             if (book.getBookImg() != null) {
                 imageView.setImageBitmap(book.getBookImg());
@@ -184,28 +181,9 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         invalidateOptionsMenu();
     }
 
-    public static <T> void executeAsyncTask(AsyncTask<T, ?, ?> asyncTask, T... params) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
-        else
-            asyncTask.execute(params);
-    }
-
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        public DownloadImageTask() {
-        }
-
         protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-                in.close();
-            } catch (Exception e) {
-                Log.e("jComic", "Failed in getting book cover: " + urldisplay);
-            }
-            return mIcon11;
+            return Utils.downloadImage(urls[0], null);
         }
 
         protected void onPostExecute(Bitmap result) {

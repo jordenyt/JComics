@@ -88,7 +88,7 @@ public class GridViewImageAdapter extends BaseAdapter {
             imageView.setAlpha(1f);
         }
         if (books.get(position).getBookImg() == null) {
-            executeAsyncTask(new DownloadImageTask(imageView, books.get(position), position), books.get(position).getBookImgUrl());
+            (new DownloadImageTask(imageView, books.get(position))).execute(books.get(position).getBookImgUrl());
         } else {
             imageView.setImageBitmap(books.get(position).getBookImg());
         }
@@ -112,37 +112,17 @@ public class GridViewImageAdapter extends BaseAdapter {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB) // API 11
-    public static <T> void executeAsyncTask(AsyncTask<T, ?, ?> asyncTask, T... params) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
-        else
-            asyncTask.execute(params);
-    }
-
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
         BookDTO book;
-        int position;
 
-        public DownloadImageTask(ImageView bmImage, BookDTO book, int position) {
+        public DownloadImageTask(ImageView bmImage, BookDTO book) {
             this.bmImage = bmImage;
             this.book = book;
-            this.position = position;
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-                in.close();
-            } catch (Exception e) {
-                Log.e("jComic", "GridViewImageAdapter:doInBackground " + e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
+            return Utils.downloadImage(urls[0], null);
         }
 
         protected void onPostExecute(Bitmap result) {

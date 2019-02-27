@@ -1,14 +1,11 @@
 package com.jsoft.jcomic.adapter;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,28 +21,29 @@ import com.jsoft.jcomic.helper.TouchImageView;
 import com.jsoft.jcomic.helper.Utils;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.net.HttpURLConnection;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class FullScreenImageAdapter extends PagerAdapter {
     private Activity _activity;
     private ComicsViewPager pager;
     private EpisodeDTO episode;
     private BookDTO book;
+    public static Executor downloadImageTaskExecutor;
 
     // constructor
     public FullScreenImageAdapter(Activity activity, ComicsViewPager viewPager, EpisodeDTO episode, BookDTO book) {
         this._activity = activity;
-        //this._imagePaths = imagePaths;
         this.pager = viewPager;
         this.episode = episode;
         this.book = book;
+        if (downloadImageTaskExecutor == null) {
+            downloadImageTaskExecutor = Executors.newFixedThreadPool(5);
+        }
     }
 
     @Override
     public int getCount() {
-        //return this._imagePaths.size();
         return (this.episode.getPageCount() > 0 ? this.episode.getPageCount() : 1);
     }
 
@@ -59,17 +57,23 @@ public class FullScreenImageAdapter extends PagerAdapter {
         TouchImageView imgDisplay;
 
         LayoutInflater inflater = (LayoutInflater) _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container,
-                false);
+        View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container,false);
 
-        imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.imgDisplay);
-        TextView progressText = (TextView)viewLayout.findViewById(R.id.progress_textview);
-        TextView statusText = (TextView)viewLayout.findViewById(R.id.status_textview);
+        imgDisplay = viewLayout.findViewById(R.id.imgDisplay);
+        TextView progressText = viewLayout.findViewById(R.id.progress_textview);
+        TextView statusText = viewLayout.findViewById(R.id.status_textview);
 
         if (episode.getPageCount() > 0) {
             progressText.setText("Downloading...");
             statusText.setText(episode.getBookTitle() + " - " + episode.getEpisodeTitle() + "    Page: " + (position + 1) + " / " + episode.getPageCount());
-            executeAsyncTask(new DownloadImageTask(imgDisplay, progressText), episode.getImageUrl().get(position));
+
+            File file = Utils.getImgFile(book, episode, episode.getPageNumByURL(episode.getImageUrl().get(position)));
+            if (file != null && file.exists()) {
+                imgDisplay.setImageBitmap(Utils.imageFromFile(file));
+                progressText.setText("");
+            } else {
+                (new DownloadImageTask(imgDisplay, progressText)).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(position));
+            }
         } else {
             progressText.setText("No Image");
             statusText.setText(episode.getBookTitle() + " - " + episode.getEpisodeTitle());
@@ -95,14 +99,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         this.episode = episode;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB) // API 11
-    public static <T> void executeAsyncTask(AsyncTask<T, ?, ?> asyncTask, T... params) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
-        else
-            asyncTask.execute(params);
-    }
-
     private class DownloadImageTask extends AsyncTask<String, Integer, Bitmap> {
         ImageView bmImage;
         TextView progressText;
@@ -113,50 +109,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String imgUrl = urls[0];
-
-            int pageNum = episode.getPageNumByURL(imgUrl);
-            File file = Utils.getImgFile(book, episode, pageNum);
-
-            if (file != null && file.exists()) {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-            }
-
-            Bitmap bitmap = null;
-            try {
-                HttpURLConnection conn = (HttpURLConnection) new java.net.URL(imgUrl).openConnection();
-                conn.setReadTimeout(5000);
-                conn.setUseCaches(true);
-                //if (urldisplay.indexOf("cartoonmad") > -1) {
-                //    conn.setRequestProperty("Referer", "https://www.cartoonmad.com/m/comic/");
-                //}
-                conn.setRequestProperty("Referer", getEpisode().getEpisodeUrl());
-                /*InputStream in = conn.getInputStream();
-                bitmap = BitmapFactory.decodeStream(in);*/
-
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                bitmap= BitmapFactory.decodeStream(in);
-
-                int length=conn.getContentLength();
-                int len=0,total_length=0,value=0;
-                byte[] data=new byte[1024];
-
-                while((len = in.read(data)) != -1){
-                    total_length += len;
-                    value = (int)((total_length/(float)length)*100);
-                    publishProgress(value);
-                    //Log.e("jComic", "Percentage: " + value + "%");
-                }
-                in.close();
-                conn.disconnect();
-            } catch (Exception e) {
-                Log.e("jComic", "" + e.getMessage());
-                e.printStackTrace();
-            }
-            //Log.e("jComic", "Finish Get Image: " + urldisplay);
-            return bitmap;
+            return Utils.downloadImage(urls[0], getEpisode().getEpisodeUrl());
         }
 
         @Override

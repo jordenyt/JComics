@@ -1,18 +1,24 @@
 package com.jsoft.jcomic.helper;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -26,6 +32,8 @@ import android.widget.Toast;
  */
 public class Utils {
     private Context _context;
+    private static Date lastOnlineCheck;
+    private static boolean isOnline;
 
     // constructor
     public Utils(Context context) {
@@ -127,13 +135,17 @@ public class Utils {
     }
 
     public static boolean isInternetAvailable() {
-        try {
-            InetAddress address = getInetAddressByName("baidu.com");
-            return (address!= null);
-        } catch (Exception e) {
-            Log.e("jComics", "Exception caught by isInternetAvailable", e);
+        if (lastOnlineCheck == null || (new Date()).getTime() - lastOnlineCheck.getTime() > 2000) {
+            try {
+                InetAddress address = getInetAddressByName("baidu.com");
+                lastOnlineCheck = new Date();
+                isOnline = (address != null);
+                return isOnline;
+            } catch (Exception e) {
+                Log.e("jComics", "Exception caught by isInternetAvailable", e);
+            }
         }
-        return false;
+        return isOnline;
     }
 
     public static InetAddress getInetAddressByName(String name)
@@ -196,6 +208,33 @@ public class Utils {
 
     public static File getImgFile(BookDTO book, EpisodeDTO episode, int pageNum) {
         return new File(getEpisodeFile(book, episode), String.format("%04d", pageNum) + ".jpg");
+    }
+
+    public static Bitmap downloadImage(String imgUrl, String referer) {
+        Bitmap bitmap = null;
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new java.net.URL(imgUrl).openConnection();
+            conn.setReadTimeout(5000);
+            conn.setUseCaches(true);
+            if (referer != null) {
+                conn.setRequestProperty("Referer", referer);
+            }
+
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            bitmap= BitmapFactory.decodeStream(in);
+
+            in.close();
+            conn.disconnect();
+        } catch (Exception e) {
+            Log.e("jComics", "Exception caught in downloadImage", e);
+        }
+        return bitmap;
+    }
+
+    public static Bitmap imageFromFile(File file) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
     }
 
 }
