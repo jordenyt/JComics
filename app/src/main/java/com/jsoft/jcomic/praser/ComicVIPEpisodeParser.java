@@ -1,8 +1,5 @@
 package com.jsoft.jcomic.praser;
 
-import android.util.Log;
-
-import com.jsoft.jcomic.FullscreenActivity;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 
 import java.util.ArrayList;

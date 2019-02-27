@@ -45,11 +45,9 @@ public abstract class BookParser {
 
         protected List<String> doInBackground(URL... urls) {
 
-            int count = urls.length;
             List<String> result = new ArrayList<String>();
-            for (int i = 0; i < count; i++) {
+            for (URL url : urls) {
                 String readLine;
-                URL url=urls[i];
                 Uri uri = Uri.parse(url.toString());
                 try {
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -67,7 +65,7 @@ public abstract class BookParser {
                     is.close();
                 } catch (Exception e) {
                     result = new ArrayList<String>();
-                    Log.e("jComics", "Exception when getting file: " + urls[i]);
+                    Log.e("jComics", "Exception when getting file: " + url);
                 }
             }
             return result;
@@ -93,7 +91,7 @@ public abstract class BookParser {
         }
     }
 
-    protected void getBookFromUrlResult(List<String> html) {};
+    protected void getBookFromUrlResult(List<String> html) {}
 
     public static void parseBook(String bookUrl, BookParserListener listener) {
         if (bookUrl.contains("comicbus")) {

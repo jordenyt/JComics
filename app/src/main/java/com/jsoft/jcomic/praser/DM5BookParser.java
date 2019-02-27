@@ -3,7 +3,6 @@ package com.jsoft.jcomic.praser;
 import android.text.Html;
 import android.util.Log;
 
-import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 
@@ -41,7 +40,6 @@ public class DM5BookParser extends BookParser {
 
         Pattern p = Pattern.compile("<a href=\"([A-Za-z0-9\\/]+?)\" title=\"(.*?)\" class=\"chapteritem\">(.+?)</a>");
         Matcher m = p.matcher(s);
-        List<String> allMatches = new ArrayList<String>();
         while (m.find()) {
             String episodeUrl = "http://m.dm5.com" + m.group(1);
             //Log.d("jComics", episodeUrl);

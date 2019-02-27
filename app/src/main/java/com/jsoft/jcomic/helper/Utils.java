@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -41,63 +40,6 @@ public class Utils {
         this._context = context;
     }
 
-    // Reading file paths from SDCard
-    public ArrayList<String> getFilePaths() {
-        ArrayList<String> filePaths = new ArrayList<String>();
-        String tempPath = "/storage/extSdCard"
-                + File.separator + AppConstant.PHOTO_ALBUM;
-        File directory = new File(tempPath);
-
-        // check for directory
-        if (directory.isDirectory()) {
-            // getting list of file paths
-            File[] listFiles = directory.listFiles();
-
-            // Check for count
-            if (listFiles.length > 0) {
-
-                // loop through all files
-                for (int i = 0; i < listFiles.length; i++) {
-
-                    // get file path
-                    String filePath = listFiles[i].getAbsolutePath();
-
-                    // check for supported file extension
-                    if (IsSupportedFile(filePath)) {
-                        // Add image path to array list
-                        filePaths.add(filePath);
-                    }
-                }
-            } else {
-                // image directory is empty
-                Toast.makeText(
-                        _context,
-                        AppConstant.PHOTO_ALBUM
-                                + " is empty. Please load some images in it !",
-                        Toast.LENGTH_LONG).show();
-            }
-
-        } else {
-            AlertDialog.Builder alert = new AlertDialog.Builder(_context);
-            alert.setTitle("Error!");
-            alert.setMessage(tempPath
-                    + " is not a directory path! Please set the image directory name AppConstant.java class");
-            alert.setPositiveButton("OK", null);
-            alert.show();
-        }
-
-        return filePaths;
-    }
-
-    // Check supported file extensions
-    private boolean IsSupportedFile(String filePath) {
-        String ext = filePath.substring((filePath.lastIndexOf(".") + 1),
-                filePath.length());
-
-        return (AppConstant.FILE_EXTN
-                .contains(ext.toLowerCase(Locale.getDefault())));
-    }
-
     /*
      * getting screen width
      */
@@ -110,9 +52,8 @@ public class Utils {
         final Point point = new Point();
         try {
             display.getSize(point);
-        } catch (java.lang.NoSuchMethodError ignore) { // Older device
-            point.x = display.getWidth();
-            point.y = display.getHeight();
+        } catch (Exception e) { // Older device
+            Log.e("jComics", "Exception caught in getScreenWidth", e);
         }
         columnWidth = point.x;
         return columnWidth;
@@ -253,6 +194,14 @@ public class Utils {
         if (v < 1024) return v + " B";
         int z = (63 - Long.numberOfLeadingZeros(v)) / 10;
         return String.format("%.1f %sB", (double)v / (1L << (z*10)), " KMGTPE".charAt(z));
+    }
+
+    public static void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+
+        fileOrDirectory.delete();
     }
 
 }

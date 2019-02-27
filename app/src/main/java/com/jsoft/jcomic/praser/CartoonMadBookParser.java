@@ -2,7 +2,6 @@ package com.jsoft.jcomic.praser;
 
 import android.text.Html;
 
-import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 
@@ -23,7 +22,6 @@ public class CartoonMadBookParser extends BookParser {
         for (String s: html) {
             Pattern p = Pattern.compile("<td>.*?<a href=(.+?)>(.+?)</a></td>");
             Matcher m = p.matcher(s);
-            List<String> allMatches = new ArrayList<String>();
             while (m.find()) {
                 String episodeUrl = "https://www.cartoonmad.com" + m.group(1);
                 episodes.add(0, new EpisodeDTO(m.group(2), episodeUrl));

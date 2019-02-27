@@ -3,7 +3,6 @@ package com.jsoft.jcomic.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;

@@ -6,22 +6,17 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.jsoft.jcomic.DownloadListActivity;
-import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.praser.EpisodeParser;
 import com.jsoft.jcomic.praser.EpisodeParserListener;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executor;
@@ -133,7 +128,7 @@ public class Downloader implements EpisodeParserListener {
                 Log.e("jComics", "Found "+episode.getImageUrl().get(i));
                 pageDownloaded += 1;
             } else {
-                new DownloadImageTask(book, episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
+                new DownloadImageTask(episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
             }
         }
         if (pageDownloaded > 0) {
@@ -143,11 +138,9 @@ public class Downloader implements EpisodeParserListener {
 
     private class DownloadImageTask extends AsyncTask<String, Integer, Bitmap> {
         EpisodeDTO episode;
-        BookDTO book;
         String imgUrl;
 
-        public DownloadImageTask(BookDTO book, EpisodeDTO episode) {
-            this.book = book;
+        public DownloadImageTask(EpisodeDTO episode) {
             this.episode = episode;
         }
 

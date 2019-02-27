@@ -3,9 +3,8 @@ package com.jsoft.jcomic.helper;
 public class DownloadItemDTO {
     public BookDTO book;
     public EpisodeDTO episode;
-    public int downloadedPageNum;
 
-    public DownloadItemDTO(BookDTO book, EpisodeDTO episode, int downloadedPageNum) {
+    public DownloadItemDTO(BookDTO book, EpisodeDTO episode) {
         this.book = book;
         this.episode = episode;
         for (EpisodeDTO e: book.getEpisodes()) {
@@ -13,7 +12,6 @@ public class DownloadItemDTO {
                 e.setImageUrl(episode.getImageUrl());
             }
         }
-        this.downloadedPageNum = downloadedPageNum;
     }
 
     public int getEpisodeIndex() {

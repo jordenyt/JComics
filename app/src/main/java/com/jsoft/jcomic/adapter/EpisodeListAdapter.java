@@ -49,7 +49,7 @@ public class EpisodeListAdapter extends BaseAdapter {
         EpisodeDTO episode = book.getEpisodes().get(position);
 
         // get the TextView and then set the text (item name) and tag (item ID) values
-        TextView textViewItem = (TextView) convertView.findViewById(R.id.episodeTitle);
+        TextView textViewItem = convertView.findViewById(R.id.episodeTitle);
         textViewItem.setText(episode.getEpisodeTitle());
         textViewItem.setTag(episode.getEpisodeUrl());
         String lastEpisode = bookmarkDb.getLastEpisode(book);

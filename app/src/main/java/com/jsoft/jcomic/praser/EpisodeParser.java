@@ -41,12 +41,11 @@ public abstract class EpisodeParser {
         }
 
         protected List<String> doInBackground(URL... urls) {
-            int count = urls.length;
             List<String> result = new ArrayList<String>();
-            for (int i = 0; i < count; i++) {
+            for (URL url : urls) {
                 String readLine;
                 try {
-                    InputStream is = urls[i].openStream();
+                    InputStream is = url.openStream();
                     BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
                     while ((readLine = in.readLine()) != null) {
                         result.add(readLine);
@@ -71,7 +70,7 @@ public abstract class EpisodeParser {
 
     protected void getEpisodeFromUrlResult(List<String> result) {
 
-    };
+    }
 
     public static void parseEpisode(EpisodeDTO episode, EpisodeParserListener listener) {
         if (episode.getEpisodeUrl().contains("comicbus")) {

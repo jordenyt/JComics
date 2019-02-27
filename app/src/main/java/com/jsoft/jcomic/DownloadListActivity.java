@@ -1,8 +1,6 @@
 package com.jsoft.jcomic;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +21,7 @@ import java.util.List;
 public class DownloadListActivity extends AppCompatActivity {
 
     private ListView listView;
+    private DownloadListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +33,13 @@ public class DownloadListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        if (adapter == null) {
+            adapter = new DownloadListAdapter(getDownloadItemList(), this);
+        }
+        listView.setAdapter(adapter);
+    }
+
+    private List<DownloadItemDTO> getDownloadItemList() {
         List<DownloadItemDTO> items = new ArrayList<DownloadItemDTO>();
         Gson gson = new Gson();
         File rootFolder = Utils.getRootFile();
@@ -55,28 +61,18 @@ public class DownloadListActivity extends AppCompatActivity {
                                 if (bookFolderFile.isDirectory()) {
                                     File episodeFile = new File(bookFolderFile, "episode.json");
                                     EpisodeDTO episode = gson.fromJson(new FileReader(episodeFile.getAbsolutePath()), EpisodeDTO.class);
-                                    File[] episodeFolderList = bookFolderFile.listFiles();
-                                    int jpgCount = 0;
-                                    for (File episodeFolderFile : episodeFolderList) {
-                                        if (episodeFolderFile.isFile() && episodeFolderFile.getName().contains(".jpg")) {
-                                            jpgCount += 1;
-                                        }
-                                    }
-                                    DownloadItemDTO item = new DownloadItemDTO(book, episode, jpgCount);
+                                    DownloadItemDTO item = new DownloadItemDTO(book, episode);
                                     items.add(item);
                                 }
                             }
                         } catch (Exception e) {
-
+                            Log.e("jComics", "Exception caught in getDownloadItemList", e);
                         }
                     }
                 }
             }
         }
-
-        DownloadListAdapter adapter = new DownloadListAdapter(items, this);
-        listView.setAdapter(adapter);
-
+        return items;
     }
 
     public void startReading(BookDTO book, int position) {
@@ -85,13 +81,19 @@ public class DownloadListActivity extends AppCompatActivity {
         Bundle b = new Bundle();
         b.putSerializable("book", book.getSerializable());
         intent.putExtras(b);
-        this.startActivityForResult(intent, 0);
+        this.startActivity(intent);
+    }
+
+    public void viewBook(BookDTO book) {
+        Intent i = new Intent(this, EpisodeListActivity.class);
+        i.putExtra("bookUrl", book.getBookUrl());
+        startActivity(i);
     }
 
     public void deleteEpisode(DownloadItemDTO item) {
         File dir = Utils.getEpisodeFile(item.book, item.episode);
         if (dir.isDirectory()) {
-            deleteRecursive(dir);
+            Utils.deleteRecursive(dir);
         }
         dir = Utils.getBookFile(item.book);
         int episodeCount = 0;
@@ -101,17 +103,9 @@ public class DownloadListActivity extends AppCompatActivity {
             }
         }
         if (episodeCount == 0) {
-            deleteRecursive(dir);
+            Utils.deleteRecursive(dir);
         }
-        finish();
-        startActivity(getIntent());
-    }
-
-    void deleteRecursive(File fileOrDirectory) {
-        if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles())
-                deleteRecursive(child);
-
-        fileOrDirectory.delete();
+        adapter.setItems(getDownloadItemList());
+        adapter.notifyDataSetChanged();
     }
 }

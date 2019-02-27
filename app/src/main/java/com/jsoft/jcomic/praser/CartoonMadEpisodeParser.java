@@ -1,8 +1,5 @@
 package com.jsoft.jcomic.praser;
 
-import android.util.Log;
-
-import com.jsoft.jcomic.FullscreenActivity;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 
 import java.util.ArrayList;
@@ -20,7 +17,6 @@ public class CartoonMadEpisodeParser extends EpisodeParser {
         String imageUrl_1 = "";
         String imageUrl_3 = "";
         int numPage = 0;
-        String bookTitle = "";
         for (String s: result) {
             Pattern p = Pattern.compile(".*<img src=\"(https?:\\/\\/[a-zA-Z0-9:\\.]+)?(.+)(\\d\\d\\d)(&.+=.+)?\" border=\"0\" oncontextmenu='return false' width=\"\\d+\">.*");
             //<img src="comicpic.asp?file=/1152/932/002" border="0" oncontextmenu='return false' width="700">

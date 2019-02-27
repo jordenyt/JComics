@@ -74,12 +74,12 @@ public class FullscreenActivity extends AppCompatActivity implements
 
     public void onEpisodeFetched(EpisodeDTO episode) {
         setContentView(R.layout.activity_fullscreen);
-        this.seekBarLayout = (LinearLayout) findViewById(R.id.seekbar_layout);
+        this.seekBarLayout = findViewById(R.id.seekbar_layout);
         this.seekBarLayout.setVisibility(View.GONE);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar = findViewById(R.id.seekBar);
         seekBar.setMax(episode.getPageCount() - 1);
         seekBar.setOnSeekBarChangeListener(this);
-        pager = (ComicsViewPager) findViewById(R.id.pager);
+        pager = findViewById(R.id.pager);
         pager.setActivity(this);
         if (pager.getAdapter() == null) {
             FullScreenImageAdapter adapter = new FullScreenImageAdapter(FullscreenActivity.this, pager, episode, book);
@@ -150,7 +150,7 @@ public class FullscreenActivity extends AppCompatActivity implements
             pager.turnPrev();
             return true;
         }
-        return false;
+        return super.onKeyDown(keyCode, event);
     }
 
     public void episodeSwitch(int pageTurn) {

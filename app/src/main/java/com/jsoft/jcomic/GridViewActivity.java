@@ -43,10 +43,8 @@ import java.util.List;
 public class GridViewActivity extends AppCompatActivity {
 
     private Utils utils;
-    private GridViewImageAdapter adapter;
     private GridView gridView;
     private WebView webView;
-    private int columnWidth;
     private List<BookDTO> books;
     private BookmarkDb bookmarkDb;
     private GridViewActivity gridViewActivity;
@@ -74,14 +72,13 @@ public class GridViewActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         books = bookmarkDb.getBookmarkedList();
-        Resources r = getResources();
-        LinearLayout view = (LinearLayout) findViewById(R.id.button_list_link);
+        LinearLayout view = findViewById(R.id.button_list_link);
         if (!Utils.isInternetAvailable()) {
             view.setVisibility(View.GONE);
         } else {
             view.setVisibility(View.VISIBLE);
         }
-        adapter = new GridViewImageAdapter(GridViewActivity.this, columnWidth, books);
+        GridViewImageAdapter adapter = new GridViewImageAdapter(GridViewActivity.this, books);
         gridView.setAdapter(adapter);
     }
 
@@ -126,12 +123,12 @@ public class GridViewActivity extends AppCompatActivity {
 
     private GridView initGridLayout() {
         Resources r = getResources();
-        gridView = (GridView) findViewById(R.id.grid_view);
+        gridView = findViewById(R.id.grid_view);
         float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 AppConstant.GRID_PADDING, r.getDisplayMetrics());
 
         int numColumns = 3;
-        columnWidth = (int) ((utils.getScreenWidth() - ((numColumns + 1) * padding)) / numColumns);
+        int columnWidth = (int) ((utils.getScreenWidth() - ((numColumns + 1) * padding)) / numColumns);
 
         gridView.setNumColumns(numColumns);
         gridView.setColumnWidth(columnWidth);
@@ -145,7 +142,7 @@ public class GridViewActivity extends AppCompatActivity {
     }
 
     private void initWebView() {
-        webView = (WebView) findViewById(R.id.web_view);
+        webView = findViewById(R.id.web_view);
         webView.setVisibility(View.INVISIBLE);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -269,24 +266,13 @@ public class GridViewActivity extends AppCompatActivity {
     }
 
     private void enableHttpCaching() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-        {
-            try {
-                File httpCacheDir = new File(getApplicationContext().getCacheDir()
-                        , "http");
-                long httpCacheSize = 100 * 1024 * 1024; // 10 MiB
-                HttpResponseCache.install(httpCacheDir, httpCacheSize);
-            } catch (IOException e) {
-
-            }
-        } else {
+        try {
             File httpCacheDir = new File(getApplicationContext().getCacheDir()
                     , "http");
-            try {
-                HttpResponseCache.install(httpCacheDir, 100 * 1024 * 1024);
-            } catch (IOException e) {
-
-            }
+            long httpCacheSize = 100 * 1024 * 1024; // 10 MiB
+            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+        } catch (IOException e) {
+            Log.e("jComics", "Exception caught in enableHttpCaching", e);
         }
     }
 

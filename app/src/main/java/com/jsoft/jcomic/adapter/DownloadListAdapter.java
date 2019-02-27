@@ -1,6 +1,7 @@
 package com.jsoft.jcomic.adapter;
 
 import android.graphics.Typeface;
+import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,10 @@ public class DownloadListAdapter extends BaseAdapter {
         this.activity = activity;
     }
 
+    public void setItems(List<DownloadItemDTO> items) {
+        this.items = items;
+    }
+
     @Override
     public int getCount() {
         return items.size();
@@ -39,13 +44,12 @@ public class DownloadListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.content_download_list, parent, false);
         }
 
+        ConstraintLayout downloadItem = convertView.findViewById(R.id.downloadItem);
         TextView textViewBookTitle = convertView.findViewById(R.id.downloadBookTitle);
         TextView textViewEpisodeTitle = convertView.findViewById(R.id.downloadEpisodeTitle);
         ImageView imageView = convertView.findViewById(R.id.downloadBookImage);
         TextView textViewPageStatus = convertView.findViewById(R.id.page_status);
         TextView textViewEpisodeSize = convertView.findViewById(R.id.episode_size);
-
-
 
         DownloadItemDTO item = items.get(position);
         int jpgCount = 0;
@@ -68,11 +72,22 @@ public class DownloadListAdapter extends BaseAdapter {
             imageView.setImageBitmap(null);
         }
 
-        ImageButton btnPlay = (ImageButton) convertView.findViewById(R.id.btnPlayDownload);
-        ImageButton btnDelete = (ImageButton) convertView.findViewById(R.id.btnDeleteDownload);
+        ImageButton btnPlay = convertView.findViewById(R.id.btnPlayDownload);
+        ImageButton btnDelete = convertView.findViewById(R.id.btnDeleteDownload);
 
-        btnPlay.setOnClickListener(new EpisodePlayListener(item));
-        btnDelete.setOnClickListener(new EpisodeDeleteListener(item));
+        btnPlay.setOnClickListener(new ImgageClickListener(item) {
+            public void onClick(View v) {activity.startReading(item.book, item.getEpisodeIndex());}
+        });
+        btnDelete.setOnClickListener(new ImgageClickListener(item) {
+            public void onClick(View v) {
+                activity.deleteEpisode(item);
+            }
+        });
+        downloadItem.setOnClickListener(new ImgageClickListener(item) {
+            public void onClick(View v) {
+                activity.viewBook(item.book);
+            }
+        });
 
         return convertView;
     }
@@ -87,31 +102,13 @@ public class DownloadListAdapter extends BaseAdapter {
         return items.get(position);
     }
 
-    class EpisodePlayListener implements View.OnClickListener {
-
+    class ImgageClickListener implements View.OnClickListener {
         DownloadItemDTO item;
-        // constructor
-        public EpisodePlayListener(DownloadItemDTO item) {
+        public ImgageClickListener(DownloadItemDTO item) {
             this.item = item;
         }
 
         @Override
-        public void onClick(View v) {
-            activity.startReading(item.book, item.getEpisodeIndex());
-        }
-
-    }
-
-    class EpisodeDeleteListener implements View.OnClickListener {
-        DownloadItemDTO item;
-        // constructor
-        public EpisodeDeleteListener(DownloadItemDTO item) {
-            this.item = item;
-        }
-
-        @Override
-        public void onClick(View v) {
-            activity.deleteEpisode(item);
-        }
+        public void onClick(View v) {}
     }
 }

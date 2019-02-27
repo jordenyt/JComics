@@ -1,12 +1,8 @@
 package com.jsoft.jcomic.adapter;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,22 +17,17 @@ import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.Utils;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class GridViewImageAdapter extends BaseAdapter {
     private GridViewActivity activity;
-    private int imageWidth;
     private List<BookDTO> books;
-    private Map<Integer, View> viewMap;
 
-    public GridViewImageAdapter(GridViewActivity activity, int imageWidth, List<BookDTO> books) {
+    public GridViewImageAdapter(GridViewActivity activity, List<BookDTO> books) {
         this.activity = activity;
-        this.imageWidth = imageWidth;
         this.books = books;
-        viewMap = new HashMap<Integer, View>();
         //Log.e("jComics", "GridViewAdapter constructor");
     }
 
@@ -62,9 +53,9 @@ public class GridViewImageAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.content_book_list, parent, false);
         }
 
-        TextView textViewItem = (TextView) convertView.findViewById(R.id.downloadBookTitle);
+        TextView textViewItem = convertView.findViewById(R.id.downloadBookTitle);
 
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.bookImage);
+        ImageView imageView = convertView.findViewById(R.id.bookImage);
 
         boolean offlineAvailable = false;
         File bookFile = new File(Utils.getBookFile(books.get(position)),"book.json");

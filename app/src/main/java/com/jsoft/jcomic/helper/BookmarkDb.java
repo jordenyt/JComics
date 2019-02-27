@@ -18,11 +18,10 @@ import java.util.Locale;
  */
 public class BookmarkDb {
 
-    private BookmarkDbHelper mDbHelper;
     private SQLiteDatabase db;
 
     public BookmarkDb(Context context) {
-        mDbHelper = new BookmarkDbHelper(context);
+        BookmarkDbHelper mDbHelper = new BookmarkDbHelper(context);
         db = mDbHelper.getWritableDatabase();
     }
 
@@ -39,9 +38,8 @@ public class BookmarkDb {
         values.put(BookmarkEntry.COLUMN_NAME_BOOK_URL, book.getBookUrl());
         values.put(BookmarkEntry.COLUMN_NAME_TITLE, book.getBookTitle());
         values.put(BookmarkEntry.COLUMN_NAME_BOOK_IMG_URL, book.getBookImgUrl());
-        long result = db.insert(BookmarkEntry.TABLE_NAME,null,values);
         //db.close();
-        return result;
+        return db.insert(BookmarkEntry.TABLE_NAME,null,values);
     }
 
     public boolean bookInDb(BookDTO book) {
@@ -89,11 +87,7 @@ public class BookmarkDb {
             c.moveToFirst();
             if (c.getString(0) == null) {
                 result = false;
-            } else if ("Y".equals(c.getString(0))) {
-                result = true;
-            } else {
-                result = false;
-            }
+            } else result = "Y".equals(c.getString(0));
         }
         c.close();
         //db.close();

@@ -22,14 +22,12 @@ public class TouchImageView extends AppCompatImageView {
     int viewWidth, viewHeight;
     float saveScale = 1f;
     protected float origWidth, origHeight;
-    int oldMeasuredWidth, oldMeasuredHeight;
+    int oldMeasuredHeight;
     ComicsViewPager pager;
 
     ScaleGestureDetector mScaleDetector;
     GestureDetector mGestureDetector;
 
-
-    Context context;
 
     public TouchImageView(Context context) {
         super(context);
@@ -47,7 +45,6 @@ public class TouchImageView extends AppCompatImageView {
 
     private void sharedConstructing(Context context) {
         super.setClickable(true);
-        this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
         matrix = new Matrix();
@@ -225,7 +222,6 @@ public class TouchImageView extends AppCompatImageView {
                 || viewWidth == 0 || viewHeight == 0)
             return;
         oldMeasuredHeight = viewHeight;
-        oldMeasuredWidth = viewWidth;
 
         if (saveScale == 1) {
             // Fit to screen.

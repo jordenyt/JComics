@@ -3,10 +3,8 @@ package com.jsoft.jcomic;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,14 +29,12 @@ import com.jsoft.jcomic.praser.BookParserListener;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 
 public class EpisodeListActivity extends AppCompatActivity implements BookParserListener {
 
     private GridView gridView;
-    private TextView textView;
     private ImageView imageView;
     private Utils utils;
     private BookDTO book;
@@ -164,13 +160,13 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         this.book = book;
         setTitle(book.getBookTitle());
         setContentView(R.layout.activity_episode_list);
-        gridView = (GridView) findViewById(R.id.episode_list_view);
+        gridView = findViewById(R.id.episode_list_view);
         InitilizeGridLayout();
         EpisodeListAdapter adapter = new EpisodeListAdapter(this, book);
         gridView.setAdapter(adapter);
-        textView = (TextView) findViewById(R.id.book_description);
+        TextView textView = findViewById(R.id.book_description);
         textView.setText(book.getBookSynopsis());
-        imageView = (ImageView) findViewById(R.id.book_image);
+        imageView = findViewById(R.id.book_image);
         if (Utils.isInternetAvailable()) {
             (new DownloadImageTask()).execute(book.getBookImgUrl());
         } else {

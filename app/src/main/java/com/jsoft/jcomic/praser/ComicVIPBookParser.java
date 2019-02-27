@@ -2,7 +2,6 @@ package com.jsoft.jcomic.praser;
 
 import android.text.Html;
 
-import com.jsoft.jcomic.EpisodeListActivity;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 

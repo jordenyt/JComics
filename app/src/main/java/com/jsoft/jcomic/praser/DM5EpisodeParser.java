@@ -1,8 +1,5 @@
 package com.jsoft.jcomic.praser;
 
-import android.util.Log;
-
-import com.jsoft.jcomic.FullscreenActivity;
 import com.jsoft.jcomic.helper.EpisodeDTO;
 
 import java.util.ArrayList;
@@ -35,7 +32,6 @@ public class DM5EpisodeParser extends EpisodeParser {
 
         Pattern p = Pattern.compile("eval\\(function\\(p,a,c,k,e,d\\)\\{.+\\}\\((.+)\\)\\s*</script>");
         Matcher m = p.matcher(s);
-        List<String> allMatches = new ArrayList<String>();
         while (m.find()) {
 
             String s1= m.group(1);
@@ -53,11 +49,10 @@ public class DM5EpisodeParser extends EpisodeParser {
             while (m2.find()) {
                 String s3=m2.group(1);
                 String[] urls = s3.split(",");
-                for (int i=0; i<urls.length; i++) {
-
-                    String imgUrl = urls[i];
+                for (String url : urls) {
+                    String imgUrl = url;
                     imgUrl = imgUrl.replaceAll("\\\\\\'", "");
-                    for (int j=0; j < replaceStrArray.length; j++) {
+                    for (int j = 0; j < replaceStrArray.length; j++) {
                         if (replaceStrArray[j].length() > 0) {
                             imgUrl = imgUrl.replaceAll("\\b" + intCode(j) + "\\b", replaceStrArray[j]);
                         }
