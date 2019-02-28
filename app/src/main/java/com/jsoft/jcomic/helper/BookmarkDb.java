@@ -136,6 +136,30 @@ public class BookmarkDb {
         return books;
     }
 
+    public BookDTO getBook(String bookUrl) {
+        //db = mDbHelper.getReadableDatabase();
+        String queryString =
+                "SELECT " + BookmarkEntry.COLUMN_NAME_BOOK_URL
+                        + ", " + BookmarkEntry.COLUMN_NAME_BOOK_IMG_URL
+                        + ", " + BookmarkEntry.COLUMN_NAME_TITLE
+                        + " FROM " + BookmarkEntry.TABLE_NAME
+                        + " WHERE " + BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_BOOK_URL + " = ?";
+        Cursor c = db.rawQuery(queryString, new String[] {bookUrl});
+        List<BookDTO> books = new ArrayList<>();
+        while (c.moveToNext()) {
+            BookDTO book = new BookDTO(c.getString(c.getColumnIndexOrThrow(BookmarkEntry.COLUMN_NAME_BOOK_URL)));
+            book.setBookImgUrl(c.getString(c.getColumnIndexOrThrow(BookmarkEntry.COLUMN_NAME_BOOK_IMG_URL)));
+            book.setBookTitle(c.getString(c.getColumnIndexOrThrow(BookmarkEntry.COLUMN_NAME_TITLE)));
+            books.add(book);
+        }
+        c.close();
+        if (books.size() > 0) {
+            return books.get(0);
+        } else {
+            return null;
+        }
+    }
+
     public String getLastEpisode(BookDTO book) {
         String queryString =
                 "SELECT " + BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE

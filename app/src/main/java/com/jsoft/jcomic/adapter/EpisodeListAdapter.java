@@ -64,13 +64,14 @@ public class EpisodeListAdapter extends BaseAdapter {
 
         if (episode.getEpisodeTitle().equals(lastEpisode)) {
             textViewItem.setTextColor(Color.RED);
+        } else if (offlineAvailable) {
+            textViewItem.setTextColor(Color.WHITE);
+        } else if (isOnline) {
+            textViewItem.setTextColor(Color.LTGRAY);
         } else {
-            if (isOnline || offlineAvailable) {
-                textViewItem.setTextColor(Color.WHITE);
-            } else {
-                textViewItem.setTextColor(Color.DKGRAY);
-            }
+            textViewItem.setTextColor(Color.DKGRAY);
         }
+
         if (isOnline || offlineAvailable) {
             EpisodeClickListener episodeClickListener = new EpisodeClickListener(position);
             convertView.setOnClickListener(episodeClickListener);
@@ -80,18 +81,16 @@ public class EpisodeListAdapter extends BaseAdapter {
             convertView.setOnLongClickListener(null);
         }
 
-        if (isOnline && offlineAvailable) {
-            textViewItem.setTypeface(null, Typeface.BOLD);
-        } else {
-            textViewItem.setTypeface(null, Typeface.NORMAL);
-        }
-
         return convertView;
     }
 
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    public void setBook(BookDTO book) {
+        this.book = book;
     }
 
     @Override

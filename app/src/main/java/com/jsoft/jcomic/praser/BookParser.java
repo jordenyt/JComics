@@ -65,7 +65,7 @@ public abstract class BookParser {
                     is.close();
                 } catch (Exception e) {
                     result = new ArrayList<>();
-                    Log.e("jComics", "Exception when getting file: " + url);
+                    Log.e("jComics", "Exception when getting file: " + url, e);
                 }
             }
             return result;
@@ -76,30 +76,25 @@ public abstract class BookParser {
         }
 
         protected void onPostExecute(List<String> result) {
-            if (result.size()==0) {
-                File bookFile = new File(Utils.getBookFile(book), "book.json");
-                try {
-                    Gson gson = new Gson();
-                    book = gson.fromJson(new FileReader(bookFile.getAbsolutePath()), BookDTO.class);
-                } catch (Exception e) {
-                    book.setBookTitle("Error");
-                }
-            } else {
+            if (result.size() > 0) {
                 getBookFromUrlResult(result);
+                listener.onBookFetched(book);
+            } else if (book.getBookSynopsis() == null) {
+                book.setBookSynopsis("Cannot load page from Internet");
+                listener.onBookFetched(book);
             }
-            listener.onBookFetched(book);
         }
     }
 
     protected void getBookFromUrlResult(List<String> html) {}
 
-    public static void parseBook(String bookUrl, BookParserListener listener) {
-        if (bookUrl.contains("comicbus")) {
-            new ComicVIPBookParser(new BookDTO(bookUrl), listener);
-        } else if (bookUrl.contains("cartoonmad")) {
-            new CartoonMadBookParser(new BookDTO(bookUrl), listener);
-        } else if (bookUrl.contains("dm5.com")) {
-            new DM5BookParser(new BookDTO(bookUrl), listener);
+    public static void parseBook(BookDTO book, BookParserListener listener) {
+        if (book.getBookUrl().contains("comicbus")) {
+            new ComicVIPBookParser(book, listener);
+        } else if (book.getBookUrl().contains("cartoonmad")) {
+            new CartoonMadBookParser(book, listener);
+        } else if (book.getBookUrl().contains("dm5.com")) {
+            new DM5BookParser(book, listener);
         }
     }
 }

@@ -35,7 +35,6 @@ import java.util.ArrayList;
 public class EpisodeListActivity extends AppCompatActivity implements BookParserListener {
 
     private GridView gridView;
-    private ImageView imageView;
     private Utils utils;
     private BookDTO book;
     private BookmarkDb bookmarkDb;
@@ -54,31 +53,36 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
             bookUrl = i.getStringExtra("bookUrl");
         }
         bookmarkDb = new BookmarkDb(this);
+        loadBook(bookUrl);
         if (Utils.isInternetAvailable()) {
-            BookParser.parseBook(bookUrl, this);
-        } else {
-            try {
-                File bookFile = new File(Utils.getBookFile(new BookDTO(bookUrl)), "book.json");
-                if (bookFile.exists()) {
-                    Gson gson = new Gson();
-                    BookDTO savedBook = gson.fromJson(new FileReader(bookFile.getAbsolutePath()), BookDTO.class);
-
-                    File bookImgFile = new File(Utils.getBookFile(new BookDTO(bookUrl)),"book.jpg");
-                    if (bookImgFile.exists()) {
-                        savedBook.setBookImg(Utils.imageFromFile(bookImgFile));
-                    }
-                    onBookFetched(savedBook);
-                } else {
-                    BookDTO newBook = new BookDTO(bookUrl);
-                    newBook.setEpisodes(new ArrayList<EpisodeDTO>());
-                    newBook.setBookTitle("No Internet");
-                    onBookFetched(newBook);
-                }
-            } catch (Exception e) {
-                Log.e("jComics", "Error caught in reading saved book.", e);
-            }
+            BookParser.parseBook(book, this);
         }
 
+    }
+
+    public void loadBook(String bookUrl) {
+        try {
+            File bookFile = new File(Utils.getBookFile(new BookDTO(bookUrl)), "book.json");
+            BookDTO dbBook = bookmarkDb.getBook(bookUrl);
+            if (bookFile.exists()) {
+                Gson gson = new Gson();
+                BookDTO savedBook = gson.fromJson(new FileReader(bookFile.getAbsolutePath()), BookDTO.class);
+
+                File bookImgFile = new File(Utils.getBookFile(new BookDTO(bookUrl)),"book.jpg");
+                if (bookImgFile.exists()) {
+                    savedBook.setBookImg(Utils.imageFromFile(bookImgFile));
+                }
+                onBookFetched(savedBook);
+            } else if (dbBook != null){
+                onBookFetched(dbBook);
+            } else {
+                BookDTO newBook = new BookDTO(bookUrl);
+                newBook.setBookTitle("Loading...");
+                onBookFetched(newBook);
+            }
+        } catch (Exception e) {
+            Log.e("jComics", "Error caught in reading saved book.", e);
+        }
     }
 
     @Override
@@ -162,22 +166,35 @@ public class EpisodeListActivity extends AppCompatActivity implements BookParser
         setContentView(R.layout.activity_episode_list);
         gridView = findViewById(R.id.episode_list_view);
         InitilizeGridLayout();
-        EpisodeListAdapter adapter = new EpisodeListAdapter(this, book);
-        gridView.setAdapter(adapter);
+
+        if (gridView.getAdapter() == null) {
+            gridView.setAdapter(new EpisodeListAdapter(this, book));
+        } else {
+            EpisodeListAdapter adapter = (EpisodeListAdapter) gridView.getAdapter();
+            adapter.setBook(book);
+            adapter.notifyDataSetChanged();
+        }
+
         TextView textView = findViewById(R.id.book_description);
         textView.setText(book.getBookSynopsis());
-        imageView = findViewById(R.id.book_image);
-        if (Utils.isInternetAvailable()) {
-            (new DownloadImageTask()).execute(book.getBookImgUrl());
-        } else {
-            if (book.getBookImg() != null) {
-                imageView.setImageBitmap(book.getBookImg());
-            }
+        ImageView imageView = findViewById(R.id.book_image);
+        if (Utils.isInternetAvailable() && book.getBookImg() == null && book.getBookImgUrl() != null) {
+            (new DownloadImageTask(book, imageView)).execute(book.getBookImgUrl());
+        } else if (book.getBookImg() != null) {
+            imageView.setImageBitmap(book.getBookImg());
         }
         invalidateOptionsMenu();
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        BookDTO book;
+        ImageView imageView;
+
+        DownloadImageTask(BookDTO book, ImageView imageView) {
+            this.book = book;
+            this.imageView = imageView;
+        }
+
         protected Bitmap doInBackground(String... urls) {
             return Utils.downloadImage(urls[0], null);
         }

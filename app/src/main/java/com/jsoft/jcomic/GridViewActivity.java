@@ -58,9 +58,7 @@ public class GridViewActivity extends AppCompatActivity {
         enableHttpCaching();
         gridViewActivity = this;
         setContentView(R.layout.activity_grid_view);
-
         utils = new Utils(this);
-
         initWebView();
 
         gridView = initGridLayout();

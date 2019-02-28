@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.jsoft.jcomic.DownloadListActivity;
@@ -30,6 +31,10 @@ public class DownloadListAdapter extends BaseAdapter {
 
     public void setItems(List<DownloadItemDTO> items) {
         this.items = items;
+    }
+
+    public List<DownloadItemDTO> getItems() {
+        return this.items;
     }
 
     @Override

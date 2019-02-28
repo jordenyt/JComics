@@ -1,6 +1,7 @@
 package com.jsoft.jcomic;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +34,7 @@ public class DownloadListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        listView.setBackgroundColor(Color.BLACK);
         if (adapter == null) {
             adapter = new DownloadListAdapter(getDownloadItemList(), this);
         }
@@ -105,7 +107,9 @@ public class DownloadListActivity extends AppCompatActivity {
         if (episodeCount == 0) {
             Utils.deleteRecursive(dir);
         }
-        adapter.setItems(getDownloadItemList());
+        adapter.getItems().clear();
+        adapter.notifyDataSetChanged();
+        adapter.getItems().addAll(getDownloadItemList());
         adapter.notifyDataSetChanged();
     }
 }

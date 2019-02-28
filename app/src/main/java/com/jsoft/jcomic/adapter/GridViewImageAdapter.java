@@ -18,15 +18,20 @@ import com.jsoft.jcomic.helper.Utils;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class GridViewImageAdapter extends BaseAdapter {
     private GridViewActivity activity;
     private List<BookDTO> books;
+    private static Executor downloadImageTaskExecutor;
 
     public GridViewImageAdapter(GridViewActivity activity, List<BookDTO> books) {
         this.activity = activity;
         this.books = books;
-        //Log.e("jComics", "GridViewAdapter constructor");
+        if (downloadImageTaskExecutor == null) {
+            downloadImageTaskExecutor = Executors.newFixedThreadPool(3);
+        }
     }
 
     @Override
@@ -76,8 +81,12 @@ public class GridViewImageAdapter extends BaseAdapter {
             textViewItem.setTextColor(Color.WHITE);
             imageView.setAlpha(1f);
         }
+        File bookImgFile = new File(Utils.getBookFile(books.get(position)),"book.jpg");
+        if (bookImgFile.exists()) {
+            imageView.setImageBitmap(Utils.imageFromFile(bookImgFile));
+        }
         if (books.get(position).getBookImg() == null) {
-            (new DownloadImageTask(imageView, books.get(position))).execute(books.get(position).getBookImgUrl());
+            (new DownloadImageTask(imageView, books.get(position))).executeOnExecutor(downloadImageTaskExecutor, books.get(position).getBookImgUrl());
         } else {
             imageView.setImageBitmap(books.get(position).getBookImg());
         }

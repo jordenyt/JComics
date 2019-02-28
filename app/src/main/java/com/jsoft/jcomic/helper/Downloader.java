@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -35,6 +37,8 @@ public class Downloader implements EpisodeParserListener {
     private int notificationID;
     private int numMissingPage;
     private static Executor downloadImageTaskExecutor;
+    private Timer notifyTimer;
+
 
     public Downloader(BookDTO book, Context activity) {
         this.book = book;
@@ -48,9 +52,6 @@ public class Downloader implements EpisodeParserListener {
         Log.d("jComics", "downloadEpisode");
         if (book != null && book.getEpisodes().size() > position) {
             EpisodeParser.parseEpisode(book.getEpisodes().get(position), this);
-
-            setNotification(activity);
-            pageDownloaded = 0;
         }
     }
 
@@ -81,6 +82,9 @@ public class Downloader implements EpisodeParserListener {
     }
 
     public void onEpisodeFetched(EpisodeDTO episode) {
+        setNotification(activity);
+        pageDownloaded = 0;
+
         pageTotal = episode.getImageUrl().size();
         numMissingPage = 0;
         this.episode = episode;
@@ -122,6 +126,8 @@ public class Downloader implements EpisodeParserListener {
             Log.e("jComics", "Create episode Folder Error", e);
         }
 
+
+
         for (int i=0;i<episode.getImageUrl().size();i++) {
             File file = Utils.getImgFile(book, episode, i);
             if (file.exists()) {
@@ -131,9 +137,13 @@ public class Downloader implements EpisodeParserListener {
                 new DownloadImageTask(episode).executeOnExecutor(downloadImageTaskExecutor, episode.getImageUrl().get(i));
             }
         }
-        if (pageDownloaded > 0) {
-            updateDownloadNotification();
-        }
+        notifyTimer = new Timer();
+        notifyTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateDownloadNotification();
+            }
+        }, 0, 1000);
     }
 
     private class DownloadImageTask extends AsyncTask<String, Integer, Bitmap> {
@@ -189,6 +199,7 @@ public class Downloader implements EpisodeParserListener {
             mBuilder.setContentText(pageDownloaded * 100 / pageTotal + "%");
             mBuilder.setProgress(pageTotal, pageDownloaded, false);
             mNotifyManager.notify(notificationID, mBuilder.build());
+            notifyTimer.cancel();
         }
     }
 

@@ -50,25 +50,23 @@ public class FullscreenActivity extends AppCompatActivity implements
             book = (BookDTO) b.getSerializable("book");
         else {
             book = new BookDTO("");
-            book.setEpisodes(new ArrayList<EpisodeDTO>());
         }
         //Log.d("jComic", "EpisodeUrl: " + episode.getEpisodeUrl());
         EpisodeDTO episode = book.getEpisodes().get(currEpisode);
-        if (Utils.isInternetAvailable()) {
-            EpisodeParser.parseEpisode(episode, this);
-        } else {
-            try {
-                File episodeFile = new File(Utils.getEpisodeFile(book, episode), "episode.json");
-                if (episodeFile.exists()) {
-                    Gson gson = new Gson();
-                    EpisodeDTO savedEpisode = gson.fromJson(new FileReader(episodeFile.getAbsolutePath()), EpisodeDTO.class);
-                    onEpisodeFetched(savedEpisode);
-                } else {
-                    onEpisodeFetched(episode);
-                }
-            } catch (Exception e) {
-                Log.e("jComics", "Error caught in reading saved episode.", e);
+
+        try {
+            File episodeFile = new File(Utils.getEpisodeFile(book, episode), "episode.json");
+            if (episodeFile.exists()) {
+                Gson gson = new Gson();
+                EpisodeDTO savedEpisode = gson.fromJson(new FileReader(episodeFile.getAbsolutePath()), EpisodeDTO.class);
+                onEpisodeFetched(savedEpisode);
+            } else if (Utils.isInternetAvailable()) {
+                EpisodeParser.parseEpisode(episode, this);
+            } else {
+                onEpisodeFetched(episode);
             }
+        } catch (Exception e) {
+            Log.e("jComics", "Error caught in reading saved episode.", e);
         }
     }
 

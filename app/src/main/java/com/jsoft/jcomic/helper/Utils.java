@@ -149,6 +149,7 @@ public class Utils {
     }
 
     public static Bitmap downloadImage(String imgUrl, String referer) {
+        if (imgUrl == null) return null;
         Bitmap bitmap = null;
         try {
             HttpURLConnection conn = (HttpURLConnection) new java.net.URL(imgUrl).openConnection();

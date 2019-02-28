@@ -41,6 +41,7 @@ public class BookDTO implements Serializable, Cloneable {
 
     public BookDTO(String bookUrl) {
         this.bookUrl = bookUrl;
+        this.episodes = new ArrayList<EpisodeDTO>();
     }
 
     public String getBookUrl() {
