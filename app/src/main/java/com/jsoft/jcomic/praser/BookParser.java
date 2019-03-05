@@ -4,14 +4,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.jsoft.jcomic.helper.BookDTO;
-import com.jsoft.jcomic.helper.Utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.InputStream;
 import java.net.HttpURLConnection;

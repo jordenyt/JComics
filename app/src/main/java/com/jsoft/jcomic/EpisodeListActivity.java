@@ -22,14 +22,12 @@ import com.jsoft.jcomic.helper.AppConstant;
 import com.jsoft.jcomic.helper.BookDTO;
 import com.jsoft.jcomic.helper.BookmarkDb;
 import com.jsoft.jcomic.helper.Downloader;
-import com.jsoft.jcomic.helper.EpisodeDTO;
 import com.jsoft.jcomic.helper.Utils;
 import com.jsoft.jcomic.praser.BookParser;
 import com.jsoft.jcomic.praser.BookParserListener;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
 
 
 public class EpisodeListActivity extends AppCompatActivity implements BookParserListener {

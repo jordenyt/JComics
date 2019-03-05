@@ -24,7 +24,6 @@ import com.jsoft.jcomic.praser.EpisodeParserListener;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
 
 public class FullscreenActivity extends AppCompatActivity implements
         SeekBar.OnSeekBarChangeListener, EpisodeParserListener {
