@@ -1,0 +1,202 @@
+package com.jsoft.jcomic.helper
+
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStreamWriter
+import java.math.BigInteger
+import java.net.HttpURLConnection
+import java.net.InetAddress
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.Date
+import java.util.concurrent.ExecutionException
+
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Point
+import android.os.AsyncTask
+import android.os.Environment
+import android.util.Log
+import android.view.Display
+import android.view.WindowManager
+
+/**
+ * Created by Jorden on 1/10/15.
+ */
+class Utils// constructor
+(private val _context: Context) {
+
+    /*
+     * getting screen width
+     */
+    // Older device
+    val screenWidth: Int
+        get() {
+            val columnWidth: Int
+            val wm = _context
+                    .getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val display = wm.defaultDisplay
+
+            val point = Point()
+            try {
+                display.getSize(point)
+            } catch (e: Exception) {
+                Log.e("jComics", "Exception caught in getScreenWidth", e)
+            }
+
+            columnWidth = point.x
+            return columnWidth
+        }
+
+    companion object {
+        private var lastOnlineCheck: Date? = null
+        private var isOnline: Boolean = false
+
+        @JvmOverloads
+        fun getHashCode(s: String?, length: Int = 16): String {
+            try {
+                val messageDigest = MessageDigest.getInstance("SHA-256")
+                messageDigest.update(s!!.toByteArray(StandardCharsets.UTF_8))
+                val digest = messageDigest.digest()
+                val hex = String.format("%064x", BigInteger(1, digest))
+                return hex.substring(0, length)
+            } catch (e: Exception) {
+                Log.e("jComics", "Error in getHashCode", e)
+            }
+
+            return "error"
+        }
+
+        val isInternetAvailable: Boolean
+            get() {
+                if (lastOnlineCheck == null || Date().time - lastOnlineCheck!!.time > 2000) {
+                    try {
+                        val address = getInetAddressByName("baidu.com")
+                        lastOnlineCheck = Date()
+                        isOnline = address != null
+                        return isOnline
+                    } catch (e: Exception) {
+                        Log.e("jComics", "Exception caught by isInternetAvailable", e)
+                    }
+
+                }
+                return isOnline
+            }
+
+        fun getInetAddressByName(name: String): InetAddress? {
+            val task = object : AsyncTask<String, Void, InetAddress>() {
+                override fun doInBackground(vararg params: String): InetAddress? {
+                    try {
+                        return InetAddress.getByName(params[0])
+                    } catch (e: Exception) {
+                        return null
+                    }
+
+                }
+            }
+            try {
+                return task.execute(name).get()
+            } catch (e: InterruptedException) {
+                return null
+            } catch (e: ExecutionException) {
+                return null
+            }
+
+        }
+
+        fun writeToFile(data: String, path: File, filename: String) {
+            // Get the directory for the user's public pictures directory.
+            val file = File(path, filename)
+
+            // Save your stream, don't forget to flush() it before closing it.
+
+            try {
+                file.createNewFile()
+                val fOut = FileOutputStream(file)
+                val myOutWriter = OutputStreamWriter(fOut)
+                myOutWriter.append(data)
+
+                myOutWriter.close()
+
+                fOut.flush()
+                fOut.close()
+            } catch (e: Exception) {
+                Log.e("jComics", "File write failed: $e")
+            }
+
+        }
+
+        val rootFile: File
+            get() = File(Environment.getExternalStorageDirectory().toString() + "/jComics")
+
+        fun getBookFile(book: BookDTO): File {
+            return File(rootFile, Utils.getHashCode(book.bookUrl))
+        }
+
+        fun getEpisodeFile(book: BookDTO, episode: EpisodeDTO): File {
+            return File(getBookFile(book), Utils.getHashCode(episode.episodeUrl))
+        }
+
+        fun getImgFile(book: BookDTO, episode: EpisodeDTO, pageNum: Int): File {
+            return File(getEpisodeFile(book, episode), String.format("%04d", pageNum) + ".jpg")
+        }
+
+        fun downloadImage(imgUrl: String?, referer: String?): Bitmap? {
+            if (imgUrl == null) return null
+            var bitmap: Bitmap? = null
+            try {
+                val conn = java.net.URL(imgUrl).openConnection() as HttpURLConnection
+                conn.readTimeout = 5000
+                conn.useCaches = true
+                if (referer != null) {
+                    conn.setRequestProperty("Referer", referer)
+                }
+
+                val bis = BufferedInputStream(conn.inputStream)
+                bitmap = BitmapFactory.decodeStream(bis)
+
+                bis.close()
+                conn.disconnect()
+            } catch (e: Exception) {
+                Log.e("jComics", "Exception caught in downloadImage", e)
+            }
+
+            return bitmap
+        }
+
+        fun imageFromFile(file: File): Bitmap {
+            val options = BitmapFactory.Options()
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888
+            return BitmapFactory.decodeFile(file.absolutePath, options)
+        }
+
+        fun calFolderSize(directory: File): Long {
+            var length: Long = 0
+            for (file in directory.listFiles()) {
+                if (file.isFile)
+                    length += file.length()
+                else
+                    length += calFolderSize(file)
+            }
+            return length
+        }
+
+        fun formatSize(v: Long): String {
+            if (v < 1024) return "$v B"
+            val z = (63 - java.lang.Long.numberOfLeadingZeros(v)) / 10
+            return String.format("%.1f %sB", v.toDouble() / (1L shl z * 10), " KMGTPE"[z])
+        }
+
+        fun deleteRecursive(fileOrDirectory: File) {
+            if (fileOrDirectory.isDirectory)
+                for (child in fileOrDirectory.listFiles())
+                    deleteRecursive(child)
+
+            fileOrDirectory.delete()
+        }
+    }
+
+}
