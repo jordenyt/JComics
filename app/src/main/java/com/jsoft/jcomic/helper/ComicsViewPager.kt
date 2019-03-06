@@ -11,13 +11,13 @@ class ComicsViewPager : ViewPager {
 
     private var activity: FullscreenActivity? = null
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context)
 
     fun setActivity(activity: FullscreenActivity) {
         this.activity = activity
     }
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     fun turnPrev() {
         if (this.currentItem == 0) {

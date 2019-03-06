@@ -2,20 +2,16 @@ package com.jsoft.jcomic.praser
 
 import android.text.Html
 import android.util.Log
-
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.EpisodeDTO
-
-import java.util.ArrayList
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
 import taobe.tec.jcc.JChineseConvertor
+import java.util.*
+import java.util.regex.Pattern
 
 
 class DM5BookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "UTF-8") {
 
-    fun chineseS2T(simplifiedChineseString: String): String {
+    private fun chineseS2T(simplifiedChineseString: String): String {
         var result = simplifiedChineseString
         try {
             val jChineseConvertor = JChineseConvertor.getInstance()
@@ -32,7 +28,7 @@ class DM5BookParser(book: BookDTO, listener: BookParserListener) : BookParser(bo
         var episodes: MutableList<EpisodeDTO> = ArrayList()
         var s = ""
         for (i in html.indices) {
-            s = s + html[i]
+            s += html[i]
         }
 
         var p = Pattern.compile("<a href=\"([A-Za-z0-9\\/]+?)\" title=\"(.*?)\" class=\"chapteritem\">(.+?)</a>")

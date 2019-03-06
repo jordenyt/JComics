@@ -2,20 +2,16 @@ package com.jsoft.jcomic.adapter
 
 import android.graphics.Typeface
 import android.support.constraint.ConstraintLayout
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-
 import com.jsoft.jcomic.DownloadListActivity
 import com.jsoft.jcomic.R
 import com.jsoft.jcomic.helper.DownloadItemDTO
 import com.jsoft.jcomic.helper.Utils
-
-import java.io.File
 
 class DownloadListAdapter(var items: ArrayList<DownloadItemDTO>?, private val activity: DownloadListActivity) : BaseAdapter() {
 

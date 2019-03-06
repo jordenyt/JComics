@@ -1,18 +1,5 @@
 package com.jsoft.jcomic.helper
 
-import java.io.BufferedInputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStreamWriter
-import java.math.BigInteger
-import java.net.HttpURLConnection
-import java.net.InetAddress
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
-import java.util.Date
-import java.util.concurrent.ExecutionException
-
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -20,8 +7,17 @@ import android.graphics.Point
 import android.os.AsyncTask
 import android.os.Environment
 import android.util.Log
-import android.view.Display
 import android.view.WindowManager
+import java.io.*
+import java.math.BigInteger
+import java.net.HttpURLConnection
+import java.net.InetAddress
+import java.net.URL
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.Date
+import java.util.concurrent.ExecutionException
+import kotlin.collections.ArrayList
 
 /**
  * Created by Jorden on 1/10/15.
@@ -86,23 +82,23 @@ class Utils// constructor
                 return isOnline
             }
 
-        fun getInetAddressByName(name: String): InetAddress? {
+        private fun getInetAddressByName(name: String): InetAddress? {
             val task = object : AsyncTask<String, Void, InetAddress>() {
                 override fun doInBackground(vararg params: String): InetAddress? {
-                    try {
-                        return InetAddress.getByName(params[0])
+                    return try {
+                        InetAddress.getByName(params[0])
                     } catch (e: Exception) {
-                        return null
+                        null
                     }
 
                 }
             }
-            try {
-                return task.execute(name).get()
+            return try {
+                task.execute(name).get()
             } catch (e: InterruptedException) {
-                return null
+                null
             } catch (e: ExecutionException) {
-                return null
+                null
             }
 
         }
@@ -167,6 +163,34 @@ class Utils// constructor
             return bitmap
         }
 
+        fun getURLResponse(url: URL, referer: String?, encoding: String): ArrayList<String> {
+            val result = ArrayList<String>()
+            try {
+                val httpConnect = url.openConnection() as HttpURLConnection
+                httpConnect.connectTimeout = 5 * 1000
+                httpConnect.readTimeout = 5 * 1000
+                httpConnect.doOutput = true
+                httpConnect.doInput = true
+                httpConnect.useCaches = true
+                httpConnect.requestMethod = "GET"
+                if (referer != null)
+                    httpConnect.setRequestProperty("Referer", referer)
+                httpConnect.connect()
+
+                val inputStream = httpConnect.inputStream
+                val reader = BufferedReader(InputStreamReader(inputStream))
+                reader.forEachLine {
+                    result.add(it)
+                }
+                inputStream.close()
+                reader.close()
+
+            } catch (e: Exception) {
+                Log.e("jComics", "Caught by getURLResponse", e)
+            }
+            return result
+        }
+
         fun imageFromFile(file: File): Bitmap {
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
@@ -176,10 +200,10 @@ class Utils// constructor
         fun calFolderSize(directory: File): Long {
             var length: Long = 0
             for (file in directory.listFiles()) {
-                if (file.isFile)
-                    length += file.length()
+                length += if (file.isFile)
+                    file.length()
                 else
-                    length += calFolderSize(file)
+                    calFolderSize(file)
             }
             return length
         }

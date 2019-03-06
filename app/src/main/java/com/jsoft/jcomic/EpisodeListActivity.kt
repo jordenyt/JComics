@@ -1,31 +1,22 @@
 package com.jsoft.jcomic
 
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.TextView
-
 import com.google.gson.Gson
 import com.jsoft.jcomic.adapter.EpisodeListAdapter
-import com.jsoft.jcomic.helper.AppConstant
-import com.jsoft.jcomic.helper.BookDTO
-import com.jsoft.jcomic.helper.BookmarkDb
-import com.jsoft.jcomic.helper.Downloader
-import com.jsoft.jcomic.helper.Utils
+import com.jsoft.jcomic.helper.*
 import com.jsoft.jcomic.praser.BookParser
 import com.jsoft.jcomic.praser.BookParserListener
-
 import java.io.File
 import java.io.FileReader
 
@@ -45,10 +36,10 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         //Log.e("jComics", "get Intent!");
         val bookUrl: String
         val data = i.data
-        if (data != null) {
-            bookUrl = data.toString()
+        bookUrl = if (data != null) {
+            data.toString()
         } else {
-            bookUrl = i.getStringExtra("bookUrl")
+            i.getStringExtra("bookUrl")
         }
         bookmarkDb = BookmarkDb(this)
         loadBook(bookUrl)
@@ -58,7 +49,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
 
     }
 
-    fun loadBook(bookUrl: String) {
+    private fun loadBook(bookUrl: String) {
         try {
             val bookFile = File(Utils.getBookFile(BookDTO(bookUrl)), "book.json")
             val dbBook = bookmarkDb!!.getBook(bookUrl)
@@ -99,7 +90,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (book != null && book!!.episodes!!.size > 0) {
+        if (book != null && book!!.episodes!!.isNotEmpty()) {
             if (!bookmarkDb!!.bookIsBookmarked(book!!)) {
                 menu.getItem(1).isVisible = false
                 menu.getItem(0).isVisible = true
@@ -160,7 +151,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         title = book.bookTitle
         setContentView(R.layout.activity_episode_list)
         gridView = findViewById(R.id.episode_list_view)
-        InitilizeGridLayout()
+        initilizeGridLayout()
 
         if (gridView!!.adapter == null) {
             gridView!!.adapter = EpisodeListAdapter(this, book)
@@ -193,7 +184,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         }
     }
 
-    private fun InitilizeGridLayout() {
+    private fun initilizeGridLayout() {
         val r = resources
         val padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 AppConstant.GRID_PADDING.toFloat(), r.displayMetrics)

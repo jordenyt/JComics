@@ -1,6 +1,5 @@
 package com.jsoft.jcomic
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -8,20 +7,10 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.SeekBar
-
 import com.google.gson.Gson
 import com.jsoft.jcomic.adapter.FullScreenImageAdapter
-import com.jsoft.jcomic.helper.BookDTO
-import com.jsoft.jcomic.helper.BookmarkDb
-import com.jsoft.jcomic.helper.ComicsViewPager
-import com.jsoft.jcomic.helper.EpisodeDTO
-import com.jsoft.jcomic.helper.Utils
-import com.jsoft.jcomic.praser.CartoonMadEpisodeParser
-import com.jsoft.jcomic.praser.ComicVIPEpisodeParser
-import com.jsoft.jcomic.praser.DM5EpisodeParser
-import com.jsoft.jcomic.praser.EpisodeParser
-import com.jsoft.jcomic.praser.EpisodeParserListener
-
+import com.jsoft.jcomic.helper.*
+import com.jsoft.jcomic.praser.*
 import java.io.File
 import java.io.FileReader
 
@@ -43,10 +32,10 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
         val i = intent
         currEpisode = i.getIntExtra("position", 0)
         val b = this.intent.extras
-        if (b != null)
-            book = b.getSerializable("book") as BookDTO
+        book = if (b != null)
+            b.getSerializable("book") as BookDTO
         else {
-            book = BookDTO("")
+            BookDTO("")
         }
         //Log.d("jComic", "EpisodeUrl: " + episode.getEpisodeUrl());
         val episode = book!!.episodes!![currEpisode]
@@ -139,7 +128,7 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
 
     @JvmOverloads
     fun episodeSwitch(pageTurn: Int, gotoLastPage: Boolean = true) {
-        currEpisode = currEpisode - pageTurn
+        currEpisode -= pageTurn
         this.pageTurn = pageTurn
         this.gotoLastPage = gotoLastPage
         if (currEpisode >= 0 && currEpisode < book!!.episodes!!.size) {

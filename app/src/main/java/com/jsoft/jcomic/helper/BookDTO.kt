@@ -1,10 +1,8 @@
 package com.jsoft.jcomic.helper
 
 import android.graphics.Bitmap
-
 import java.io.Serializable
-import java.util.ArrayList
-import java.util.Date
+import java.util.*
 
 class BookDTO(var bookUrl: String?) : Serializable, Cloneable {
     var bookTitle: String? = null
@@ -19,7 +17,7 @@ class BookDTO(var bookUrl: String?) : Serializable, Cloneable {
     val serializable: BookDTO
         get() {
             val cloneBook = this.clone()
-            cloneBook!!.bookImg = null
+            cloneBook.bookImg = null
             return cloneBook
         }
 
@@ -32,7 +30,7 @@ class BookDTO(var bookUrl: String?) : Serializable, Cloneable {
                 episodeList.add(episode.clone())
             }
         } catch (e: CloneNotSupportedException) {
-            episodeList!!.clear()
+            episodeList.clear()
         }
         cloneBook.episodes = episodeList
         return cloneBook

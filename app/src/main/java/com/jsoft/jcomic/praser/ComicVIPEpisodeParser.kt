@@ -1,9 +1,7 @@
 package com.jsoft.jcomic.praser
 
 import com.jsoft.jcomic.helper.EpisodeDTO
-
-import java.util.ArrayList
-import java.util.regex.Matcher
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -42,7 +40,7 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
         }
 
         var extractCode = ""
-        if (code.length > 0 && episodeId > 0 && bookId > 0) {
+        if (code.isNotEmpty() && episodeId > 0 && bookId > 0) {
             for (i in 0 until code.length / 50) { // i = 0 to 399
                 if (Integer.parseInt(ss(code, i * 50, 4, true)) == episodeId) {
                     extractCode = ss(code, i * 50, 50, false)

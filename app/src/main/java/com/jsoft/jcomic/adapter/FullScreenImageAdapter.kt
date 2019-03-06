@@ -11,15 +11,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-
 import com.jsoft.jcomic.R
-import com.jsoft.jcomic.helper.BookDTO
-import com.jsoft.jcomic.helper.ComicsViewPager
-import com.jsoft.jcomic.helper.EpisodeDTO
-import com.jsoft.jcomic.helper.TouchImageView
-import com.jsoft.jcomic.helper.Utils
-
-import java.io.File
+import com.jsoft.jcomic.helper.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 

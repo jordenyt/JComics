@@ -2,34 +2,33 @@ package com.jsoft.jcomic.helper
 
 import android.content.Context
 import android.graphics.Matrix
-import android.graphics.drawable.Drawable
+import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import android.support.v7.widget.AppCompatImageView
 import android.widget.ImageView
 
 class TouchImageView: AppCompatImageView {
     internal var matrix: Matrix = Matrix()
 
     // Remember some things for zooming
-    internal var minScale = 1f
+    private var minScale = 1f
     internal var maxScale = 3f
-    internal var m: FloatArray = FloatArray(9)
+    private var m: FloatArray = FloatArray(9)
 
     internal var viewWidth: Int = 0
     internal var viewHeight: Int = 0
     internal var saveScale = 1f
-    protected var origWidth: Float = 0.toFloat()
-    protected var origHeight: Float = 0.toFloat()
-    internal var oldMeasuredHeight: Int = 0
+    private var origWidth: Float = 0.toFloat()
+    private var origHeight: Float = 0.toFloat()
+    private var oldMeasuredHeight: Int = 0
     internal var pager: ComicsViewPager = ComicsViewPager(context)
 
-    internal var mScaleDetector: ScaleGestureDetector = ScaleGestureDetector(context, ScaleListener())
-    internal var mGestureDetector: GestureDetector = GestureDetector(context, GestureListener())
+    private var mScaleDetector: ScaleGestureDetector = ScaleGestureDetector(context, ScaleListener())
+    private var mGestureDetector: GestureDetector = GestureDetector(context, GestureListener())
 
 
     constructor(context: Context) : super(context) {
@@ -80,12 +79,12 @@ class TouchImageView: AppCompatImageView {
 
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onDoubleTap(e: MotionEvent): Boolean {
-            if (saveScale < maxScale) {
+            return if (saveScale < maxScale) {
                 scaleImage(2f, e.x, e.y)
-                return true
+                true
             } else {
                 scaleImage(0.1f, e.x, e.y)
-                return true
+                true
             }
         }
 
@@ -172,7 +171,7 @@ class TouchImageView: AppCompatImageView {
             matrix.postTranslate(fixTransX, fixTransY)
     }
 
-    internal fun getFixTrans(trans: Float, viewSize: Float, contentSize: Float): Float {
+    private fun getFixTrans(trans: Float, viewSize: Float, contentSize: Float): Float {
         val minTrans: Float
         val maxTrans: Float
 

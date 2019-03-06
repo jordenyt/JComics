@@ -3,19 +3,16 @@ package com.jsoft.jcomic.adapter
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.AsyncTask
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-
 import com.jsoft.jcomic.GridViewActivity
 import com.jsoft.jcomic.R
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.Utils
-
 import java.io.File
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors

@@ -50,7 +50,7 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
         }
     }
 
-    fun setNotification(mContext: Context) {
+    private fun setNotification(mContext: Context) {
         mBuilder = NotificationCompat.Builder(mContext.applicationContext, "notify_001")
         val ii = Intent(mContext.applicationContext, DownloadListActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(mContext, 0, ii, 0)
@@ -154,10 +154,6 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
 
             //Log.e("jComic", "Finish Get Image: " + urldisplay);
             return bitmap
-        }
-
-        override fun onProgressUpdate(vararg progress: Int?) {
-            super.onProgressUpdate(*progress)
         }
 
         override fun onPostExecute(result: Bitmap?) {

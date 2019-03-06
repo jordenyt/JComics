@@ -1,12 +1,9 @@
 package com.jsoft.jcomic.praser
 
 import android.text.Html
-
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.EpisodeDTO
-
-import java.util.ArrayList
-import java.util.regex.Matcher
+import java.util.*
 import java.util.regex.Pattern
 
 class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "BIG5") {

@@ -1,9 +1,7 @@
 package com.jsoft.jcomic.praser
 
 import com.jsoft.jcomic.helper.EpisodeDTO
-
-import java.util.ArrayList
-import java.util.regex.Matcher
+import java.util.*
 import java.util.regex.Pattern
 
 class DM5EpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener) : EpisodeParser(episode, listener, "UTF-8") {
@@ -12,16 +10,16 @@ class DM5EpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener) : E
         var s = ""
         val characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         if (i >= characters.length) {
-            s = s + characters[i / characters.length]
+            s += characters[i / characters.length]
         }
-        s = s + characters[i % characters.length]
+        s += characters[i % characters.length]
         return s
     }
 
     override fun getEpisodeFromUrlResult(result: List<String>) {
         var s = ""
         for (i in result.indices) {
-            s = s + result[i]
+            s += result[i]
         }
 
         val imageUrlList = ArrayList<String>()
@@ -49,7 +47,7 @@ class DM5EpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener) : E
                     var imgUrl = url
                     imgUrl = imgUrl.replace("\\\\\\'".toRegex(), "")
                     for (j in replaceStrArray.indices) {
-                        if (replaceStrArray[j]!!.length > 0) {
+                        if (replaceStrArray[j]!!.isNotEmpty()) {
                             imgUrl = imgUrl.replace(("\\b" + intCode(j) + "\\b").toRegex(), replaceStrArray[j]!!)
                         }
                     }

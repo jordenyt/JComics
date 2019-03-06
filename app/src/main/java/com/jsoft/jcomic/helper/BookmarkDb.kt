@@ -2,15 +2,10 @@ package com.jsoft.jcomic.helper
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-
 import com.jsoft.jcomic.helper.BookmarkDbHelper.BookmarkEntry
-
 import java.text.SimpleDateFormat
-import java.util.ArrayList
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 /**
  * Created by Jorden on 4/10/15.
@@ -69,7 +64,7 @@ class BookmarkDb(context: Context) {
         val queryString = ("SELECT " + BookmarkEntry.COLUMN_NAME_BOOK_URL
                 + " FROM " + BookmarkEntry.TABLE_NAME
                 + " WHERE " + BookmarkEntry.COLUMN_NAME_BOOK_URL + " = ?")
-        val c = db.rawQuery(queryString, arrayOf<String>(book.bookUrl!!))
+        val c = db.rawQuery(queryString, arrayOf(book.bookUrl!!))
         val result = c.count > 0
         c.close()
         //db.close();
@@ -86,7 +81,7 @@ class BookmarkDb(context: Context) {
 
         // Which row to update, based on the ID
         val selection = BookmarkEntry.COLUMN_NAME_BOOK_URL + " LIKE ?"
-        val selectionArgs = arrayOf<String>(book.bookUrl!!)
+        val selectionArgs = arrayOf(book.bookUrl!!)
 
         val count = db.update(
                 BookmarkEntry.TABLE_NAME,
@@ -101,14 +96,14 @@ class BookmarkDb(context: Context) {
         val queryString = ("SELECT " + BookmarkEntry.COLUMN_NAME_IS_BOOKMARK
                 + " FROM " + BookmarkEntry.TABLE_NAME
                 + " WHERE " + BookmarkEntry.COLUMN_NAME_BOOK_URL + " = ?")
-        val c = db.rawQuery(queryString, arrayOf<String>(book.bookUrl!!))
+        val c = db.rawQuery(queryString, arrayOf(book.bookUrl!!))
         var result = c.count > 0
         if (result) {
             c.moveToFirst()
-            if (c.getString(0) == null) {
-                result = false
+            result = if (c.getString(0) == null) {
+                false
             } else
-                result = "Y" == c.getString(0)
+                "Y" == c.getString(0)
         }
         c.close()
         //db.close();
@@ -125,7 +120,7 @@ class BookmarkDb(context: Context) {
 
         // Which row to update, based on the ID
         val selection = BookmarkEntry.COLUMN_NAME_BOOK_URL + " LIKE ?"
-        val selectionArgs = arrayOf<String>(book.bookUrl!!)
+        val selectionArgs = arrayOf(book.bookUrl!!)
 
         val count = db.update(
                 BookmarkEntry.TABLE_NAME,
@@ -162,7 +157,7 @@ class BookmarkDb(context: Context) {
         val queryString = ("SELECT " + BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE
                 + " FROM " + BookmarkDbHelper.BookmarkEntry.TABLE_NAME
                 + " WHERE " + BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_BOOK_URL + " = ?")
-        val c = db.rawQuery(queryString, arrayOf<String>(book.bookUrl!!))
+        val c = db.rawQuery(queryString, arrayOf(book.bookUrl!!))
         var result = "NOT FOUND"
         if (c.count > 0) {
             c.moveToFirst()
@@ -178,7 +173,7 @@ class BookmarkDb(context: Context) {
         val queryString = ("SELECT " + BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE_PAGE
                 + " FROM " + BookmarkDbHelper.BookmarkEntry.TABLE_NAME
                 + " WHERE " + BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_BOOK_URL + " = ?")
-        val c = db.rawQuery(queryString, arrayOf<String>(book.bookUrl!!))
+        val c = db.rawQuery(queryString, arrayOf(book.bookUrl!!))
         var result = 0
         if (c.count > 0) {
             c.moveToFirst()

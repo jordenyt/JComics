@@ -1,30 +1,21 @@
 package com.jsoft.jcomic.adapter
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.graphics.Color
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import android.widget.Toast
-
 import com.jsoft.jcomic.EpisodeListActivity
 import com.jsoft.jcomic.R
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.BookmarkDb
-import com.jsoft.jcomic.helper.EpisodeDTO
 import com.jsoft.jcomic.helper.Utils
-
 import java.io.File
 
 class EpisodeListAdapter(private val activity: EpisodeListActivity, private var book: BookDTO?) : BaseAdapter() {
-    private val bookmarkDb: BookmarkDb
-
-    init {
-        bookmarkDb = BookmarkDb(activity)
-    }
+    private val bookmarkDb: BookmarkDb = BookmarkDb(activity)
 
     override fun getCount(): Int {
         return book!!.episodes!!.size

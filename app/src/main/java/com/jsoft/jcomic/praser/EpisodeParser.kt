@@ -2,16 +2,11 @@ package com.jsoft.jcomic.praser
 
 import android.os.AsyncTask
 import android.util.Log
-
 import com.jsoft.jcomic.helper.EpisodeDTO
-
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
+import com.jsoft.jcomic.helper.Utils
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by 01333855 on 02/10/2015.
@@ -30,27 +25,7 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
     inner class DownloadFilesTask(private val encoding: String) : AsyncTask<URL, Int, ArrayList<String>>() {
 
         override fun doInBackground(vararg urls: URL): ArrayList<String> {
-            val result = ArrayList<String>()
-            for (url in urls) {
-                var readLine: String?
-                try {
-                    val `is` = url.openStream()
-                    val `in` = BufferedReader(InputStreamReader(`is`, encoding))
-                    do {
-                        readLine = `in`.readLine()
-                        if (readLine != null) result.add(readLine)
-                    } while (readLine != null)
-                    `is`.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-
-            }
-            return result
-        }
-
-        override fun onProgressUpdate(vararg progress: Int?) {
-            //setProgressPercent(progress[0]);
+            return Utils.getURLResponse(urls[0], episode.episodeUrl, encoding)
         }
 
         override fun onPostExecute(result: ArrayList<String>) {

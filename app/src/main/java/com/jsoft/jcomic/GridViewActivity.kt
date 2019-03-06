@@ -3,8 +3,6 @@ package com.jsoft.jcomic
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
-import android.net.Uri
 import android.net.http.HttpResponseCache
 import android.os.AsyncTask
 import android.os.Build
@@ -14,31 +12,21 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebResourceRequest
-import android.webkit.WebSettings
-import android.webkit.WebViewClient
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.GridView
 import android.widget.LinearLayout
-
 import com.jsoft.jcomic.adapter.GridViewImageAdapter
 import com.jsoft.jcomic.helper.AppConstant
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.BookmarkDb
 import com.jsoft.jcomic.helper.Utils
-
-import java.io.BufferedInputStream
-import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
 import java.net.URL
-import java.util.ArrayList
 
 class GridViewActivity : AppCompatActivity() {
 
@@ -50,32 +38,32 @@ class GridViewActivity : AppCompatActivity() {
     private var gridViewActivity: GridViewActivity? = null
 
     //permission is automatically granted on sdk<23 upon installation
-    val isReadStoragePermissionGranted: Boolean
+    private val isReadStoragePermissionGranted: Boolean
         get() {
-            if (Build.VERSION.SDK_INT >= 23) {
+            return if (Build.VERSION.SDK_INT >= 23) {
                 if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    return true
+                    true
                 } else {
                     ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 3)
-                    return false
+                    false
                 }
             } else {
-                return true
+                true
             }
         }
 
     //permission is automatically granted on sdk<23 upon installation
-    val isWriteStoragePermissionGranted: Boolean
+    private val isWriteStoragePermissionGranted: Boolean
         get() {
-            if (Build.VERSION.SDK_INT >= 23) {
+            return if (Build.VERSION.SDK_INT >= 23) {
                 if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    return true
+                    true
                 } else {
                     ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 2)
-                    return false
+                    false
                 }
             } else {
-                return true
+                true
             }
         }
 
@@ -132,14 +120,14 @@ class GridViewActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.menu_item_download -> {
                 val intent = Intent(this, DownloadListActivity::class.java)
                 this.startActivityForResult(intent, 0)
                 invalidateOptionsMenu()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -170,57 +158,36 @@ class GridViewActivity : AppCompatActivity() {
         webSettings.javaScriptEnabled = true
         webView!!.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                val uri = request.url
                 try {
-                    val uri = request.url
                     if (uri.host!!.contains("cartoonmad.com") && uri.path!!.startsWith("/m/comic/") || uri.host!!.contains("comicbus.com") && uri.path!!.startsWith("/comic/")) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
                         i.putExtra("bookUrl", uri.toString())
                         startActivity(i)
                         return true
                     } else if (uri.host!!.contains("dm5.com")) {
-                        InterceptDM5Task("UTF-8", view).execute(URL(uri.toString()))
+                        InterceptDM5Task(view).execute(URL(uri.toString()))
                         return true
                     }
                 } catch (e: Exception) {
                     Log.e("jComics", "Caught by shouldOverrideUrlLoading", e)
                 }
-
                 return false
             }
         }
     }
 
-    inner class InterceptDM5Task(private val encoding: String, private val wv: WebView) : AsyncTask<URL, Int, List<String>>() {
+    inner class InterceptDM5Task(private val wv: WebView) : AsyncTask<URL, Int, List<String>>() {
         private var url: String? = null
 
         override fun doInBackground(vararg urls: URL): List<String> {
-            val result = ArrayList<String>()
-            val urlConn = urls[0]
-            this.url = urls[0].toString()
-            try {
-                val conn = urlConn.openConnection() as HttpURLConnection
-                conn.readTimeout = 5000
-                conn.useCaches = true
-                conn.setRequestProperty("Referer", "http://m.dm5.com/manhua-list/")
-                val `is` = BufferedInputStream(conn.inputStream)
-                val `in` = BufferedReader(InputStreamReader(`is`, encoding))
-                var readLine: String
-                do {
-                    readLine = `in`.readLine()
-                    result.add(readLine)
-                } while (readLine != null)
-                `in`.close()
-                `is`.close()
-            } catch (e: Exception) {
-                Log.e("jComics", "Caught by InterceptDM5Task", e)
-            }
-
-            return result
+            url = urls[0].toString()
+            return Utils.getURLResponse(urls[0], null, "UTF-8")
         }
 
         override fun onPostExecute(result: List<String>) {
             var data = ""
-            if (result.size > 0) {
+            if (result.isNotEmpty()) {
                 for (i in result.indices) {
                     data = data + "\n" + result[i].replace("\\s{4,}".toRegex(), "\n")
                 }
@@ -230,7 +197,7 @@ class GridViewActivity : AppCompatActivity() {
                 i.putExtra("bookUrl", url)
                 gridViewActivity!!.startActivity(i)
             } else {
-                data = data.replace("var tagid = \"(.*)\";".toRegex(), "var tagid = \"$1\"; var categoryid = \"0\"")
+                data = data.replace("var tagid = \"(.*)\";".toRegex(), "var tagid = \"$1\"; var categoryid = \"0\"; ")
                 wv.loadDataWithBaseURL(url, data, "text/html; charset=utf-8", "utf-8", null)
             }
         }
@@ -258,7 +225,7 @@ class GridViewActivity : AppCompatActivity() {
         webView!!.visibility = View.VISIBLE
         gridView!!.visibility = View.GONE
         try {
-            InterceptDM5Task("UTF-8", webView!!).execute(URL("http://m.dm5.com/manhua-list/"))
+            InterceptDM5Task(webView!!).execute(URL("http://m.dm5.com/manhua-list/"))
         } catch (e: Exception) {
             Log.e("jComics", "Caught by goToDM5", e)
         }
@@ -284,6 +251,5 @@ class GridViewActivity : AppCompatActivity() {
         } catch (e: IOException) {
             Log.e("jComics", "Exception caught in enableHttpCaching", e)
         }
-
     }
 }

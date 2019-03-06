@@ -10,14 +10,14 @@ class BookmarkDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
 
     abstract class BookmarkEntry : BaseColumns {
         companion object {
-            val TABLE_NAME = "JC_BOOKMARK"
-            val COLUMN_NAME_BOOK_URL = "book_url"
-            val COLUMN_NAME_TITLE = "title"
-            val COLUMN_NAME_BOOK_IMG_URL = "book_img_url"
-            val COLUMN_NAME_IS_BOOKMARK = "is_bookmark"
-            val COLUMN_NAME_LAST_READ_EPISODE = "last_read_episode"
-            val COLUMN_NAME_LAST_READ_EPISODE_PAGE = "last_read_episode_page"
-            val COLUMN_NAME_LAST_READ_TIME = "last_read_time"
+            const val TABLE_NAME = "JC_BOOKMARK"
+            const val COLUMN_NAME_BOOK_URL = "book_url"
+            const val COLUMN_NAME_TITLE = "title"
+            const val COLUMN_NAME_BOOK_IMG_URL = "book_img_url"
+            const val COLUMN_NAME_IS_BOOKMARK = "is_bookmark"
+            const val COLUMN_NAME_LAST_READ_EPISODE = "last_read_episode"
+            const val COLUMN_NAME_LAST_READ_EPISODE_PAGE = "last_read_episode_page"
+            const val COLUMN_NAME_LAST_READ_TIME = "last_read_time"
         }
     }
 
@@ -38,12 +38,12 @@ class BookmarkDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
 
     companion object {
         // If you change the database schema, you must increment the database version.
-        val DATABASE_VERSION = 2
-        val DATABASE_NAME = "JCBookmark.db"
+        const val DATABASE_VERSION = 2
+        const val DATABASE_NAME = "JCBookmark.db"
 
-        private val TEXT_TYPE = " TEXT"
-        private val INT_TYPE = " INTEGER"
-        private val COMMA_SEP = ","
+        private const val TEXT_TYPE = " TEXT"
+        private const val INT_TYPE = " INTEGER"
+        private const val COMMA_SEP = ","
         private val SQL_CREATE_ENTRIES = "CREATE TABLE " + BookmarkEntry.TABLE_NAME + " (" +
                 BaseColumns._ID + " INTEGER PRIMARY KEY," +
                 BookmarkEntry.COLUMN_NAME_BOOK_URL + TEXT_TYPE + COMMA_SEP +
