@@ -15,7 +15,7 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
         try {
             DownloadFilesTask(encoding).execute(URL(book.bookUrl))
         } catch (e: MalformedURLException) {
-            Log.e("jComics", "MalformedURLException: " + book.bookUrl)
+            Log.e("jComics", "MalformedURLException: " + book.bookUrl!!)
         }
     }
 
@@ -47,9 +47,9 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
 
         fun parseBook(book: BookDTO, listener: BookParserListener) {
             when {
-                book.bookUrl.contains("comicbus") -> ComicVIPBookParser(book, listener)
-                book.bookUrl.contains("cartoonmad") -> CartoonMadBookParser(book, listener)
-                book.bookUrl.contains("dm5.com") -> DM5BookParser(book, listener)
+                book.bookUrl!!.contains("comicbus") -> ComicVIPBookParser(book, listener)
+                book.bookUrl!!.contains("cartoonmad") -> CartoonMadBookParser(book, listener)
+                book.bookUrl!!.contains("dm5.com") -> DM5BookParser(book, listener)
             }
         }
     }

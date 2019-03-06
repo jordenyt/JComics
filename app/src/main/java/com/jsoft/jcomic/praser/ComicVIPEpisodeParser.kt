@@ -15,14 +15,14 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
         var bookId = 0
         var code = ""
 
-        if (episode.episodeUrl.contains("www.comicbus.com")) {
+        if (episode.episodeUrl!!.contains("www.comicbus.com")) {
             val p = Pattern.compile("https://www\\.comicbus\\.com/show/([a-z-]+)(\\d+)\\.html\\?ch=(\\d+)")
             val m = p.matcher(episode.episodeUrl)
             if (m.matches()) {
                 bookId = Integer.parseInt(m.group(2))
                 episodeId = Integer.parseInt(m.group(3))
             }
-        } else if (episode.episodeUrl.contains("m.comicbus.com")) {
+        } else if (episode.episodeUrl!!.contains("m.comicbus.com")) {
             val p = Pattern.compile("https://m\\.comicbus\\.com/comic/[a-z]+_(\\d+)\\.html\\?ch=(\\d+)")
             val m = p.matcher(episode.episodeUrl)
             if (m.matches()) {

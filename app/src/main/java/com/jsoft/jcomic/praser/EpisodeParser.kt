@@ -17,7 +17,7 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
         try {
             DownloadFilesTask(encoding).execute(URL(episode.episodeUrl))
         } catch (e: MalformedURLException) {
-            Log.e("jComics", "MalformedURLException: " + episode.episodeUrl)
+            Log.e("jComics", "MalformedURLException: " + episode.episodeUrl!!)
         }
 
     }
@@ -41,11 +41,11 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
     companion object {
 
         fun parseEpisode(episode: EpisodeDTO, listener: EpisodeParserListener) {
-            if (episode.episodeUrl.contains("comicbus")) {
+            if (episode.episodeUrl!!.contains("comicbus")) {
                 ComicVIPEpisodeParser(episode, listener)
-            } else if (episode.episodeUrl.contains("cartoonmad")) {
+            } else if (episode.episodeUrl!!.contains("cartoonmad")) {
                 CartoonMadEpisodeParser(episode, listener)
-            } else if (episode.episodeUrl.contains("dm5.com")) {
+            } else if (episode.episodeUrl!!.contains("dm5.com")) {
                 DM5EpisodeParser(episode, listener)
             }
         }

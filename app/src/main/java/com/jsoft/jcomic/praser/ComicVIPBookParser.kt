@@ -15,7 +15,7 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
             var s = html[i - 2].trim { it <= ' ' } + html[i - 1].trim { it <= ' ' } + html[i].trim { it <= ' ' }
             s = s.replace("\n", "")
 
-            if (book.bookUrl.contains("www.comicbus.com")) {
+            if (book.bookUrl!!.contains("www.comicbus.com")) {
                 var p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(.+)\\);return false;\" id=\".+\" class=\".+\">\\s*(.+)</a>.*")
                 var m = p.matcher(s)
                 if (m.matches()) {
@@ -53,7 +53,7 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
                 if (m.matches()) {
                     book.bookImgUrl = "https://www.comicbus.com" + m.group(1)
                 }
-            } else if (book.bookUrl.contains("m.comicbus.com")) {
+            } else if (book.bookUrl!!.contains("m.comicbus.com")) {
                 //Pattern p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(.+)\\);return false;\" id=\".+\" class=\".+\">\\s*(.+)</a>.*");
                 val baseurl = "https://m.comicbus.com"
 

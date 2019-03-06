@@ -49,7 +49,7 @@
     </LinearLayout>
 
     <GridView
-        android:id="@+id/bookGridView"
+        android:id="@+id/grid_view"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:background="#000000"
@@ -59,7 +59,7 @@
         android:visibility="visible" />
 
     <WebView
-        android:id="@+id/siteWebView"
+        android:id="@+id/web_view"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

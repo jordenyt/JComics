@@ -77,7 +77,7 @@ class DM5BookParser(book: BookDTO, listener: BookParserListener) : BookParser(bo
         for (episode in episodes) {
             var found = false
             for (cleanEpisode in cleanEpisodes) {
-                if (cleanEpisode.episodeUrl.trim { it <= ' ' } == episode.episodeUrl.trim { it <= ' ' }) {
+                if (cleanEpisode.episodeUrl!!.trim { it <= ' ' } == episode.episodeUrl!!.trim { it <= ' ' }) {
                     found = true
                     break
                 }

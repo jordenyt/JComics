@@ -13,29 +13,27 @@ import com.jsoft.jcomic.R
 import com.jsoft.jcomic.helper.DownloadItemDTO
 import com.jsoft.jcomic.helper.Utils
 
-class DownloadListAdapter(var items: ArrayList<DownloadItemDTO>, private val activity: DownloadListActivity) : BaseAdapter() {
+class DownloadListAdapter(var items: ArrayList<DownloadItemDTO>?, private val activity: DownloadListActivity) : BaseAdapter() {
 
     override fun getCount(): Int {
-        return items.size
+        return items!!.size
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var myConvertView = convertView
-        if (myConvertView == null) {
+        var convertView = convertView
+        if (convertView == null) {
             val inflater = activity.layoutInflater
-            myConvertView = inflater.inflate(R.layout.content_download_list, parent, false)
+            convertView = inflater.inflate(R.layout.content_download_list, parent, false)
         }
 
-        val downloadItem = myConvertView!!.findViewById<ConstraintLayout>(R.id.downloadItem)
-        val textViewBookTitle = myConvertView.findViewById<TextView>(R.id.downloadBookTitle)
-        val textViewEpisodeTitle = myConvertView.findViewById<TextView>(R.id.downloadEpisodeTitle)
-        val imageView = myConvertView.findViewById<ImageView>(R.id.downloadBookImage)
-        val textViewPageStatus = myConvertView.findViewById<TextView>(R.id.page_status)
-        val textViewEpisodeSize = myConvertView.findViewById<TextView>(R.id.episode_size)
-        val btnPlay = myConvertView.findViewById<ImageButton>(R.id.btnPlayDownload)
-        val btnDelete = myConvertView.findViewById<ImageButton>(R.id.btnDeleteDownload)
+        val downloadItem = convertView!!.findViewById<ConstraintLayout>(R.id.downloadItem)
+        val textViewBookTitle = convertView.findViewById<TextView>(R.id.downloadBookTitle)
+        val textViewEpisodeTitle = convertView.findViewById<TextView>(R.id.downloadEpisodeTitle)
+        val imageView = convertView.findViewById<ImageView>(R.id.downloadBookImage)
+        val textViewPageStatus = convertView.findViewById<TextView>(R.id.page_status)
+        val textViewEpisodeSize = convertView.findViewById<TextView>(R.id.episode_size)
 
-        val item = items[position]
+        val item = items!![position]
         var jpgCount = 0
         val episodeFile = Utils.getEpisodeFile(item.book, item.episode)
         for (file in episodeFile.listFiles()) {
@@ -56,24 +54,26 @@ class DownloadListAdapter(var items: ArrayList<DownloadItemDTO>, private val act
             imageView.setImageBitmap(null)
         }
 
+        val btnPlay = convertView.findViewById<ImageButton>(R.id.btnPlayDownload)
+        val btnDelete = convertView.findViewById<ImageButton>(R.id.btnDeleteDownload)
 
-        btnPlay.setOnClickListener(object : ImageClickListener(item) {
+        btnPlay.setOnClickListener(object : ImgageClickListener(item) {
             override fun onClick(v: View) {
                 activity.startReading(item.book, item.episodeIndex)
             }
         })
-        btnDelete.setOnClickListener(object : ImageClickListener(item) {
+        btnDelete.setOnClickListener(object : ImgageClickListener(item) {
             override fun onClick(v: View) {
                 activity.deleteEpisode(item)
             }
         })
-        downloadItem.setOnClickListener(object : ImageClickListener(item) {
+        downloadItem.setOnClickListener(object : ImgageClickListener(item) {
             override fun onClick(v: View) {
                 activity.viewBook(item.book)
             }
         })
 
-        return myConvertView
+        return convertView
     }
 
     override fun getItemId(position: Int): Long {
@@ -81,10 +81,10 @@ class DownloadListAdapter(var items: ArrayList<DownloadItemDTO>, private val act
     }
 
     override fun getItem(position: Int): Any {
-        return items[position]
+        return items!![position]
     }
 
-    internal open inner class ImageClickListener(var item: DownloadItemDTO) : View.OnClickListener {
+    internal open inner class ImgageClickListener(var item: DownloadItemDTO) : View.OnClickListener {
 
         override fun onClick(v: View) {}
     }
