@@ -25,7 +25,7 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
     inner class DownloadFilesTask(private val encoding: String) : AsyncTask<URL, Int, ArrayList<String>>() {
 
         override fun doInBackground(vararg urls: URL): ArrayList<String> {
-            return Utils.getURLResponse(urls[0], episode.episodeUrl, encoding)
+            return getURLResponse(urls[0], encoding)
         }
 
         override fun onPostExecute(result: ArrayList<String>) {
@@ -36,6 +36,10 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
 
     protected open fun getEpisodeFromUrlResult(result: List<String>) {
 
+    }
+
+    protected open fun getURLResponse(url: URL, encoding: String): ArrayList<String> {
+        return Utils.getURLResponse(url, episode.episodeUrl, encoding)
     }
 
     companion object {

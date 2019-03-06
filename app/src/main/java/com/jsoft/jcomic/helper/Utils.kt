@@ -151,6 +151,14 @@ class Utils// constructor
                     conn.setRequestProperty("Referer", referer)
                 }
 
+                val status = conn.getResponseCode()
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                        || status == HttpURLConnection.HTTP_MOVED_PERM
+                        || status == HttpURLConnection.HTTP_SEE_OTHER) {
+                    val newUrl = conn.getHeaderField("Location")
+                    return downloadImage(newUrl, referer)
+                }
+
                 val bis = BufferedInputStream(conn.inputStream)
                 bitmap = BitmapFactory.decodeStream(bis)
 
@@ -163,22 +171,31 @@ class Utils// constructor
             return bitmap
         }
 
-        fun getURLResponse(url: URL, referer: String?, encoding: String): ArrayList<String> {
+        fun getURLResponse(url: URL, referer: String?, encoding: String, cookies: String? = null): ArrayList<String> {
             val result = ArrayList<String>()
             try {
-                val httpConnect = url.openConnection() as HttpURLConnection
-                httpConnect.connectTimeout = 5 * 1000
-                httpConnect.readTimeout = 5 * 1000
-                httpConnect.doOutput = true
-                httpConnect.doInput = true
-                httpConnect.useCaches = true
-                httpConnect.requestMethod = "GET"
+                var httpConnect = url.openConnection() as HttpURLConnection
+                httpConnect.useCaches = false
                 if (referer != null)
                     httpConnect.setRequestProperty("Referer", referer)
+                if (cookies != null)
+                    httpConnect.setRequestProperty("Cookie", cookies)
+                httpConnect.doInput = true
+                httpConnect.doOutput = true
+
                 httpConnect.connect()
 
+                val status = httpConnect.getResponseCode()
+
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                        || status == HttpURLConnection.HTTP_MOVED_PERM
+                        || status == HttpURLConnection.HTTP_SEE_OTHER) {
+                    val newUrl = httpConnect.getHeaderField("Location")
+                    return getURLResponse(URL(newUrl), referer, encoding, cookies)
+                }
+
                 val inputStream = httpConnect.inputStream
-                val reader = BufferedReader(InputStreamReader(inputStream))
+                val reader = BufferedReader(InputStreamReader(inputStream, encoding))
                 reader.forEachLine {
                     result.add(it)
                 }
