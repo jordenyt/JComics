@@ -4,13 +4,13 @@
     android:orientation="vertical">
 
     <com.jsoft.jcomic.helper.ComicsViewPager
-        android:id="@+id/pager"
+        android:id="@+id/imageViewPager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/black" />
 
     <LinearLayout
-        android:id="@+id/seekbar_layout"
+        android:id="@+id/seekBarLayout"
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:layout_gravity="center|top"

@@ -32,8 +32,7 @@ class Utils// constructor
     val screenWidth: Int
         get() {
             val columnWidth: Int
-            val wm = _context
-                    .getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val wm = _context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val display = wm.defaultDisplay
 
             val point = Point()

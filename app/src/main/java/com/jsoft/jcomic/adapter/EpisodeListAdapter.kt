@@ -18,7 +18,7 @@ class EpisodeListAdapter(private val activity: EpisodeListActivity, private var 
     private val bookmarkDb: BookmarkDb = BookmarkDb(activity)
 
     override fun getCount(): Int {
-        return book!!.episodes!!.size
+        return book!!.episodes.size
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -30,7 +30,7 @@ class EpisodeListAdapter(private val activity: EpisodeListActivity, private var 
         }
 
         // object item based on the position
-        val episode = book!!.episodes!![position]
+        val episode = book!!.episodes[position]
 
         // get the TextView and then set the text (item name) and tag (item ID) values
         val textViewItem = convertView!!.findViewById<TextView>(R.id.episodeTitle)
@@ -77,7 +77,7 @@ class EpisodeListAdapter(private val activity: EpisodeListActivity, private var 
     }
 
     override fun getItem(position: Int): Any {
-        return this.book!!.episodes!![position]
+        return this.book!!.episodes[position]
     }
 
     internal inner class EpisodeClickListener// constructor

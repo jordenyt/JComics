@@ -5,21 +5,21 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.ListView
 import com.google.gson.Gson
 import com.jsoft.jcomic.adapter.DownloadListAdapter
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.DownloadItemDTO
 import com.jsoft.jcomic.helper.EpisodeDTO
 import com.jsoft.jcomic.helper.Utils
+import kotlinx.android.synthetic.main.activity_download_list.*
 import java.io.File
 import java.io.FileReader
 import java.util.*
 
 class DownloadListActivity : AppCompatActivity() {
 
-    private var listView: ListView? = null
-    private var adapter: DownloadListAdapter? = null
+    //private var listView: ListView? = null
+    private var adapter: DownloadListAdapter = DownloadListAdapter(ArrayList(), this)
 
     private val downloadItemList: ArrayList<DownloadItemDTO>
         get() {
@@ -62,17 +62,14 @@ class DownloadListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_download_list)
-        listView = this.findViewById(R.id.download_list_view)
+        //listView = this.findViewById(R.id.downloadListView)
     }
 
     public override fun onResume() {
         super.onResume()
-        listView!!.setBackgroundColor(Color.BLACK)
-        if (adapter == null) {
-            adapter = DownloadListAdapter(downloadItemList, this)
-        }
-        listView!!.adapter = adapter
+        downloadListView.setBackgroundColor(Color.BLACK)
         adapter = DownloadListAdapter(downloadItemList, this)
+        downloadListView.adapter = adapter
     }
 
     fun startReading(book: BookDTO, position: Int) {
@@ -105,9 +102,9 @@ class DownloadListActivity : AppCompatActivity() {
         if (episodeCount == 0) {
             Utils.deleteRecursive(dir)
         }
-        adapter!!.items!!.clear()
-        adapter!!.notifyDataSetChanged()
-        adapter!!.items!!.addAll(downloadItemList)
-        adapter!!.notifyDataSetChanged()
+        adapter.items.clear()
+        adapter.notifyDataSetChanged()
+        adapter.items.addAll(downloadItemList)
+        adapter.notifyDataSetChanged()
     }
 }

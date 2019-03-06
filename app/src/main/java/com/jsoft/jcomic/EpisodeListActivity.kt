@@ -17,16 +17,17 @@ import com.jsoft.jcomic.adapter.EpisodeListAdapter
 import com.jsoft.jcomic.helper.*
 import com.jsoft.jcomic.praser.BookParser
 import com.jsoft.jcomic.praser.BookParserListener
+import kotlinx.android.synthetic.main.activity_episode_list.*
 import java.io.File
 import java.io.FileReader
 
 
 class EpisodeListActivity : AppCompatActivity(), BookParserListener {
 
-    private var gridView: GridView? = null
+    //private var gridView: GridView? = null
     private var utils: Utils? = null
-    private var book: BookDTO? = null
-    private var bookmarkDb: BookmarkDb? = null
+    private var book: BookDTO = BookDTO("")
+    private val bookmarkDb: BookmarkDb = BookmarkDb(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +42,9 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         } else {
             i.getStringExtra("bookUrl")
         }
-        bookmarkDb = BookmarkDb(this)
         loadBook(bookUrl)
         if (Utils.isInternetAvailable) {
-            BookParser.parseBook(book!!, this)
+            BookParser.parseBook(book, this)
         }
 
     }
@@ -52,7 +52,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
     private fun loadBook(bookUrl: String) {
         try {
             val bookFile = File(Utils.getBookFile(BookDTO(bookUrl)), "book.json")
-            val dbBook = bookmarkDb!!.getBook(bookUrl)
+            val dbBook = bookmarkDb.getBook(bookUrl)
             if (bookFile.exists()) {
                 val gson = Gson()
                 val savedBook = gson.fromJson(FileReader(bookFile.absolutePath), BookDTO::class.java)
@@ -77,9 +77,9 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
 
     public override fun onResume() {
         super.onResume()
-        if (gridView != null) {
+        if (episodeListView != null) {
             val adapter = EpisodeListAdapter(this, book)
-            gridView!!.adapter = adapter
+            episodeListView.adapter = adapter
         }
     }
 
@@ -90,8 +90,8 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (book != null && book!!.episodes!!.isNotEmpty()) {
-            if (!bookmarkDb!!.bookIsBookmarked(book!!)) {
+        if (book.episodes.isNotEmpty()) {
+            if (!bookmarkDb.bookIsBookmarked(book)) {
                 menu.getItem(1).isVisible = false
                 menu.getItem(0).isVisible = true
             } else {
@@ -111,34 +111,34 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         when (item.itemId) {
             R.id.menu_item_add_bookmark -> {
                 //Log.e("jComics", "Add Bookmark");
-                if (!bookmarkDb!!.bookInDb(book!!)) {
-                    bookmarkDb!!.insertBookIntoDb(book!!)
+                if (!bookmarkDb.bookInDb(book)) {
+                    bookmarkDb.insertBookIntoDb(book)
                 }
-                bookmarkDb!!.updateIsBookmark(book!!, "Y")
+                bookmarkDb.updateIsBookmark(book, "Y")
                 invalidateOptionsMenu()
                 return true
             }
             R.id.menu_item_delete_bookmark -> {
                 //Log.e("jComics", "Delete Bookmark");
-                if (!bookmarkDb!!.bookInDb(book!!)) {
-                    bookmarkDb!!.insertBookIntoDb(book!!)
+                if (!bookmarkDb.bookInDb(book)) {
+                    bookmarkDb.insertBookIntoDb(book)
                 }
-                bookmarkDb!!.updateIsBookmark(book!!, "N")
+                bookmarkDb.updateIsBookmark(book, "N")
                 invalidateOptionsMenu()
                 return true
             }
             R.id.menu_play_book -> {
-                if (!bookmarkDb!!.bookInDb(book!!)) {
-                    bookmarkDb!!.insertBookIntoDb(book!!)
+                if (!bookmarkDb.bookInDb(book)) {
+                    bookmarkDb.insertBookIntoDb(book)
                 }
-                val lastEpisode = bookmarkDb!!.getLastEpisode(book!!)
-                for (i in 0 until book!!.episodes!!.size) {
-                    if (lastEpisode == book!!.episodes!![i].episodeTitle) {
+                val lastEpisode = bookmarkDb.getLastEpisode(book)
+                for (i in 0 until book.episodes.size) {
+                    if (lastEpisode == book.episodes[i].episodeTitle) {
                         startReading(i)
                         return true
                     }
                 }
-                startReading(book!!.episodes!!.size - 1)
+                startReading(book.episodes.size - 1)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -150,13 +150,13 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         this.book = book
         title = book.bookTitle
         setContentView(R.layout.activity_episode_list)
-        gridView = findViewById(R.id.episode_list_view)
+        //gridView = findViewById(R.id.episode_list_view)
         initilizeGridLayout()
 
-        if (gridView!!.adapter == null) {
-            gridView!!.adapter = EpisodeListAdapter(this, book)
+        if (episodeListView.adapter == null) {
+            episodeListView.adapter = EpisodeListAdapter(this, book)
         } else {
-            val adapter = gridView!!.adapter as EpisodeListAdapter
+            val adapter = episodeListView.adapter as EpisodeListAdapter
             adapter.setBook(book)
             adapter.notifyDataSetChanged()
         }
@@ -191,20 +191,20 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
 
         val columnWidth = ((utils!!.screenWidth - (AppConstant.NUM_OF_COLUMNS + 1) * padding) / AppConstant.NUM_OF_COLUMNS).toInt()
 
-        gridView!!.numColumns = AppConstant.NUM_OF_COLUMNS
-        gridView!!.columnWidth = columnWidth
-        gridView!!.stretchMode = GridView.NO_STRETCH
-        gridView!!.setPadding(padding.toInt(), padding.toInt(), padding.toInt(),
+        episodeListView.numColumns = AppConstant.NUM_OF_COLUMNS
+        episodeListView.columnWidth = columnWidth
+        episodeListView.stretchMode = GridView.NO_STRETCH
+        episodeListView.setPadding(padding.toInt(), padding.toInt(), padding.toInt(),
                 padding.toInt())
-        gridView!!.horizontalSpacing = padding.toInt()
-        gridView!!.verticalSpacing = padding.toInt()
+        episodeListView.horizontalSpacing = padding.toInt()
+        episodeListView.verticalSpacing = padding.toInt()
     }
 
     fun startReading(position: Int) {
         val intent = Intent(this, FullscreenActivity::class.java)
         intent.putExtra("position", position)
         val b = Bundle()
-        b.putSerializable("book", book!!.serializable)
+        b.putSerializable("book", book.serializable)
         intent.putExtras(b)
         this.startActivityForResult(intent, 0)
     }

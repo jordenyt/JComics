@@ -24,18 +24,17 @@ import com.jsoft.jcomic.helper.AppConstant
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.BookmarkDb
 import com.jsoft.jcomic.helper.Utils
+import kotlinx.android.synthetic.main.activity_grid_view.*
 import java.io.File
 import java.io.IOException
 import java.net.URL
 
 class GridViewActivity : AppCompatActivity() {
 
-    private var utils: Utils? = null
-    private var gridView: GridView? = null
-    private var webView: WebView? = null
-    private var books: List<BookDTO>? = null
-    private var bookmarkDb: BookmarkDb? = null
-    private var gridViewActivity: GridViewActivity? = null
+    private var utils: Utils = Utils(this)
+    private var books: List<BookDTO> = ArrayList()
+    private var bookmarkDb: BookmarkDb = BookmarkDb(this)
+    private var gridViewActivity: GridViewActivity = this
 
     //permission is automatically granted on sdk<23 upon installation
     private val isReadStoragePermissionGranted: Boolean
@@ -69,15 +68,12 @@ class GridViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bookmarkDb = BookmarkDb(this)
 
         enableHttpCaching()
-        gridViewActivity = this
         setContentView(R.layout.activity_grid_view)
-        utils = Utils(this)
         initWebView()
 
-        gridView = initGridLayout()
+        initGridLayout()
         //bookmarkDb.clearDb();
         isReadStoragePermissionGranted
         isWriteStoragePermissionGranted
@@ -85,24 +81,24 @@ class GridViewActivity : AppCompatActivity() {
 
     public override fun onResume() {
         super.onResume()
-        books = bookmarkDb!!.bookmarkedList
+        books = bookmarkDb.bookmarkedList
         val view = findViewById<LinearLayout>(R.id.button_list_link)
         if (!Utils.isInternetAvailable) {
             view.visibility = View.GONE
         } else {
             view.visibility = View.VISIBLE
         }
-        val adapter = GridViewImageAdapter(this@GridViewActivity, books!!)
-        gridView!!.adapter = adapter
+        val adapter = GridViewImageAdapter(this@GridViewActivity, books)
+        bookGridView.adapter = adapter
     }
 
     override fun onBackPressed() {
-        if (webView!!.visibility == View.VISIBLE && webView!!.canGoBack()) {
-            webView!!.goBack()
+        if (siteWebView.visibility == View.VISIBLE && siteWebView.canGoBack()) {
+            siteWebView.goBack()
             return
-        } else if (webView!!.visibility == View.VISIBLE) {
-            webView!!.visibility = View.GONE
-            gridView!!.visibility = View.VISIBLE
+        } else if (siteWebView.visibility == View.VISIBLE) {
+            siteWebView.visibility = View.GONE
+            bookGridView.visibility = View.VISIBLE
             return
         }
         // Otherwise defer to system default behavior.
@@ -131,32 +127,27 @@ class GridViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun initGridLayout(): GridView {
-        val r = resources
-        gridView = findViewById(R.id.grid_view)
+    private fun initGridLayout() {
         val padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                AppConstant.GRID_PADDING.toFloat(), r.displayMetrics)
+                AppConstant.GRID_PADDING.toFloat(), resources.displayMetrics)
 
         val numColumns = 3
-        val columnWidth = ((utils!!.screenWidth - (numColumns + 1) * padding) / numColumns).toInt()
+        val columnWidth = ((utils.screenWidth - (numColumns + 1) * padding) / numColumns).toInt()
 
-        gridView!!.numColumns = numColumns
-        gridView!!.columnWidth = columnWidth
-        gridView!!.stretchMode = GridView.NO_STRETCH
-        gridView!!.setPadding(padding.toInt(), padding.toInt(), padding.toInt(),
+        bookGridView.numColumns = numColumns
+        bookGridView.columnWidth = columnWidth
+        bookGridView.stretchMode = GridView.NO_STRETCH
+        bookGridView.setPadding(padding.toInt(), padding.toInt(), padding.toInt(),
                 padding.toInt())
-        gridView!!.horizontalSpacing = padding.toInt()
-        gridView!!.verticalSpacing = padding.toInt()
+        bookGridView.horizontalSpacing = padding.toInt()
+        bookGridView.verticalSpacing = padding.toInt()
 
-        return gridView!!
     }
 
     private fun initWebView() {
-        webView = findViewById(R.id.web_view)
-        webView!!.visibility = View.INVISIBLE
-        val webSettings = webView!!.settings
-        webSettings.javaScriptEnabled = true
-        webView!!.webViewClient = object : WebViewClient() {
+        siteWebView.visibility = View.INVISIBLE
+        siteWebView.settings.javaScriptEnabled = true
+        siteWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 val uri = request.url
                 try {
@@ -195,7 +186,7 @@ class GridViewActivity : AppCompatActivity() {
             if (data.contains("chapteritem")) {
                 val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
                 i.putExtra("bookUrl", url)
-                gridViewActivity!!.startActivity(i)
+                gridViewActivity.startActivity(i)
             } else {
                 data = data.replace("var tagid = \"(.*)\";".toRegex(), "var tagid = \"$1\"; var categoryid = \"0\"; ")
                 wv.loadDataWithBaseURL(url, data, "text/html; charset=utf-8", "utf-8", null)
@@ -205,7 +196,7 @@ class GridViewActivity : AppCompatActivity() {
 
     fun getEpisodeList(position: Int) {
         val i = Intent(this, EpisodeListActivity::class.java)
-        i.putExtra("bookUrl", books!![position].bookUrl)
+        i.putExtra("bookUrl", books[position].bookUrl)
         startActivityForResult(i, position)
     }
 
@@ -222,10 +213,10 @@ class GridViewActivity : AppCompatActivity() {
     }
 
     fun goToDM5(view: View) {
-        webView!!.visibility = View.VISIBLE
-        gridView!!.visibility = View.GONE
+        siteWebView.visibility = View.VISIBLE
+        bookGridView.visibility = View.GONE
         try {
-            InterceptDM5Task(webView!!).execute(URL("http://m.dm5.com/manhua-list/"))
+            InterceptDM5Task(siteWebView).execute(URL("http://m.dm5.com/manhua-list/"))
         } catch (e: Exception) {
             Log.e("jComics", "Caught by goToDM5", e)
         }
@@ -233,14 +224,14 @@ class GridViewActivity : AppCompatActivity() {
     }
 
     fun goToHome(view: View) {
-        webView!!.visibility = View.GONE
-        gridView!!.visibility = View.VISIBLE
+        siteWebView.visibility = View.GONE
+        bookGridView.visibility = View.VISIBLE
     }
 
     private fun openWebView(url: String) {
-        webView!!.visibility = View.VISIBLE
-        gridView!!.visibility = View.GONE
-        webView!!.loadUrl(url)
+        siteWebView.visibility = View.VISIBLE
+        bookGridView.visibility = View.GONE
+        siteWebView.loadUrl(url)
     }
 
     private fun enableHttpCaching() {
