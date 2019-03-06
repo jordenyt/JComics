@@ -1,20 +1,28 @@
 package com.jsoft.jcomic.praser
 
 import com.jsoft.jcomic.helper.EpisodeDTO
+import com.jsoft.jcomic.helper.Utils
+import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 
 class CartoonMadEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener) : EpisodeParser(episode, listener, "BIG5") {
+
+    override fun getURLResponse(url: URL, encoding: String): ArrayList<String> {
+        return Utils.getURLResponse(URL("http://" + url.host + url.path.substring(2)), null, encoding)
+    }
+
     override fun getEpisodeFromUrlResult(result: List<String>) {
         episode.imageUrl = ArrayList()
         var imageUrlHost: String? = ""
         var imageUrlPath = ""
         var imageUrlQuery: String? = ""
         var numPage = 0
+
         for (s in result) {
-            var p = Pattern.compile(".*<img src=\"(https?:\\/\\/[a-zA-Z0-9:\\.]+)?(.+)(\\d\\d\\d)(&.+=.+)?\" border=\"0\" oncontextmenu='return false' width=\"\\d+\">.*")
-            //<img src="comicpic.asp?file=/1152/932/002" border="0" oncontextmenu='return false' width="700">
-            //<img src="comicpic.asp?file=/1558/001/001&rimg=1" border="0" oncontextmenu='return false' width="700"></a>
+            var p = Pattern.compile(".*<img src=\"(https?:\\/\\/[a-zA-Z0-9:\\.]+)?(.+)(\\d\\d\\d)(&.+=.+)?\" border=\"\\d+\" oncontextmenu=.+?>.*")
+            //<img src="comicpic.asp?file=/1152/934/001" border="0" oncontextmenu='return false' onload=
+
 
             var m = p.matcher(s)
             if (m.matches()) {
@@ -34,7 +42,7 @@ class CartoonMadEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListen
 
         val imageUrlList = ArrayList<String>()
         if (imageUrlHost == null) {
-            imageUrlHost = "https://www.cartoonmad.com/m/comic/"
+            imageUrlHost = "http://www.cartoonmad.com/comic/"
         }
         if (imageUrlQuery == null) {
             imageUrlQuery = ""
@@ -44,5 +52,6 @@ class CartoonMadEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListen
             imageUrlList.add(imageUrl)
         }
         episode.imageUrl = imageUrlList
+
     }
 }
