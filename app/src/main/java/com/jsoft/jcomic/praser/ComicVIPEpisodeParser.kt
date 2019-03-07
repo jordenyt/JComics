@@ -53,7 +53,7 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
                 val pageUrl = ("https://img" + ss(extractCode, 4, 2, true) + ".8comic.com/"
                         + ss(extractCode, 6, 1, true) + "/" + bookId + "/" + ss(extractCode, 0, 4, true) + "/"
                         + String.format("%03d", i) + '_'.toString() + ss(extractCode, mm(i) + 10, 3, false) + ".jpg")
-                episode.imageUrl!!.add(pageUrl)
+                episode.imageUrl.add(pageUrl)
             }
         }
     }

@@ -10,11 +10,10 @@ import android.os.AsyncTask
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-
+import com.google.gson.Gson
 import com.jsoft.jcomic.DownloadListActivity
 import com.jsoft.jcomic.praser.EpisodeParser
 import com.jsoft.jcomic.praser.EpisodeParserListener
-
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -23,8 +22,7 @@ import java.util.Timer
 import java.util.TimerTask
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-
-import com.google.gson.Gson
+import kotlin.collections.ArrayList
 
 class Downloader(internal var book: BookDTO?, private val activity: Context) : EpisodeParserListener {
     internal var episode: EpisodeDTO = EpisodeDTO("","")
@@ -79,7 +77,7 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
         setNotification(activity)
         pageDownloaded = 0
 
-        pageTotal = episode.imageUrl!!.size
+        pageTotal = episode.imageUrl.size
         numMissingPage = 0
         this.episode = episode
         mBuilder!!.setContentTitle("正在下載" + book!!.bookTitle + "-" + episode.episodeTitle)
@@ -98,7 +96,7 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
             nomediaFile.createNewFile()
             val cloneBook = book!!.clone()
             for (i in 0 until cloneBook.episodes.size) {
-                cloneBook.episodes[i].imageUrl = null
+                cloneBook.episodes[i].imageUrl = ArrayList()
             }
             cloneBook.bookImg = null
             Utils.writeToFile(gson.toJson(cloneBook), myDir, "book.json")
@@ -122,13 +120,13 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
 
 
 
-        for (i in 0 until episode.imageUrl!!.size) {
+        for (i in 0 until episode.imageUrl.size) {
             val file = Utils.getImgFile(book!!, episode, i)
             if (file.exists()) {
-                Log.e("jComics", "Found " + episode.imageUrl!![i])
+                Log.e("jComics", "Found " + episode.imageUrl[i])
                 pageDownloaded += 1
             } else {
-                DownloadImageTask(episode).executeOnExecutor(downloadImageTaskExecutor, episode.imageUrl!![i])
+                DownloadImageTask(episode).executeOnExecutor(downloadImageTaskExecutor, episode.imageUrl[i])
             }
         }
         notifyTimer = Timer()

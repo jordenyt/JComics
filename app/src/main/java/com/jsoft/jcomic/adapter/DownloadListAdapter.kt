@@ -36,14 +36,14 @@ class DownloadListAdapter(private var items: ArrayList<DownloadItemDTO>, private
         val item = items[position]
         var jpgCount = 0
         val episodeFile = Utils.getEpisodeFile(item.book, item.episode)
-        for (file in episodeFile.listFiles()) {
-            if (file.isFile && file.name.endsWith(".jpg"))
-                jpgCount += 1
+        episodeFile.listFiles().forEach{
+            if (it.isFile && it.name.endsWith(".jpg"))
+                jpgCount++
         }
 
         textViewEpisodeSize.text = Utils.formatSize(Utils.calFolderSize(episodeFile))
         textViewEpisodeSize.setTypeface(null, Typeface.BOLD)
-        textViewPageStatus.text = jpgCount.toString() + " / " + item.episode.imageUrl!!.size
+        textViewPageStatus.text = jpgCount.toString() + " / " + item.episode.imageUrl.size
         textViewBookTitle.text = item.book.bookTitle
         textViewBookTitle.setTypeface(null, Typeface.BOLD)
         textViewEpisodeTitle.text = item.episode.episodeTitle

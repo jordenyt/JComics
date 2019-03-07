@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 class CartoonMadBookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "BIG5") {
 
     override fun getURLResponse(url: URL, encoding: String): ArrayList<String> {
-        var path = if (url.path.startsWith("/m"))  url.path else "/m" + url.path
+        val path = if (url.path.startsWith("/m"))  url.path else "/m" + url.path
         return Utils.getURLResponse(URL("http://" + url.host + path), null, encoding)
     }
 

@@ -7,10 +7,11 @@
     <TextView
         android:id="@+id/episodeTitle"
         android:layout_width="match_parent"
-        android:layout_height="40sp"
+        android:layout_height="45sp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="5sp"
+        android:maxLines="2"
         android:text="Item name here..."
         android:textColor="#AAAAAA"
         android:textSize="16sp" />

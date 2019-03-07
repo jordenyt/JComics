@@ -104,18 +104,15 @@ class TouchImageView: AppCompatImageView {
             val diffX = (e2.x - e1.x).toDouble()
             val diffY = (e2.y - e1.y).toDouble()
             if (saveScale == 1f) {
-                if (diffY / Math.abs(diffX) < -ratio) {
-                    //Fling Up
-                    pager.exitActivity()
-                } else if (diffY / Math.abs(diffX) > ratio) {
-                    //Fling Down
-                    pager.showPageBar()
-                } else if (diffX / Math.abs(diffY) < -ratio) {
-                    //Fling Left
-                    pager.turnNext()
-                } else if (diffX / Math.abs(diffY) > ratio) {
-                    //Fling Right
-                    pager.turnPrev()
+                when {
+                    diffY / Math.abs(diffX) < -ratio -> //Fling Up
+                        pager.exitActivity()
+                    diffY / Math.abs(diffX) > ratio -> //Fling Down
+                        pager.showPageBar()
+                    diffX / Math.abs(diffY) < -ratio -> //Fling Left
+                        pager.turnNext()
+                    diffX / Math.abs(diffY) > ratio -> //Fling Right
+                        pager.turnPrev()
                 }
             }
             return false

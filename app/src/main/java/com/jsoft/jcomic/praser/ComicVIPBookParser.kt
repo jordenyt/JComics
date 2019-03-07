@@ -57,7 +57,7 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
                 //Pattern p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(.+)\\);return false;\" id=\".+\" class=\".+\">\\s*(.+)</a>.*");
                 val baseurl = "https://m.comicbus.com"
 
-                var p = Pattern.compile(".*<td style=\".*\">.*<a href='(.+)' class=\"(Vol|Ch)\"  id=\"(.+)\"  >\\s*(.+)</a>.*")
+                var p = Pattern.compile(".*<td style=\".*\">.*<a href='(.+)' class=\"(Vol|Ch)\"\\s+id=\"(.+)\"\\s+>\\s*(.+)</a>.*")
                 var m = p.matcher(s)
                 if (m.matches()) {
                     val episodeUrl = baseurl + m.group(1)

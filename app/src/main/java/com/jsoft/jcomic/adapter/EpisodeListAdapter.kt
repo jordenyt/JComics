@@ -46,14 +46,11 @@ class EpisodeListAdapter(private val activity: EpisodeListActivity, private var 
         }
         val isOnline = Utils.isInternetAvailable
 
-        if (episode.episodeTitle == lastEpisode) {
-            textViewItem.setTextColor(Color.RED)
-        } else if (offlineAvailable) {
-            textViewItem.setTextColor(Color.WHITE)
-        } else if (isOnline) {
-            textViewItem.setTextColor(Color.LTGRAY)
-        } else {
-            textViewItem.setTextColor(Color.DKGRAY)
+        when {
+            episode.episodeTitle == lastEpisode -> textViewItem.setTextColor(Color.RED)
+            offlineAvailable -> textViewItem.setTextColor(Color.WHITE)
+            isOnline -> textViewItem.setTextColor(Color.LTGRAY)
+            else -> textViewItem.setTextColor(Color.DKGRAY)
         }
 
         if (isOnline || offlineAvailable) {

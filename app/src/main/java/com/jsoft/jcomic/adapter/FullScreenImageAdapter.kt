@@ -47,12 +47,12 @@ class FullScreenImageAdapter// constructor
             progressText.text = "Downloading..."
             statusText.text = episode!!.bookTitle + " - " + episode!!.episodeTitle + "    Page: " + (position + 1) + " / " + episode!!.pageCount
 
-            val file = Utils.getImgFile(book, episode!!, episode!!.getPageNumByURL(episode!!.imageUrl!![position]))
+            val file = Utils.getImgFile(book, episode!!, episode!!.getPageNumByURL(episode!!.imageUrl[position]))
             if (file.exists()) {
                 imgDisplay.setImageBitmap(Utils.imageFromFile(file))
                 progressText.text = ""
             } else {
-                DownloadImageTask(imgDisplay, progressText).executeOnExecutor(downloadImageTaskExecutor, episode!!.imageUrl!![position])
+                DownloadImageTask(imgDisplay, progressText).executeOnExecutor(downloadImageTaskExecutor, episode!!.imageUrl[position])
             }
         } else {
             progressText.text = "No Image"
