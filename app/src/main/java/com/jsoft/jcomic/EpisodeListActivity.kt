@@ -25,7 +25,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
 
     private var gridView: GridView? = null
     private var utils: Utils? = null
-    private var book: BookDTO? = null
+    private var book = BookDTO("")
     private var bookmarkDb: BookmarkDb? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,15 +36,11 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         //Log.e("jComics", "get Intent!");
         val bookUrl: String
         val data = i.data
-        bookUrl = if (data != null) {
-            data.toString()
-        } else {
-            i.getStringExtra("bookUrl")
-        }
+        bookUrl = data?.toString() ?: i.getStringExtra("bookUrl")
         bookmarkDb = BookmarkDb(this)
         loadBook(bookUrl)
         if (Utils.isInternetAvailable) {
-            BookParser.parseBook(book!!, this)
+            BookParser.parseBook(book, this)
         }
 
     }
@@ -90,8 +86,8 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (book != null && book!!.episodes!!.isNotEmpty()) {
-            if (!bookmarkDb!!.bookIsBookmarked(book!!)) {
+        if (book != null && book.episodes.isNotEmpty()) {
+            if (!bookmarkDb!!.bookIsBookmarked(book)) {
                 menu.getItem(1).isVisible = false
                 menu.getItem(0).isVisible = true
             } else {
@@ -111,34 +107,34 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         when (item.itemId) {
             R.id.menu_item_add_bookmark -> {
                 //Log.e("jComics", "Add Bookmark");
-                if (!bookmarkDb!!.bookInDb(book!!)) {
-                    bookmarkDb!!.insertBookIntoDb(book!!)
+                if (!bookmarkDb!!.bookInDb(book)) {
+                    bookmarkDb!!.insertBookIntoDb(book)
                 }
-                bookmarkDb!!.updateIsBookmark(book!!, "Y")
+                bookmarkDb!!.updateIsBookmark(book, "Y")
                 invalidateOptionsMenu()
                 return true
             }
             R.id.menu_item_delete_bookmark -> {
                 //Log.e("jComics", "Delete Bookmark");
-                if (!bookmarkDb!!.bookInDb(book!!)) {
-                    bookmarkDb!!.insertBookIntoDb(book!!)
+                if (!bookmarkDb!!.bookInDb(book)) {
+                    bookmarkDb!!.insertBookIntoDb(book)
                 }
-                bookmarkDb!!.updateIsBookmark(book!!, "N")
+                bookmarkDb!!.updateIsBookmark(book, "N")
                 invalidateOptionsMenu()
                 return true
             }
             R.id.menu_play_book -> {
-                if (!bookmarkDb!!.bookInDb(book!!)) {
-                    bookmarkDb!!.insertBookIntoDb(book!!)
+                if (!bookmarkDb!!.bookInDb(book)) {
+                    bookmarkDb!!.insertBookIntoDb(book)
                 }
-                val lastEpisode = bookmarkDb!!.getLastEpisode(book!!)
-                for (i in 0 until book!!.episodes!!.size) {
-                    if (lastEpisode == book!!.episodes!![i].episodeTitle) {
+                val lastEpisode = bookmarkDb!!.getLastEpisode(book)
+                for (i in 0 until book.episodes.size) {
+                    if (lastEpisode == book.episodes[i].episodeTitle) {
                         startReading(i)
                         return true
                     }
                 }
-                startReading(book!!.episodes!!.size - 1)
+                startReading(book.episodes.size - 1)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -204,7 +200,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         val intent = Intent(this, FullscreenActivity::class.java)
         intent.putExtra("position", position)
         val b = Bundle()
-        b.putSerializable("book", book!!.serializable)
+        b.putSerializable("book", book.serializable)
         intent.putExtras(b)
         this.startActivityForResult(intent, 0)
     }

@@ -75,7 +75,7 @@ class BookmarkDb(context: Context) {
         //db = mDbHelper.getWritableDatabase();
         // New value for one column
         val values = ContentValues()
-        values.put(BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE, book.episodes!![currEpisode].episodeTitle)
+        values.put(BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE, book.episodes[currEpisode].episodeTitle)
         values.put(BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE_PAGE, currPage)
         values.put(BookmarkEntry.COLUMN_NAME_LAST_READ_TIME, dateTime)
 

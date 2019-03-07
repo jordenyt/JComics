@@ -4,8 +4,8 @@ class DownloadItemDTO(var book: BookDTO, var episode: EpisodeDTO) {
 
     val episodeIndex: Int
         get() {
-            for (i in 0 until book.episodes!!.size) {
-                if (book.episodes!![i].episodeUrl == episode.episodeUrl) {
+            for (i in 0 until book.episodes.size) {
+                if (book.episodes[i].episodeUrl == episode.episodeUrl) {
                     return i
                 }
             }
@@ -13,7 +13,7 @@ class DownloadItemDTO(var book: BookDTO, var episode: EpisodeDTO) {
         }
 
     init {
-        for (e in book.episodes!!) {
+        for (e in book.episodes) {
             if (e.episodeUrl == episode.episodeUrl) {
                 e.imageUrl = episode.imageUrl
             }

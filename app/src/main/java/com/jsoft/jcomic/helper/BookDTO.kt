@@ -10,7 +10,7 @@ class BookDTO(var bookUrl: String?) : Serializable, Cloneable {
     var lastUpdate: Date? = null
     var book: String? = null
     var bookCategory: String? = null
-    var episodes: List<EpisodeDTO>? = null
+    var episodes = ArrayList<EpisodeDTO>()
     var bookImgUrl: String? = null
     var bookImg: Bitmap? = null
 
@@ -26,7 +26,7 @@ class BookDTO(var bookUrl: String?) : Serializable, Cloneable {
         val cloneBook = super.clone() as BookDTO
         val episodeList = ArrayList<EpisodeDTO>()
         try {
-            for (episode in this.episodes!!) {
+            for (episode in this.episodes) {
                 episodeList.add(episode.clone())
             }
         } catch (e: CloneNotSupportedException) {

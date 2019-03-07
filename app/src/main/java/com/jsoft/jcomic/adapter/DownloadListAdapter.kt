@@ -13,10 +13,10 @@ import com.jsoft.jcomic.R
 import com.jsoft.jcomic.helper.DownloadItemDTO
 import com.jsoft.jcomic.helper.Utils
 
-class DownloadListAdapter(var items: ArrayList<DownloadItemDTO>?, private val activity: DownloadListActivity) : BaseAdapter() {
+class DownloadListAdapter(private var items: ArrayList<DownloadItemDTO>, private val activity: DownloadListActivity) : BaseAdapter() {
 
     override fun getCount(): Int {
-        return items!!.size
+        return items.size
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -33,7 +33,7 @@ class DownloadListAdapter(var items: ArrayList<DownloadItemDTO>?, private val ac
         val textViewPageStatus = convertView.findViewById<TextView>(R.id.page_status)
         val textViewEpisodeSize = convertView.findViewById<TextView>(R.id.episode_size)
 
-        val item = items!![position]
+        val item = items[position]
         var jpgCount = 0
         val episodeFile = Utils.getEpisodeFile(item.book, item.episode)
         for (file in episodeFile.listFiles()) {
@@ -81,7 +81,7 @@ class DownloadListAdapter(var items: ArrayList<DownloadItemDTO>?, private val ac
     }
 
     override fun getItem(position: Int): Any {
-        return items!![position]
+        return items[position]
     }
 
     internal open inner class ImgageClickListener(var item: DownloadItemDTO) : View.OnClickListener {

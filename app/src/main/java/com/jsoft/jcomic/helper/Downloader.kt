@@ -45,8 +45,8 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
 
     fun downloadEpisode(position: Int) {
         Log.d("jComics", "downloadEpisode")
-        if (book != null && book!!.episodes!!.size > position) {
-            EpisodeParser.parseEpisode(book!!.episodes!![position], this)
+        if (book != null && book!!.episodes.size > position) {
+            EpisodeParser.parseEpisode(book!!.episodes[position], this)
         }
     }
 
@@ -97,8 +97,8 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
             val nomediaFile = File(myDir, ".nomedia")
             nomediaFile.createNewFile()
             val cloneBook = book!!.clone()
-            for (i in 0 until cloneBook.episodes!!.size) {
-                cloneBook.episodes!![i].imageUrl = null
+            for (i in 0 until cloneBook.episodes.size) {
+                cloneBook.episodes[i].imageUrl = null
             }
             cloneBook.bookImg = null
             Utils.writeToFile(gson.toJson(cloneBook), myDir, "book.json")

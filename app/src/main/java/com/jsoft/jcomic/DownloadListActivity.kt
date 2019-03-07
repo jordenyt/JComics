@@ -72,7 +72,6 @@ class DownloadListActivity : AppCompatActivity() {
             adapter = DownloadListAdapter(downloadItemList, this)
         }
         listView!!.adapter = adapter
-        adapter = DownloadListAdapter(downloadItemList, this)
     }
 
     fun startReading(book: BookDTO, position: Int) {
@@ -105,9 +104,8 @@ class DownloadListActivity : AppCompatActivity() {
         if (episodeCount == 0) {
             Utils.deleteRecursive(dir)
         }
-        adapter!!.items!!.clear()
-        adapter!!.notifyDataSetChanged()
-        adapter!!.items!!.addAll(downloadItemList)
-        adapter!!.notifyDataSetChanged()
+
+        adapter = DownloadListAdapter(downloadItemList, this)
+        listView!!.adapter = adapter
     }
 }

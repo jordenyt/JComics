@@ -151,7 +151,7 @@ class Utils// constructor
                     conn.setRequestProperty("Referer", referer)
                 }
 
-                val status = conn.getResponseCode()
+                val status = conn.responseCode
                 if (status == HttpURLConnection.HTTP_MOVED_TEMP
                         || status == HttpURLConnection.HTTP_MOVED_PERM
                         || status == HttpURLConnection.HTTP_SEE_OTHER) {
@@ -174,7 +174,7 @@ class Utils// constructor
         fun getURLResponse(url: URL, referer: String?, encoding: String, cookies: String? = null): ArrayList<String> {
             val result = ArrayList<String>()
             try {
-                var httpConnect = url.openConnection() as HttpURLConnection
+                val httpConnect = url.openConnection() as HttpURLConnection
                 httpConnect.useCaches = false
                 if (referer != null)
                     httpConnect.setRequestProperty("Referer", referer)
@@ -185,7 +185,7 @@ class Utils// constructor
 
                 httpConnect.connect()
 
-                val status = httpConnect.getResponseCode()
+                val status = httpConnect.responseCode
 
                 if (status == HttpURLConnection.HTTP_MOVED_TEMP
                         || status == HttpURLConnection.HTTP_MOVED_PERM

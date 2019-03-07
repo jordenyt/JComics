@@ -38,7 +38,7 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
             BookDTO("")
         }
         //Log.d("jComic", "EpisodeUrl: " + episode.getEpisodeUrl());
-        val episode = book!!.episodes!![currEpisode]
+        val episode = book!!.episodes[currEpisode]
 
         try {
             val episodeFile = File(Utils.getEpisodeFile(book!!, episode), "episode.json")
@@ -70,11 +70,11 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
             val adapter = FullScreenImageAdapter(this@FullscreenActivity, pager!!, episode, book!!)
             pager!!.adapter = adapter
         } else {
-            (pager!!.adapter as FullScreenImageAdapter).episode = book!!.episodes!![currEpisode]
+            (pager!!.adapter as FullScreenImageAdapter).episode = book!!.episodes[currEpisode]
         }
         var currentPage = 0
         val lastEpisode = bookmarkDb!!.getLastEpisode(book!!)
-        if (book!!.episodes!![currEpisode].episodeTitle == lastEpisode) {
+        if (book!!.episodes[currEpisode].episodeTitle == lastEpisode) {
             currentPage = bookmarkDb!!.getLastEpisodePage(book!!)
         }
         if (pageTurn == -1 && gotoLastPage) {
@@ -131,16 +131,16 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
         currEpisode -= pageTurn
         this.pageTurn = pageTurn
         this.gotoLastPage = gotoLastPage
-        if (currEpisode >= 0 && currEpisode < book!!.episodes!!.size) {
-            if (book!!.episodes!![currEpisode].pageCount > 0) {
-                onEpisodeFetched(book!!.episodes!![currEpisode])
+        if (currEpisode >= 0 && currEpisode < book!!.episodes.size) {
+            if (book!!.episodes[currEpisode].pageCount > 0) {
+                onEpisodeFetched(book!!.episodes[currEpisode])
             } else {
-                if (book!!.episodes!![currEpisode].episodeUrl!!.contains("comicbus")) {
-                    ComicVIPEpisodeParser(book!!.episodes!![currEpisode], this)
-                } else if (book!!.episodes!![currEpisode].episodeUrl!!.contains("cartoonmad")) {
-                    CartoonMadEpisodeParser(book!!.episodes!![currEpisode], this)
-                } else if (book!!.episodes!![currEpisode].episodeUrl!!.contains("dm5.com")) {
-                    DM5EpisodeParser(book!!.episodes!![currEpisode], this)
+                if (book!!.episodes[currEpisode].episodeUrl!!.contains("comicbus")) {
+                    ComicVIPEpisodeParser(book!!.episodes[currEpisode], this)
+                } else if (book!!.episodes[currEpisode].episodeUrl!!.contains("cartoonmad")) {
+                    CartoonMadEpisodeParser(book!!.episodes[currEpisode], this)
+                } else if (book!!.episodes[currEpisode].episodeUrl!!.contains("dm5.com")) {
+                    DM5EpisodeParser(book!!.episodes[currEpisode], this)
                 }
             }
         } else {

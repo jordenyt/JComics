@@ -44,7 +44,7 @@ class BookmarkDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
         private const val TEXT_TYPE = " TEXT"
         private const val INT_TYPE = " INTEGER"
         private const val COMMA_SEP = ","
-        private val SQL_CREATE_ENTRIES = "CREATE TABLE " + BookmarkEntry.TABLE_NAME + " (" +
+        private const val SQL_CREATE_ENTRIES = "CREATE TABLE " + BookmarkEntry.TABLE_NAME + " (" +
                 BaseColumns._ID + " INTEGER PRIMARY KEY," +
                 BookmarkEntry.COLUMN_NAME_BOOK_URL + TEXT_TYPE + COMMA_SEP +
                 BookmarkEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
@@ -55,6 +55,6 @@ class BookmarkDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
                 BookmarkEntry.COLUMN_NAME_LAST_READ_TIME + TEXT_TYPE +
                 " )"
 
-        private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + BookmarkEntry.TABLE_NAME
+        private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + BookmarkEntry.TABLE_NAME
     }
 }
