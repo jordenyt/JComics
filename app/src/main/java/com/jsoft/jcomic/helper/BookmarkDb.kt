@@ -153,17 +153,15 @@ class BookmarkDb(context: Context) {
         }
     }
 
-    fun getLastEpisode(book: BookDTO): String {
+    fun getLastEpisode(book: BookDTO): String? {
         val queryString = ("SELECT " + BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE
                 + " FROM " + BookmarkDbHelper.BookmarkEntry.TABLE_NAME
                 + " WHERE " + BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_BOOK_URL + " = ?")
         val c = db.rawQuery(queryString, arrayOf(book.bookUrl!!))
-        var result = "NOT FOUND"
+        var result : String? = null
         if (c.count > 0) {
             c.moveToFirst()
-            result = c.getString(
-                    c.getColumnIndexOrThrow(BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE)
-            )
+            result = c.getString(c.getColumnIndexOrThrow(BookmarkDbHelper.BookmarkEntry.COLUMN_NAME_LAST_READ_EPISODE))
         }
         c.close()
         return result
