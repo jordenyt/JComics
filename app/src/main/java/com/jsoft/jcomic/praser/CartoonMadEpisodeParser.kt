@@ -9,7 +9,8 @@ import java.util.regex.Pattern
 class CartoonMadEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener) : EpisodeParser(episode, listener, "BIG5") {
 
     override fun getURLResponse(url: URL, encoding: String): ArrayList<String> {
-        return Utils.getURLResponse(URL("http://" + url.host + url.path.substring(2)), null, encoding)
+        var path = if (url.path.startsWith("/m")) url.path.substring(2) else url.path
+        return Utils.getURLResponse(URL("http://" + url.host + path), null, encoding)
     }
 
     override fun getEpisodeFromUrlResult(result: List<String>) {

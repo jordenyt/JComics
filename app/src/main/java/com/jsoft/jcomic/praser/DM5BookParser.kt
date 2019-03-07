@@ -1,10 +1,13 @@
 package com.jsoft.jcomic.praser
 
+import android.net.Uri
 import android.text.Html
 import android.util.Log
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.EpisodeDTO
+import com.jsoft.jcomic.helper.Utils
 import taobe.tec.jcc.JChineseConvertor
+import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 
@@ -21,6 +24,15 @@ class DM5BookParser(book: BookDTO, listener: BookParserListener) : BookParser(bo
         }
 
         return result
+    }
+
+    override fun getURLResponse(url: URL, encoding: String): ArrayList<String> {
+        val uri = Uri.parse(url.toString())
+        var referer : String? = null
+        if (uri.getQueryParameter("from") != null) {
+            referer = "http://m.dm5.com" + uri.getQueryParameter("from")
+        }
+        return Utils.getURLResponse(url, referer, encoding)
     }
 
     //Call when URL is fetched

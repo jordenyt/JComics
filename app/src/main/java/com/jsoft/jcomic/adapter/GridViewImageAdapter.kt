@@ -38,15 +38,15 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
-        if (convertView == null) {
+        var myConvertView = convertView
+        if (myConvertView == null) {
             val inflater = activity.layoutInflater
-            convertView = inflater.inflate(R.layout.content_book_list, parent, false)
+            myConvertView = inflater.inflate(R.layout.content_book_list, parent, false)
         }
 
-        val textViewItem = convertView!!.findViewById<TextView>(R.id.downloadBookTitle)
+        val textViewItem = myConvertView!!.findViewById<TextView>(R.id.downloadBookTitle)
 
-        val imageView = convertView.findViewById<ImageView>(R.id.bookImage)
+        val imageView = myConvertView.findViewById<ImageView>(R.id.bookImage)
 
         var offlineAvailable = false
         val bookFile = File(Utils.getBookFile(books[position]), "book.json")
@@ -79,7 +79,7 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
             imageView.setImageBitmap(books[position].bookImg)
         }
 
-        return convertView
+        return myConvertView
     }
 
     internal inner class OnImageClickListener// constructor
@@ -97,9 +97,11 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
             return Utils.downloadImage(urls[0], null)
         }
 
-        override fun onPostExecute(result: Bitmap) {
-            book.bookImg = result
-            bmImage.setImageBitmap(result)
+        override fun onPostExecute(result: Bitmap?) {
+            if (result != null) {
+                book.bookImg = result
+                bmImage.setImageBitmap(result)
+            }
         }
     }
 

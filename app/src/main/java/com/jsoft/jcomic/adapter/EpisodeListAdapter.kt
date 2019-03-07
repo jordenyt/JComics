@@ -22,18 +22,18 @@ class EpisodeListAdapter(private val activity: EpisodeListActivity, private var 
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+        var myConvertView = convertView
 
-        if (convertView == null) {
+        if (myConvertView == null) {
             val inflater = activity.layoutInflater
-            convertView = inflater.inflate(R.layout.content_episode_list, parent, false)
+            myConvertView = inflater.inflate(R.layout.content_episode_list, parent, false)
         }
 
         // object item based on the position
         val episode = book!!.episodes[position]
 
         // get the TextView and then set the text (item name) and tag (item ID) values
-        val textViewItem = convertView!!.findViewById<TextView>(R.id.episodeTitle)
+        val textViewItem = myConvertView!!.findViewById<TextView>(R.id.episodeTitle)
         textViewItem.text = episode.episodeTitle
         textViewItem.tag = episode.episodeUrl
         val lastEpisode = bookmarkDb.getLastEpisode(book!!)
@@ -58,14 +58,14 @@ class EpisodeListAdapter(private val activity: EpisodeListActivity, private var 
 
         if (isOnline || offlineAvailable) {
             val episodeClickListener = EpisodeClickListener(position)
-            convertView.setOnClickListener(episodeClickListener)
-            convertView.setOnLongClickListener(episodeClickListener)
+            myConvertView.setOnClickListener(episodeClickListener)
+            myConvertView.setOnLongClickListener(episodeClickListener)
         } else {
-            convertView.setOnClickListener(null)
-            convertView.setOnLongClickListener(null)
+            myConvertView.setOnClickListener(null)
+            myConvertView.setOnLongClickListener(null)
         }
 
-        return convertView
+        return myConvertView
     }
 
     override fun getItemId(position: Int): Long {

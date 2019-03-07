@@ -86,7 +86,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (book != null && book.episodes.isNotEmpty()) {
+        if (book.episodes.isNotEmpty()) {
             if (!bookmarkDb!!.bookIsBookmarked(book)) {
                 menu.getItem(1).isVisible = false
                 menu.getItem(0).isVisible = true
@@ -174,9 +174,11 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
             return Utils.downloadImage(urls[0], null)
         }
 
-        override fun onPostExecute(result: Bitmap) {
-            book.bookImg = result
-            imageView.setImageBitmap(result)
+        override fun onPostExecute(result: Bitmap?) {
+            if (result != null) {
+                book.bookImg = result
+                imageView.setImageBitmap(result)
+            }
         }
     }
 

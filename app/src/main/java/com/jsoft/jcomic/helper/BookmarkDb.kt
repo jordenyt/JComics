@@ -83,7 +83,7 @@ class BookmarkDb(context: Context) {
         val selection = BookmarkEntry.COLUMN_NAME_BOOK_URL + " LIKE ?"
         val selectionArgs = arrayOf(book.bookUrl!!)
 
-        val count = db.update(
+        db.update(
                 BookmarkEntry.TABLE_NAME,
                 values,
                 selection,
@@ -122,7 +122,7 @@ class BookmarkDb(context: Context) {
         val selection = BookmarkEntry.COLUMN_NAME_BOOK_URL + " LIKE ?"
         val selectionArgs = arrayOf(book.bookUrl!!)
 
-        val count = db.update(
+        db.update(
                 BookmarkEntry.TABLE_NAME,
                 values,
                 selection,

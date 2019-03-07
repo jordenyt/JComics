@@ -81,9 +81,13 @@ class FullScreenImageAdapter// constructor
             super.onProgressUpdate(*progress)
         }
 
-        override fun onPostExecute(result: Bitmap) {
-            bmImage.setImageBitmap(result)
-            progressText.text = ""
+        override fun onPostExecute(result: Bitmap?) {
+            if (result != null) {
+                bmImage.setImageBitmap(result)
+                progressText.text = ""
+            } else {
+                progressText.text = "Error"
+            }
         }
 
     }

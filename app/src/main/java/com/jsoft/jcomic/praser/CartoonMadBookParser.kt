@@ -3,10 +3,17 @@ package com.jsoft.jcomic.praser
 import android.text.Html
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.EpisodeDTO
+import com.jsoft.jcomic.helper.Utils
+import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 
 class CartoonMadBookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "BIG5") {
+
+    override fun getURLResponse(url: URL, encoding: String): ArrayList<String> {
+        var path = if (url.path.startsWith("/m"))  url.path else "/m" + url.path
+        return Utils.getURLResponse(URL("http://" + url.host + path), null, encoding)
+    }
 
     //Call when URL is fetched
     override fun getBookFromUrlResult(html: ArrayList<String>) {

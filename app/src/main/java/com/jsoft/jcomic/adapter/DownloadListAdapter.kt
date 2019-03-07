@@ -20,18 +20,18 @@ class DownloadListAdapter(private var items: ArrayList<DownloadItemDTO>, private
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
-        if (convertView == null) {
+        var myConvertView = convertView
+        if (myConvertView == null) {
             val inflater = activity.layoutInflater
-            convertView = inflater.inflate(R.layout.content_download_list, parent, false)
+            myConvertView = inflater.inflate(R.layout.content_download_list, parent, false)
         }
 
-        val downloadItem = convertView!!.findViewById<ConstraintLayout>(R.id.downloadItem)
-        val textViewBookTitle = convertView.findViewById<TextView>(R.id.downloadBookTitle)
-        val textViewEpisodeTitle = convertView.findViewById<TextView>(R.id.downloadEpisodeTitle)
-        val imageView = convertView.findViewById<ImageView>(R.id.downloadBookImage)
-        val textViewPageStatus = convertView.findViewById<TextView>(R.id.page_status)
-        val textViewEpisodeSize = convertView.findViewById<TextView>(R.id.episode_size)
+        val downloadItem = myConvertView!!.findViewById<ConstraintLayout>(R.id.downloadItem)
+        val textViewBookTitle = myConvertView.findViewById<TextView>(R.id.downloadBookTitle)
+        val textViewEpisodeTitle = myConvertView.findViewById<TextView>(R.id.downloadEpisodeTitle)
+        val imageView = myConvertView.findViewById<ImageView>(R.id.downloadBookImage)
+        val textViewPageStatus = myConvertView.findViewById<TextView>(R.id.page_status)
+        val textViewEpisodeSize = myConvertView.findViewById<TextView>(R.id.episode_size)
 
         val item = items[position]
         var jpgCount = 0
@@ -54,8 +54,8 @@ class DownloadListAdapter(private var items: ArrayList<DownloadItemDTO>, private
             imageView.setImageBitmap(null)
         }
 
-        val btnPlay = convertView.findViewById<ImageButton>(R.id.btnPlayDownload)
-        val btnDelete = convertView.findViewById<ImageButton>(R.id.btnDeleteDownload)
+        val btnPlay = myConvertView.findViewById<ImageButton>(R.id.btnPlayDownload)
+        val btnDelete = myConvertView.findViewById<ImageButton>(R.id.btnDeleteDownload)
 
         btnPlay.setOnClickListener(object : ImgageClickListener(item) {
             override fun onClick(v: View) {
@@ -73,7 +73,7 @@ class DownloadListAdapter(private var items: ArrayList<DownloadItemDTO>, private
             }
         })
 
-        return convertView
+        return myConvertView
     }
 
     override fun getItemId(position: Int): Long {

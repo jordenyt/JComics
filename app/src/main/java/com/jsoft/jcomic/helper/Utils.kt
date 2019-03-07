@@ -90,7 +90,6 @@ class Utils// constructor
                     } catch (e: Exception) {
                         null
                     }
-
                 }
             }
             return try {
@@ -140,8 +139,7 @@ class Utils// constructor
             return File(getEpisodeFile(book, episode), String.format("%04d", pageNum) + ".jpg")
         }
 
-        fun downloadImage(imgUrl: String?, referer: String?): Bitmap? {
-            if (imgUrl == null) return null
+        fun downloadImage(imgUrl: String, referer: String? = null): Bitmap? {
             var bitmap: Bitmap? = null
             try {
                 val conn = java.net.URL(imgUrl).openConnection() as HttpURLConnection
@@ -175,7 +173,8 @@ class Utils// constructor
             val result = ArrayList<String>()
             try {
                 val httpConnect = url.openConnection() as HttpURLConnection
-                httpConnect.useCaches = false
+                httpConnect.readTimeout = 5000
+                httpConnect.useCaches = true
                 if (referer != null)
                     httpConnect.setRequestProperty("Referer", referer)
                 if (cookies != null)

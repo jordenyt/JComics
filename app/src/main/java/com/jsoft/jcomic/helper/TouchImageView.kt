@@ -138,22 +138,22 @@ class TouchImageView: AppCompatImageView {
     }
 
     internal fun scaleImage(mScaleFactor: Float, focusX: Float, focusY: Float) {
-        var mScaleFactor = mScaleFactor
+        var scaleFactor = mScaleFactor
         val origScale = saveScale
-        saveScale *= mScaleFactor
+        saveScale *= scaleFactor
         if (saveScale > maxScale) {
             saveScale = maxScale
-            mScaleFactor = maxScale / origScale
+            scaleFactor = maxScale / origScale
         } else if (saveScale < minScale) {
             saveScale = minScale
-            mScaleFactor = minScale / origScale
+            scaleFactor = minScale / origScale
         }
 
         if (origWidth * saveScale <= viewWidth || origHeight * saveScale <= viewHeight)
-            matrix.postScale(mScaleFactor, mScaleFactor, (viewWidth / 2).toFloat(),
+            matrix.postScale(scaleFactor, scaleFactor, (viewWidth / 2).toFloat(),
                     (viewHeight / 2).toFloat())
         else
-            matrix.postScale(mScaleFactor, mScaleFactor,
+            matrix.postScale(scaleFactor, scaleFactor,
                     focusX, focusY)
 
         fixTrans()
