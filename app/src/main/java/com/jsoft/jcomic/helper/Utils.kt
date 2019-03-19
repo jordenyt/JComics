@@ -8,6 +8,7 @@ import android.os.AsyncTask
 import android.os.Environment
 import android.util.Log
 import android.view.WindowManager
+import com.google.gson.Gson
 import java.io.*
 import java.math.BigInteger
 import java.net.HttpURLConnection
@@ -124,6 +125,29 @@ class Utils// constructor
 
         }
 
+        fun saveBook(book: BookDTO) {
+            val gson = Gson()
+            var myDir = Utils.rootFile
+            if (!myDir.exists()) myDir.mkdirs()
+            myDir = Utils.getBookFile(book)
+            if (!myDir.exists()) myDir.mkdirs()
+            try {
+                val nomediaFile = File(myDir, ".nomedia")
+                if (!nomediaFile.exists()) nomediaFile.createNewFile()
+                val cloneBook = book.clone()
+                for (i in 0 until cloneBook.episodes.size) {
+                    cloneBook.episodes[i].imageUrl = ArrayList()
+                }
+                cloneBook.bookImg = null
+                Utils.writeToFile(gson.toJson(cloneBook), myDir, "book.json")
+
+                val bookImg = File(myDir, "book.jpg")
+                if (!bookImg.exists() && book.bookImg != null) saveImage(bookImg, book.bookImg)
+            } catch (e: Exception) {
+                Log.e("jComics", "Utils.saveBook Error", e)
+            }
+        }
+
         val rootFile: File
             get() = File(Environment.getExternalStorageDirectory().toString() + "/jComics")
 
@@ -211,6 +235,20 @@ class Utils// constructor
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
             return BitmapFactory.decodeFile(file.absolutePath, options)
+        }
+
+        fun saveImage(file: File, finalBitmap: Bitmap?) {
+            if (!file.exists()) {
+                try {
+                    val out = FileOutputStream(file)
+                    finalBitmap!!.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                    out.flush()
+                    out.close()
+                } catch (e: Exception) {
+                    Log.e("jComics", "Write File Error", e)
+                }
+
+            }
         }
 
         fun calFolderSize(directory: File): Long {

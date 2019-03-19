@@ -21,17 +21,14 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
     inner class DownloadFilesTask(private val encoding: String) : AsyncTask<URL, Int, ArrayList<String>>() {
 
         override fun doInBackground(vararg urls: URL): ArrayList<String> {
-            /*val uri = Uri.parse(urls[0].toString())
-            var referer : String? = null
-            if (uri.host!!.contains("dm5.com") && uri.getQueryParameter("from") != null) {
-                referer = "http://m.dm5.com" + uri.getQueryParameter("from")
-            }*/
             return getURLResponse(urls[0], encoding)
         }
 
         override fun onPostExecute(result: ArrayList<String>) {
             if (result.size > 0) {
                 getBookFromUrlResult(result)
+                var myBookFile = Utils.getBookFile(book)
+                if (myBookFile.exists()) Utils.saveBook(book)
                 listener.onBookFetched(book)
             } else if (book.bookSynopsis == null) {
                 book.bookSynopsis = "Cannot load page from Internet"

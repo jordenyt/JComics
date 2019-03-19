@@ -8,10 +8,7 @@ import android.util.Log
 import android.widget.ListView
 import com.google.gson.Gson
 import com.jsoft.jcomic.adapter.DownloadListAdapter
-import com.jsoft.jcomic.helper.BookDTO
-import com.jsoft.jcomic.helper.DownloadItemDTO
-import com.jsoft.jcomic.helper.EpisodeDTO
-import com.jsoft.jcomic.helper.Utils
+import com.jsoft.jcomic.helper.*
 import java.io.File
 import java.io.FileReader
 import java.util.*
@@ -72,6 +69,7 @@ class DownloadListActivity : AppCompatActivity() {
             adapter = DownloadListAdapter(downloadItemList, this)
         }
         listView!!.adapter = adapter
+        Downloader.clearNotification()
     }
 
     fun startReading(book: BookDTO, position: Int) {

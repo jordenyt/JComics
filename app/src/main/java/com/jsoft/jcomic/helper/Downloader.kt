@@ -15,18 +15,13 @@ import com.jsoft.jcomic.DownloadListActivity
 import com.jsoft.jcomic.praser.EpisodeParser
 import com.jsoft.jcomic.praser.EpisodeParserListener
 import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import kotlin.collections.ArrayList
 
-class Downloader(internal var book: BookDTO?, private val activity: Context) : EpisodeParserListener {
+class Downloader(internal var book: BookDTO, private val activity: Context) : EpisodeParserListener {
     internal var episode: EpisodeDTO = EpisodeDTO("","")
-    private var mNotifyManager: NotificationManager? = null
     private var mBuilder: NotificationCompat.Builder? = null
     private var pageTotal: Int = 0
     private var pageDownloaded: Int = 0
@@ -43,8 +38,8 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
 
     fun downloadEpisode(position: Int) {
         Log.d("jComics", "downloadEpisode")
-        if (book != null && book!!.episodes.size > position) {
-            EpisodeParser.parseEpisode(book!!.episodes[position], this)
+        if (book.episodes.size > position) {
+            EpisodeParser.parseEpisode(book.episodes[position], this)
         }
     }
 
@@ -70,7 +65,7 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
         val sdf = SimpleDateFormat("HHmmss")
         notificationID = Integer.parseInt(sdf.format(Date()))
 
-        mNotifyManager!!.notify(notificationID, mBuilder!!.build())
+        //mNotifyManager!!.notify(notificationID, mBuilder!!.build())
     }
 
     override fun onEpisodeFetched(episode: EpisodeDTO) {
@@ -80,39 +75,20 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
         pageTotal = episode.imageUrl.size
         numMissingPage = 0
         this.episode = episode
-        mBuilder!!.setContentTitle("正在下載" + book!!.bookTitle + "-" + episode.episodeTitle)
+        mBuilder!!.setContentTitle("正在下載" + book.bookTitle + "-" + episode.episodeTitle)
         mBuilder!!.setContentText("0%")
         mBuilder!!.setProgress(100, 0, false)
         mNotifyManager!!.notify(notificationID, mBuilder!!.build())
 
-        val gson = Gson()
-        var myDir = Utils.rootFile
-        myDir.mkdirs()
-        myDir = Utils.getBookFile(book!!)
-        myDir.mkdirs()
+        Utils.saveBook(book)
 
-        try {
-            val nomediaFile = File(myDir, ".nomedia")
-            nomediaFile.createNewFile()
-            val cloneBook = book!!.clone()
-            for (i in 0 until cloneBook.episodes.size) {
-                cloneBook.episodes[i].imageUrl = ArrayList()
-            }
-            cloneBook.bookImg = null
-            Utils.writeToFile(gson.toJson(cloneBook), myDir, "book.json")
-
-            val bookImg = File(myDir, "book.jpg")
-            saveImage(bookImg, book!!.bookImg)
-        } catch (e: Exception) {
-            Log.e("jComics", "Create book Folder Error", e)
-        }
-
-        myDir = Utils.getEpisodeFile(book!!, episode)
+        var myDir = Utils.getEpisodeFile(book, episode)
         myDir.mkdirs()
 
         try {
             val nomediaFile = File(myDir, ".nomedia")
             nomediaFile.createNewFile()
+            val gson = Gson()
             Utils.writeToFile(gson.toJson(episode), myDir, "episode.json")
         } catch (e: Exception) {
             Log.e("jComics", "Create episode Folder Error", e)
@@ -121,7 +97,7 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
 
 
         for (i in 0 until episode.imageUrl.size) {
-            val file = Utils.getImgFile(book!!, episode, i)
+            val file = Utils.getImgFile(book, episode, i)
             if (file.exists()) {
                 Log.e("jComics", "Found " + episode.imageUrl[i])
                 pageDownloaded += 1
@@ -167,7 +143,7 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
 
     private fun updateDownloadNotification() {
         if (pageDownloaded == pageTotal) {
-            mBuilder!!.setContentTitle("已完成下載" + book!!.bookTitle + "-" + episode.episodeTitle)
+            mBuilder!!.setContentTitle("已完成下載" + book.bookTitle + "-" + episode.episodeTitle)
             mBuilder!!.setContentText("")
             mBuilder!!.setSmallIcon(android.R.drawable.stat_sys_download_done)
             if (numMissingPage > 0) {
@@ -185,28 +161,19 @@ class Downloader(internal var book: BookDTO?, private val activity: Context) : E
         }
     }
 
-    private fun saveImage(file: File, finalBitmap: Bitmap?) {
-        if (!file.exists()) {
-            try {
-                val out = FileOutputStream(file)
-                finalBitmap!!.compress(Bitmap.CompressFormat.JPEG, 90, out)
-                out.flush()
-                out.close()
-            } catch (e: Exception) {
-                Log.e("jComics", "Write File Error", e)
-            }
-
-        }
-    }
-
     private fun saveImage(imgUrl: String, episode: EpisodeDTO, finalBitmap: Bitmap) {
         val pageNum = episode.getPageNumByURL(imgUrl)
-        val file = Utils.getImgFile(book!!, episode, pageNum)
-        saveImage(file, finalBitmap)
+        val file = Utils.getImgFile(book, episode, pageNum)
+        Utils.saveImage(file, finalBitmap)
     }
 
     companion object {
         private var downloadImageTaskExecutor: Executor? = null
+        private var mNotifyManager: NotificationManager? = null
+
+        fun clearNotification() {
+            mNotifyManager?.cancelAll()
+        }
     }
 
 }
