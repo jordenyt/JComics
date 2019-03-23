@@ -82,7 +82,7 @@ class Downloader(internal var book: BookDTO, private val activity: Context) : Ep
 
         Utils.saveBook(book)
 
-        var myDir = Utils.getEpisodeFile(book, episode)
+        val myDir = Utils.getEpisodeFile(book, episode)
         myDir.mkdirs()
 
         try {

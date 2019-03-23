@@ -27,7 +27,7 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
         override fun onPostExecute(result: ArrayList<String>) {
             if (result.size > 0) {
                 getBookFromUrlResult(result)
-                var myBookFile = Utils.getBookFile(book)
+                val myBookFile = Utils.getBookFile(book)
                 if (myBookFile.exists()) Utils.saveBook(book)
                 listener.onBookFetched(book)
             } else if (book.bookSynopsis == null) {

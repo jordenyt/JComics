@@ -49,21 +49,23 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         try {
             val bookFile = File(Utils.getBookFile(BookDTO(bookUrl)), "book.json")
             val dbBook = bookmarkDb!!.getBook(bookUrl)
-            if (bookFile.exists()) {
-                val gson = Gson()
-                val savedBook = gson.fromJson(FileReader(bookFile.absolutePath), BookDTO::class.java)
+            when {
+                bookFile.exists() -> {
+                    val gson = Gson()
+                    val savedBook = gson.fromJson(FileReader(bookFile.absolutePath), BookDTO::class.java)
 
-                val bookImgFile = File(Utils.getBookFile(BookDTO(bookUrl)), "book.jpg")
-                if (bookImgFile.exists()) {
-                    savedBook.bookImg = Utils.imageFromFile(bookImgFile)
+                    val bookImgFile = File(Utils.getBookFile(BookDTO(bookUrl)), "book.jpg")
+                    if (bookImgFile.exists()) {
+                        savedBook.bookImg = Utils.imageFromFile(bookImgFile)
+                    }
+                    onBookFetched(savedBook)
                 }
-                onBookFetched(savedBook)
-            } else if (dbBook != null) {
-                onBookFetched(dbBook)
-            } else {
-                val newBook = BookDTO(bookUrl)
-                newBook.bookTitle = "Loading..."
-                onBookFetched(newBook)
+                dbBook != null -> onBookFetched(dbBook)
+                else -> {
+                    val newBook = BookDTO(bookUrl)
+                    newBook.bookTitle = "Loading..."
+                    onBookFetched(newBook)
+                }
             }
         } catch (e: Exception) {
             Log.e("jComics", "Error caught in reading saved book.", e)

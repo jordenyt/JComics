@@ -7,9 +7,7 @@ import java.util.*
 class BookDTO(var bookUrl: String?) : Serializable, Cloneable {
     var bookTitle: String? = null
     var bookSynopsis: String? = null
-    var lastUpdate: Date? = null
     var book: String? = null
-    var bookCategory: String? = null
     var episodes = ArrayList<EpisodeDTO>()
     var bookImgUrl: String? = null
     var bookImg: Bitmap? = null

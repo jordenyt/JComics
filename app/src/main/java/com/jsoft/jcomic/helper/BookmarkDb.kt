@@ -14,6 +14,11 @@ class BookmarkDb(context: Context) {
 
     private val db: SQLiteDatabase
 
+    init {
+        val mDbHelper = BookmarkDbHelper(context)
+        db = mDbHelper.writableDatabase
+    }
+
     private val dateTime: String
         get() {
             val dateFormat = SimpleDateFormat(
@@ -43,11 +48,6 @@ class BookmarkDb(context: Context) {
             c.close()
             return books
         }
-
-    init {
-        val mDbHelper = BookmarkDbHelper(context)
-        db = mDbHelper.writableDatabase
-    }
 
     fun insertBookIntoDb(book: BookDTO): Long {
         //db = mDbHelper.getWritableDatabase();

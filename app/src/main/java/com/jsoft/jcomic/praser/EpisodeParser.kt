@@ -4,7 +4,6 @@ import android.os.AsyncTask
 import android.util.Log
 import com.jsoft.jcomic.helper.EpisodeDTO
 import com.jsoft.jcomic.helper.Utils
-import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
@@ -16,8 +15,8 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
     init {
         try {
             DownloadFilesTask(encoding).execute(URL(episode.episodeUrl))
-        } catch (e: MalformedURLException) {
-            Log.e("jComics", "MalformedURLException: " + episode.episodeUrl!!)
+        } catch (e: Exception) {
+            Log.e("jComics", "Exception: " + episode.episodeUrl)
         }
 
     }
@@ -46,9 +45,9 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
 
         fun parseEpisode(episode: EpisodeDTO, listener: EpisodeParserListener) {
             when {
-                episode.episodeUrl!!.contains("comicbus") -> ComicVIPEpisodeParser(episode, listener)
-                episode.episodeUrl!!.contains("cartoonmad") -> CartoonMadEpisodeParser(episode, listener)
-                episode.episodeUrl!!.contains("dm5.com") -> DM5EpisodeParser(episode, listener)
+                episode.episodeUrl.contains("comicbus") -> ComicVIPEpisodeParser(episode, listener)
+                episode.episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(episode, listener)
+                episode.episodeUrl.contains("dm5.com") -> DM5EpisodeParser(episode, listener)
             }
         }
     }

@@ -47,9 +47,6 @@ class CartoonMadBookParser(book: BookDTO, listener: BookParserListener) : BookPa
                 book.bookImgUrl = "http://www.cartoonmad.com" + Html.fromHtml(m.group(1)).toString()
             }
         }
-        for (episode in episodes) {
-            episode.bookTitle = book.bookTitle
-        }
         book.episodes = episodes
     }
 }

@@ -45,7 +45,7 @@ class FullScreenImageAdapter// constructor
 
         if (episode!!.pageCount > 0) {
             progressText.text = "Downloading..."
-            statusText.text = episode!!.bookTitle + " - " + episode!!.episodeTitle + "    Page: " + (position + 1) + " / " + episode!!.pageCount
+            statusText.text = book.bookTitle + " - " + episode!!.episodeTitle + "    Page: " + (position + 1) + " / " + episode!!.pageCount
 
             val file = Utils.getImgFile(book, episode!!, episode!!.getPageNumByURL(episode!!.imageUrl[position]))
             if (file.exists()) {
@@ -56,7 +56,7 @@ class FullScreenImageAdapter// constructor
             }
         } else {
             progressText.text = "No Image"
-            statusText.text = episode!!.bookTitle + " - " + episode!!.episodeTitle
+            statusText.text = book.bookTitle + " - " + episode!!.episodeTitle
         }
         imgDisplay.setPager(pager)
 

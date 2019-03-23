@@ -2,8 +2,8 @@ package com.jsoft.jcomic.helper
 
 import java.io.Serializable
 
-class EpisodeDTO(var episodeTitle: String?, var episodeUrl: String?) : Serializable, Cloneable {
-    var bookTitle: String? = null
+class EpisodeDTO(var episodeTitle: String?, var episodeUrl: String) : Serializable, Cloneable {
+    //var bookTitle: String? = null
     var pageCount: Int = 0
     var imageUrl = ArrayList<String>()
 

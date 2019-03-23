@@ -86,9 +86,6 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
                 }
             }
         }
-        for (episode in episodes) {
-            episode.bookTitle = book.bookTitle
-        }
         book.episodes = episodes
     }
 }

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:myapp="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/menu_item_add_bookmark"
-        android:icon="@android:drawable/ic_menu_add"
+    <item
+        android:id="@+id/menu_item_add_bookmark"
+        android:icon="@android:drawable/star_big_off"
         android:title="Add to Bookmark"
         myapp:showAsAction="ifRoom" />
-    <item android:id="@+id/menu_item_delete_bookmark"
-        android:icon="@android:drawable/ic_menu_delete"
+    <item
+        android:id="@+id/menu_item_delete_bookmark"
+        android:icon="@android:drawable/btn_star_big_on"
         android:title="Delete Bookmark"
         myapp:showAsAction="ifRoom" />
     <item

@@ -42,14 +42,14 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
 
         try {
             val episodeFile = File(Utils.getEpisodeFile(book!!, episode), "episode.json")
-            if (episodeFile.exists()) {
-                val gson = Gson()
-                val savedEpisode = gson.fromJson(FileReader(episodeFile.absolutePath), EpisodeDTO::class.java)
-                onEpisodeFetched(savedEpisode)
-            } else if (Utils.isInternetAvailable) {
-                EpisodeParser.parseEpisode(episode, this)
-            } else {
-                onEpisodeFetched(episode)
+            when {
+                episodeFile.exists() -> {
+                    val gson = Gson()
+                    val savedEpisode = gson.fromJson(FileReader(episodeFile.absolutePath), EpisodeDTO::class.java)
+                    onEpisodeFetched(savedEpisode)
+                }
+                Utils.isInternetAvailable -> EpisodeParser.parseEpisode(episode, this)
+                else -> onEpisodeFetched(episode)
             }
         } catch (e: Exception) {
             Log.e("jComics", "Error caught in reading saved episode.", e)
@@ -144,10 +144,10 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
             pager!!.turnNext()
             return true
-        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_UP ) {
             pager!!.turnPrev()
             return true
         }
@@ -163,12 +163,10 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
             if (book!!.episodes[currEpisode].pageCount > 0) {
                 onEpisodeFetched(book!!.episodes[currEpisode])
             } else {
-                if (book!!.episodes[currEpisode].episodeUrl!!.contains("comicbus")) {
-                    ComicVIPEpisodeParser(book!!.episodes[currEpisode], this)
-                } else if (book!!.episodes[currEpisode].episodeUrl!!.contains("cartoonmad")) {
-                    CartoonMadEpisodeParser(book!!.episodes[currEpisode], this)
-                } else if (book!!.episodes[currEpisode].episodeUrl!!.contains("dm5.com")) {
-                    DM5EpisodeParser(book!!.episodes[currEpisode], this)
+                when {
+                    book!!.episodes[currEpisode].episodeUrl.contains("comicbus") -> ComicVIPEpisodeParser(book!!.episodes[currEpisode], this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(book!!.episodes[currEpisode], this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("dm5.com") -> DM5EpisodeParser(book!!.episodes[currEpisode], this)
                 }
             }
         } else {
