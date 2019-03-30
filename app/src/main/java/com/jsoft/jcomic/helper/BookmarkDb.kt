@@ -49,6 +49,52 @@ class BookmarkDb(context: Context) {
             return books
         }
 
+    private fun getBooksWithUrl(pattern: String) : List<BookDTO> {
+        val queryString = ("SELECT " + BookmarkEntry.COLUMN_NAME_BOOK_URL
+                + ", " + BookmarkEntry.COLUMN_NAME_BOOK_IMG_URL
+                + ", " + BookmarkEntry.COLUMN_NAME_TITLE
+                + " FROM " + BookmarkEntry.TABLE_NAME
+                + " WHERE " + BookmarkEntry.COLUMN_NAME_BOOK_URL + " LIKE '%" + pattern + "%'")
+        val c = db.rawQuery(queryString, arrayOf())
+        val books = ArrayList<BookDTO>()
+        while (c.moveToNext()) {
+            val book = BookDTO(c.getString(c.getColumnIndexOrThrow(BookmarkEntry.COLUMN_NAME_BOOK_URL)))
+            book.bookImgUrl = c.getString(c.getColumnIndexOrThrow(BookmarkEntry.COLUMN_NAME_BOOK_IMG_URL))
+            book.bookTitle = c.getString(c.getColumnIndexOrThrow(BookmarkEntry.COLUMN_NAME_TITLE))
+            books.add(book)
+        }
+        c.close()
+        return books
+    }
+
+    private fun updateBookUrl(book: BookDTO, newUrl: String, newImgUrl: String) {
+        //db = mDbHelper.getWritableDatabase();
+        // New value for one column
+        val values = ContentValues()
+        values.put(BookmarkEntry.COLUMN_NAME_BOOK_URL, newUrl)
+        values.put(BookmarkEntry.COLUMN_NAME_BOOK_IMG_URL, newImgUrl)
+
+        // Which row to update, based on the ID
+        val selection = BookmarkEntry.COLUMN_NAME_BOOK_URL + " LIKE ?"
+        val selectionArgs = arrayOf(book.bookUrl!!)
+
+        db.update(
+                BookmarkEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs)
+        //db.close();
+    }
+
+    fun updateComicBus() {
+        var bookList = getBooksWithUrl("comicbus")
+        if (!bookList.isEmpty()) {
+            bookList.forEach{
+                updateBookUrl(it, it.bookUrl!!.replace("comicbus", "comicgood"), it.bookImgUrl!!.replace("comicbus", "comicgood"))
+            }
+        }
+    }
+
     fun insertBookIntoDb(book: BookDTO): Long {
         //db = mDbHelper.getWritableDatabase();
         val values = ContentValues()

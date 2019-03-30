@@ -14,23 +14,16 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
         var episodeId = 0
         var bookId = 0
         var code = ""
-
-        if (episode.episodeUrl.contains("www.comicbus.com")) {
-            val p = Pattern.compile("https://www\\.comicbus\\.com/show/([a-z-]+)(\\d+)\\.html\\?ch=(\\d+)")
-            val m = p.matcher(episode.episodeUrl)
-            if (m.matches()) {
-                bookId = Integer.parseInt(m.group(2))
-                episodeId = Integer.parseInt(m.group(3))
-            }
-        } else if (episode.episodeUrl.contains("m.comicbus.com")) {
-            val p = Pattern.compile("https://m\\.comicbus\\.com/comic/[a-z]+_(\\d+)\\.html\\?ch=(\\d+)")
+        // http://m.comicgood.com/comic/finance_16264.html?ch=21
+        if (episode.episodeUrl.contains("m.comicgood.com")) {
+            val p = Pattern.compile("http://m\\.comicgood\\.com/comic/[a-z]+_(\\d+)\\.html\\?ch=(\\d+)")
             val m = p.matcher(episode.episodeUrl)
             if (m.matches()) {
                 bookId = Integer.parseInt(m.group(1))
                 episodeId = Integer.parseInt(m.group(2))
             }
         }
-
+        //<script>var chs=545;var ti=3654;var cs='
         for (s in result) {
             val p = Pattern.compile(".*<script>var chs=(\\d+);var ti=(\\d+);var cs='([a-z0-9]+)';eval.*")
             val m = p.matcher(s)
@@ -50,7 +43,8 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
             val numPage = Integer.parseInt(ss(extractCode, 7, 3, true))
             episode.pageCount = numPage
             for (i in 1..numPage) {
-                val pageUrl = ("https://img" + ss(extractCode, 4, 2, true) + ".8comic.com/"
+                //'//img' + ss(c, 4, 2) + '.8comic.com/' + ss(c, 6, 1) + '/' + ti + '/' + ss(c, 0, 4) + '/' + nn(p) + '_' + ss(c, mm(p) + 10, 3, f) + '.jpg';
+                val pageUrl = ("http://img" + ss(extractCode, 4, 2, true) + ".8comic.com/"
                         + ss(extractCode, 6, 1, true) + "/" + bookId + "/" + ss(extractCode, 0, 4, true) + "/"
                         + String.format("%03d", i) + '_'.toString() + ss(extractCode, mm(i) + 10, 3, false) + ".jpg")
                 episode.imageUrl.add(pageUrl)

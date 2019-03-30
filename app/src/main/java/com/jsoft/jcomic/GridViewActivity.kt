@@ -71,6 +71,8 @@ class GridViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         bookmarkDb = BookmarkDb(this)
 
+        bookmarkDb!!.updateComicBus()
+
         enableHttpCaching()
         gridViewActivity = this
         setContentView(R.layout.activity_grid_view)
@@ -160,7 +162,7 @@ class GridViewActivity : AppCompatActivity() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 val uri = request.url
                 try {
-                    if (uri.host!!.contains("cartoonmad.com") && uri.path!!.startsWith("/m/comic/") || uri.host!!.contains("comicbus.com") && uri.path!!.startsWith("/comic/")) {
+                    if (uri.host!!.contains("cartoonmad.com") && uri.path!!.startsWith("/m/comic/") || uri.host!!.contains("comicgood.com") && uri.path!!.startsWith("/comic/")) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
                         i.putExtra("bookUrl", uri.toString())
                         startActivity(i)
@@ -218,7 +220,7 @@ class GridViewActivity : AppCompatActivity() {
     }
 
     fun goTo8Comic(view: View) {
-        openWebView("http://m.comicbus.com/")
+        openWebView("http://m.comicgood.com/")
     }
 
     fun goToDM5(view: View) {
