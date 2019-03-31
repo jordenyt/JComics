@@ -2,7 +2,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#000000"
-    android:padding="10dp"
+    android:padding="5dp"
     android:orientation="vertical">
 
     <ImageView
@@ -13,7 +13,7 @@
     <TextView
         android:id="@+id/downloadBookTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45sp"
         android:layout_gravity="center_horizontal"
         android:maxLines="2"
         android:text="Item name here..."
