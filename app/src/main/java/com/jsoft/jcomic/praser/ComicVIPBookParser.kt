@@ -11,8 +11,8 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
     override fun getBookFromUrlResult(html: ArrayList<String>) {
         val episodes = ArrayList<EpisodeDTO>()
         //Log.e("jComics", "${book.bookUrl}")
-        for (i in 1 until html.size) {
-            var s = html[i - 1].trim { it <= ' ' } + html[i].trim { it <= ' ' }
+        for (i in 3 until html.size) {
+            var s = html[i - 3].trim { it <= ' '} + html[i - 2].trim { it <= ' '} + html[i - 1].trim { it <= ' ' } + html[i].trim { it <= ' ' }
             s = s.replace("\n", "")
 
             var p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(\\d+),(\\d+)\\);return false;\" id=\".+\" class=\"(Vol|Ch)\" >\\s*(.+)</a>.*")
