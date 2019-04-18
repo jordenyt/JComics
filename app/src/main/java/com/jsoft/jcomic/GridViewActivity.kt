@@ -162,9 +162,12 @@ class GridViewActivity : AppCompatActivity() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 val uri = request.url
                 try {
-                    if (uri.host!!.contains("cartoonmad.com") && uri.path!!.startsWith("/m/comic/") || uri.host!!.contains("comicgood.com") && uri.path!!.startsWith("/comic/")) {
+                    if (uri.host!!.contains("cartoonmad.com") && uri.path!!.startsWith("/m/comic/")
+                            || (uri.host!!.contains("comicgood.com") || uri.host!!.contains("comicbus.com")) && uri.path!!.startsWith("/comic/")) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
-                        i.putExtra("bookUrl", uri.toString())
+                        var bookUrl = uri.toString()
+                        bookUrl = bookUrl.replace("comicbus", "comicgood")
+                        i.putExtra("bookUrl", bookUrl)
                         startActivity(i)
                         return true
                     } else if (uri.host!!.contains("dm5.com")) {
