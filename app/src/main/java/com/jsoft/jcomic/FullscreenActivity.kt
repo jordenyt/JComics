@@ -164,7 +164,7 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
                 onEpisodeFetched(book!!.episodes[currEpisode])
             } else {
                 when {
-                    book!!.episodes[currEpisode].episodeUrl.contains("comicgood") -> ComicVIPEpisodeParser(book!!.episodes[currEpisode], this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("comicbus") -> ComicVIPEpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("dm5.com") -> DM5EpisodeParser(book!!.episodes[currEpisode], this)
                 }

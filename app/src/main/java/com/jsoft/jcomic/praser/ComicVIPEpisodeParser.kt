@@ -16,8 +16,8 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
         var code = ""
         //Log.e("jComics", "${episode.episodeUrl}")
         // http://m.comicgood.com/comic/finance_16264.html?ch=21
-        if (episode.episodeUrl.contains("m.comicgood.com")) {
-            val p = Pattern.compile("http://m\\.comicgood\\.com/comic/[a-z]+_(\\d+)\\.html\\?ch=(\\d+)")
+        if (episode.episodeUrl.contains("m.comicbus.com")) {
+            val p = Pattern.compile("http://m\\.comicbus\\.com/comic/[a-z]+_(\\d+)\\.html\\?ch=(\\d+)")
             val m = p.matcher(episode.episodeUrl)
             if (m.matches()) {
                 bookId = Integer.parseInt(m.group(1))

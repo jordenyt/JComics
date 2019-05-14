@@ -163,10 +163,10 @@ class GridViewActivity : AppCompatActivity() {
                 val uri = request.url
                 try {
                     if (uri.host!!.contains("cartoonmad.com") && uri.path!!.startsWith("/m/comic/")
-                            || (uri.host!!.contains("comicgood.com") || uri.host!!.contains("comicbus.com")) && uri.path!!.startsWith("/comic/")) {
+                            || uri.host!!.contains("comicbus.com") && uri.path!!.startsWith("/comic/")) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
                         var bookUrl = uri.toString()
-                        bookUrl = bookUrl.replace("comicbus", "comicgood")
+                        //bookUrl = bookUrl.replace("comicbus", "comicgood")
                         i.putExtra("bookUrl", bookUrl)
                         startActivity(i)
                         return true
@@ -223,7 +223,7 @@ class GridViewActivity : AppCompatActivity() {
     }
 
     fun goTo8Comic(view: View) {
-        openWebView("http://m.comicgood.com/")
+        openWebView("http://m.comicbus.com/")
     }
 
     fun goToDM5(view: View) {

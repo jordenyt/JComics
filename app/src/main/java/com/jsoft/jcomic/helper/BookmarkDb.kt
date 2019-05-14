@@ -87,10 +87,10 @@ class BookmarkDb(context: Context) {
     }
 
     fun updateComicBus() {
-        var bookList = getBooksWithUrl("comicbus")
+        var bookList = getBooksWithUrl("comicgood")
         if (!bookList.isEmpty()) {
             bookList.forEach{
-                updateBookUrl(it, it.bookUrl!!.replace("comicbus", "comicgood"), it.bookImgUrl!!.replace("comicbus", "comicgood"))
+                updateBookUrl(it, it.bookUrl!!.replace("comicgood", "comicbus"), it.bookImgUrl!!.replace("comicgood", "comicbus"))
             }
         }
     }
