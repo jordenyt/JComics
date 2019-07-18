@@ -42,7 +42,7 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
                 book.bookTitle = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
             }
 
-            p = Pattern.compile(".*<div class=\"item_show_detail\"><ul><li>(.+?)</li></ul>.*")
+            p = Pattern.compile(".*<div class=\"full_text\" style=\".+?\">(.+?)</div>.*")
             m = p.matcher(s)
             if (m.matches()) {
                 book.bookSynopsis = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
