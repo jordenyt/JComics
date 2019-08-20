@@ -159,19 +159,18 @@ class GridViewActivity : AppCompatActivity() {
         val webSettings = webView!!.settings
         webSettings.javaScriptEnabled = true
         webView!!.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                val uri = request.url
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 try {
-                    if (uri.host!!.contains("cartoonmad.com") && uri.path!!.startsWith("/m/comic/")
-                            || uri.host!!.contains("comicbus.com") && uri.path!!.startsWith("/comic/")) {
+                    if (url.contains("cartoonmad.com/m/comic/")
+                            || url.contains("comicbus.com/comic/")) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
-                        var bookUrl = uri.toString()
+                        var bookUrl = url
                         //bookUrl = bookUrl.replace("comicbus", "comicgood")
                         i.putExtra("bookUrl", bookUrl)
                         startActivity(i)
                         return true
-                    } else if (uri.host!!.contains("dm5.com")) {
-                        InterceptDM5Task(view).execute(URL(uri.toString()))
+                    } else if (url.contains("dm5.com")) {
+                        InterceptDM5Task(view).execute(URL(url))
                         return true
                     }
                 } catch (e: Exception) {
