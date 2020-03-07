@@ -50,6 +50,7 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
                 book.bookUrl!!.contains("comicbus") -> ComicVIPBookParser(book, listener)
                 book.bookUrl!!.contains("cartoonmad") -> CartoonMadBookParser(book, listener)
                 book.bookUrl!!.contains("dm5.com") -> DM5BookParser(book, listener)
+                book.bookUrl!!.contains("qimiaomh.com") -> QiMiaoBookParser(book, listener)
             }
         }
     }

@@ -162,7 +162,8 @@ class GridViewActivity : AppCompatActivity() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 try {
                     if (url.contains("cartoonmad.com/m/comic/")
-                            || url.contains("comicbus.com/comic/")) {
+                            || url.contains("comicbus.com/comic/")
+                            || url.contains("qimiaomh.com/manhua/")) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
                         var bookUrl = url
                         //bookUrl = bookUrl.replace("comicbus", "comicgood")
@@ -223,6 +224,10 @@ class GridViewActivity : AppCompatActivity() {
 
     fun goTo8Comic(view: View) {
         openWebView("http://m.comicbus.com/")
+    }
+
+    fun goToQiMiao(view: View) {
+        openWebView("https://m.qimiaomh.com/")
     }
 
     fun goToDM5(view: View) {
