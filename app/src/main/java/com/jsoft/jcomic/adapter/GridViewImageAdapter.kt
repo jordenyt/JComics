@@ -1,5 +1,6 @@
 package com.jsoft.jcomic.adapter
 
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.AsyncTask
@@ -61,6 +62,7 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
         } else {
             imageView.setOnClickListener(null)
         }
+        imageView.setOnLongClickListener(OnImageClickListener(position))
         textViewItem.text = books[position].bookTitle
         if (!Utils.isInternetAvailable && !offlineAvailable) {
             textViewItem.setTextColor(Color.DKGRAY)
@@ -74,6 +76,7 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
             imageView.setImageBitmap(Utils.imageFromFile(bookImgFile))
         }
         if (books[position].bookImg == null) {
+            imageView.setImageResource(R.mipmap.ic_launcher)
             DownloadImageTask(imageView, books[position]).executeOnExecutor(downloadImageTaskExecutor, books[position].bookImgUrl)
         } else {
             imageView.setImageBitmap(books[position].bookImg)
@@ -83,10 +86,24 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
     }
 
     internal inner class OnImageClickListener// constructor
-    (var position: Int) : OnClickListener {
+    (var position: Int) : OnClickListener, View.OnLongClickListener {
 
         override fun onClick(v: View) {
             activity.getEpisodeList(position)
+        }
+
+        override fun onLongClick(view: View): Boolean {
+            AlertDialog.Builder(activity)
+                    .setTitle("要刪除嗎?")
+                    .setMessage("你可以隨時在網站加回")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes) { dialog, whichButton ->
+                        val book : BookDTO = getItem(position) as BookDTO
+                        activity.unBookmark(book)
+                        activity.onResume()
+                    }
+                    .setNegativeButton(android.R.string.no, null).show()
+            return true
         }
 
     }

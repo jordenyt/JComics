@@ -256,4 +256,8 @@ class GridViewActivity : AppCompatActivity() {
             Log.e("jComics", "Exception caught in enableHttpCaching", e)
         }
     }
+
+    fun unBookmark(book: BookDTO) {
+        bookmarkDb!!.updateIsBookmark(book, "N")
+    }
 }
