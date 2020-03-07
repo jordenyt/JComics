@@ -15,41 +15,22 @@ class CartoonMadEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListen
 
     override fun getEpisodeFromUrlResult(result: List<String>) {
         episode.imageUrl = ArrayList()
-        var imageUrlHost: String? = ""
-        var imageUrlPath = ""
-        var imageUrlQuery: String? = ""
-        var numPage = 0
 
-        for (s in result) {
-            var p = Pattern.compile(".*<img src=\"(https?:\\/\\/[a-zA-Z0-9:\\.]+)?(.+)(\\d\\d\\d)(&.+=.+)?\" border=\"\\d+\" oncontextmenu=.+?>.*")
-            //<img src="comicpic.asp?file=/1152/934/001" border="0" oncontextmenu='return false' onload=
-
-
-            var m = p.matcher(s)
-            if (m.matches()) {
-                imageUrlHost = m.group(1)
-                imageUrlPath = m.group(2)
-                imageUrlQuery = m.group(4)
-            }
-
-            p = Pattern.compile(".*...<a class=pages href=(.+)>(\\d+)</a>.*")
-            m = p.matcher(s)
-            if (m.matches()) {
-                numPage = Integer.parseInt(m.group(2))
-            }
-
+        //http://www.cartoonmad.com/m/comic/102900123095001.html
+        var p = Pattern.compile(".*(\\d{4})\\d(\\d{3})\\d(\\d{3})(\\d{3}).*")
+        var m = p.matcher(episode.episodeUrl)
+        var bookId = ""
+        var episodeId = ""
+        if (m.matches()) {
+            episode.pageCount = Integer.parseInt(m.group(3))
+            bookId = m.group(1)
+            episodeId = m.group(2)
         }
-        episode.pageCount = numPage
-
+        //http://www.cartoonmad.com/m/comic/comicpic.asp?file=/1029/032/004&rimg=1
         val imageUrlList = ArrayList<String>()
-        if (imageUrlHost == null) {
-            imageUrlHost = "http://www.cartoonmad.com/comic/"
-        }
-        if (imageUrlQuery == null) {
-            imageUrlQuery = ""
-        }
         for (k in 1..episode.pageCount) {
-            val imageUrl = imageUrlHost + imageUrlPath + String.format("%03d", k) + imageUrlQuery
+            val imageUrl = "http://www.cartoonmad.com/comic/comicpic.asp?file=/" + bookId + "/" + episodeId + "/" + String.format("%03d", k) + "&rimg=1"
+            //Log.d("jComics", imageUrl)
             imageUrlList.add(imageUrl)
         }
         episode.imageUrl = imageUrlList
