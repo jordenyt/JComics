@@ -49,6 +49,7 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
                 episode.episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(episode, listener)
                 episode.episodeUrl.contains("dm5.com") -> DM5EpisodeParser(episode, listener)
                 episode.episodeUrl.contains("qimiaomh.com") -> QiMiaoEpisodeParser(episode, listener)
+                episode.episodeUrl.contains("kuman5.com") -> KuMan5EpisodeParser(episode, listener)
             }
         }
     }

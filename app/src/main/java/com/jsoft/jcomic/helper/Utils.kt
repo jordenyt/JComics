@@ -13,6 +13,7 @@ import java.io.*
 import java.math.BigInteger
 import java.net.HttpURLConnection
 import java.net.InetAddress
+import java.net.ProtocolException
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest

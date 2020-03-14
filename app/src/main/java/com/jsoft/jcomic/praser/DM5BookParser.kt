@@ -36,7 +36,7 @@ class DM5BookParser(book: BookDTO, listener: BookParserListener) : BookParser(bo
     }
 
     //Call when URL is fetched
-    override fun getBookFromUrlResult(html: ArrayList<String>) {
+    override fun getBookFromUrlResult(html: ArrayList<String>):Boolean {
         var episodes: MutableList<EpisodeDTO> = ArrayList()
         var s = ""
         for (i in html.indices) {
@@ -100,5 +100,6 @@ class DM5BookParser(book: BookDTO, listener: BookParserListener) : BookParser(bo
         }
         episodes = cleanEpisodes
         book.episodes = episodes
+        return true
     }
 }

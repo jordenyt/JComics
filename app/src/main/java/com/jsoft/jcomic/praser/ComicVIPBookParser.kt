@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "BIG5") {
 
     //Call when URL is fetched
-    override fun getBookFromUrlResult(html: ArrayList<String>) {
+    override fun getBookFromUrlResult(html: ArrayList<String>):Boolean {
         val episodes = ArrayList<EpisodeDTO>()
         //Log.e("jComics", "${book.bookUrl}")
         for (i in 3 until html.size) {
@@ -56,5 +56,6 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
 
         }
         book.episodes = episodes
+        return true
     }
 }

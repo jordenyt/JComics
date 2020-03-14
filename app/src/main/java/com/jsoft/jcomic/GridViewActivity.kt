@@ -163,10 +163,10 @@ class GridViewActivity : AppCompatActivity() {
                 try {
                     if (url.contains("cartoonmad.com/m/comic/")
                             || url.contains("comicbus.com/comic/")
-                            || url.contains("qimiaomh.com/manhua/")) {
+                            || url.contains("qimiaomh.com/manhua/")
+                            || ".*kuman5.com\\/\\d+\\/.*".toRegex().matches(url)) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
                         var bookUrl = url
-                        //bookUrl = bookUrl.replace("comicbus", "comicgood")
                         i.putExtra("bookUrl", bookUrl)
                         startActivity(i)
                         return true
@@ -228,6 +228,10 @@ class GridViewActivity : AppCompatActivity() {
 
     fun goToQiMiao(view: View) {
         openWebView("https://m.qimiaomh.com/")
+    }
+
+    fun goToKM5(view: View) {
+        openWebView("http://kuman5.com/")
     }
 
     fun goToDM5(view: View) {

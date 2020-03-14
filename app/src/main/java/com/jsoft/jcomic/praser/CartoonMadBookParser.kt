@@ -16,7 +16,7 @@ class CartoonMadBookParser(book: BookDTO, listener: BookParserListener) : BookPa
     }
 
     //Call when URL is fetched
-    override fun getBookFromUrlResult(html: ArrayList<String>) {
+    override fun getBookFromUrlResult(html: ArrayList<String>):Boolean {
         val episodes = ArrayList<EpisodeDTO>()
         for (s in html) {
             var p = Pattern.compile("<td>.*?<a href=(.+?)>(.+?)</a></td>")
@@ -48,5 +48,6 @@ class CartoonMadBookParser(book: BookDTO, listener: BookParserListener) : BookPa
             }
         }
         book.episodes = episodes
+        return true
     }
 }

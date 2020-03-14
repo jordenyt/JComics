@@ -25,7 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.2"
+            android:layout_weight="0.225"
             android:onClick="goToCartoonMad"
             android:text="動漫狂" />
 
@@ -34,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.25"
+            android:layout_weight="0.225"
             android:onClick="goTo8Comic"
             android:text="無限動漫" />
 
@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.2"
+            android:layout_weight="0.225"
             android:onClick="goToDM5"
             android:text="動漫屋" />
 
@@ -52,9 +52,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_weight="0.225"
+            android:onClick="goToKM5"
+            android:text="酷漫屋" />
+
+        <!--<Button
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="0.25"
             android:onClick="goToQiMiao"
-            android:text="奇妙動漫" />
+            android:text="奇妙動漫" />-->
     </LinearLayout>
 
     <GridView

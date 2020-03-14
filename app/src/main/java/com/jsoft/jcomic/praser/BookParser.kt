@@ -26,10 +26,10 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
 
         override fun onPostExecute(result: ArrayList<String>) {
             if (result.size > 0) {
-                getBookFromUrlResult(result)
-                val myBookFile = Utils.getBookFile(book)
-                if (myBookFile.exists()) Utils.saveBook(book)
-                listener.onBookFetched(book)
+                val finished = getBookFromUrlResult(result)
+                if (finished) {
+                    loadedAllEpisodes();
+                }
             } else if (book.bookSynopsis == null) {
                 book.bookSynopsis = "Cannot load page from Internet"
                 listener.onBookFetched(book)
@@ -37,11 +37,19 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
         }
     }
 
+    protected open fun loadedAllEpisodes() {
+        val myBookFile = Utils.getBookFile(book)
+        if (myBookFile.exists()) Utils.saveBook(book)
+        listener.onBookFetched(book)
+    }
+
     protected open fun getURLResponse(url: URL, encoding: String): ArrayList<String> {
         return Utils.getURLResponse(url, null, encoding)
     }
 
-    protected open fun getBookFromUrlResult(html: ArrayList<String>) {}
+    protected open fun getBookFromUrlResult(html: ArrayList<String>): Boolean {
+        return true
+    }
 
     companion object {
 
@@ -51,6 +59,7 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
                 book.bookUrl!!.contains("cartoonmad") -> CartoonMadBookParser(book, listener)
                 book.bookUrl!!.contains("dm5.com") -> DM5BookParser(book, listener)
                 book.bookUrl!!.contains("qimiaomh.com") -> QiMiaoBookParser(book, listener)
+                book.bookUrl!!.contains("kuman5.com") -> KuMan5BookParser(book, listener)
             }
         }
     }

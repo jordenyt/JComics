@@ -20,7 +20,7 @@ class QiMiaoBookParser(book: BookDTO, listener: BookParserListener) : BookParser
         return result
     }
 
-    override fun getBookFromUrlResult(html: ArrayList<String>) {
+    override fun getBookFromUrlResult(html: ArrayList<String>):Boolean {
         val episodes = ArrayList<EpisodeDTO>()
         //Log.e("jComics", "${book.bookUrl}")
         for (i in 3 until html.size) {
@@ -67,5 +67,6 @@ class QiMiaoBookParser(book: BookDTO, listener: BookParserListener) : BookParser
 
         }
         book.episodes = episodes
+        return true
     }
 }
