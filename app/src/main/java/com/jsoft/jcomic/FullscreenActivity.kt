@@ -2,7 +2,6 @@ package com.jsoft.jcomic
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.LinearLayout
@@ -37,7 +36,6 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
         else {
             BookDTO("")
         }
-        //Log.d("jComic", "EpisodeUrl: " + episode.getEpisodeUrl());
         val episode = book!!.episodes[currEpisode]
 
         try {
@@ -52,7 +50,7 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
                 else -> onEpisodeFetched(episode)
             }
         } catch (e: Exception) {
-            Log.e("jComics", "Error caught in reading saved episode.", e)
+            e.printStackTrace()
         }
 
     }
@@ -167,6 +165,8 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
                     book!!.episodes[currEpisode].episodeUrl.contains("comicbus") -> ComicVIPEpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("dm5.com") -> DM5EpisodeParser(book!!.episodes[currEpisode], this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("kuman5.com") -> KuMan5EpisodeParser(book!!.episodes[currEpisode], this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("qimiaomh.com") -> QiMiaoEpisodeParser(book!!.episodes[currEpisode], this)
                 }
             }
         } else {

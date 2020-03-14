@@ -5,10 +5,28 @@
     android:padding="5dp"
     android:orientation="vertical">
 
-    <ImageView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="150sp"
-        android:id="@+id/bookImage" />
+        android:layout_height="150sp" >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="150sp"
+            android:id="@+id/bookImage" />
+
+        <TextView
+            android:id="@+id/bookOrigin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="#A6000000"
+            android:gravity="center"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/downloadBookTitle"
@@ -20,5 +38,7 @@
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="16sp" />
+
+
 
 </LinearLayout>

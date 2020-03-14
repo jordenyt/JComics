@@ -220,8 +220,11 @@ class Utils// constructor
 
                 val inputStream = httpConnect.inputStream
                 val reader = BufferedReader(InputStreamReader(inputStream, encoding))
-                reader.forEachLine {
-                    result.add(it)
+                var line : String? = null
+                line = try { reader.readLine() } catch (e: ProtocolException) { null }
+                while (line != null) {
+                    result.add(line)
+                    line = try { reader.readLine() } catch (e: ProtocolException) { null }
                 }
                 inputStream.close()
                 reader.close()

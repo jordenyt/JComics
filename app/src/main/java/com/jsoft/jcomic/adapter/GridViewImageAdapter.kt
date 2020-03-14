@@ -46,7 +46,7 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
         }
 
         val textViewItem = myConvertView!!.findViewById<TextView>(R.id.downloadBookTitle)
-
+        val originViewItem = myConvertView!!.findViewById<TextView>(R.id.bookOrigin)
         val imageView = myConvertView.findViewById<ImageView>(R.id.bookImage)
 
         var offlineAvailable = false
@@ -70,6 +70,15 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
         } else {
             textViewItem.setTextColor(Color.WHITE)
             imageView.alpha = 1f
+        }
+
+        when {
+            books[position].bookUrl!!.contains("cartoonmad.com/m/comic/") -> {originViewItem.text = "動漫狂"}
+            books[position].bookUrl!!.contains("comicbus.com/comic/") -> {originViewItem.text = "無限動漫"}
+            books[position].bookUrl!!.contains("dm5.com") -> {originViewItem.text = "動漫屋"}
+            books[position].bookUrl!!.contains("qimiaomh.com/manhua/") -> {originViewItem.text = "奇妙動漫"}
+            books[position].bookUrl!!.contains("kuman5.com") -> {originViewItem.text = "酷漫屋"}
+            else -> {originViewItem.text = ""}
         }
         val bookImgFile = File(Utils.getBookFile(books[position]), "book.jpg")
         if (bookImgFile.exists()) {
