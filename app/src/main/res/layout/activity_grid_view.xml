@@ -25,45 +25,45 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.225"
+            android:layout_weight="0.2"
             android:onClick="goToCartoonMad"
-            android:text="動漫狂" />
+            android:text="狂" />
 
         <Button
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.225"
+            android:layout_weight="0.2"
             android:onClick="goTo8Comic"
-            android:text="無限動漫" />
+            android:text="無限" />
 
         <Button
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.225"
+            android:layout_weight="0.2"
             android:onClick="goToDM5"
-            android:text="動漫屋" />
+            android:text="屋" />
 
         <Button
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.225"
+            android:layout_weight="0.2"
             android:onClick="goToKM5"
-            android:text="酷漫屋" />
+            android:text="酷" />
 
-        <!--<Button
+        <Button
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.25"
+            android:layout_weight="0.2"
             android:onClick="goToQiMiao"
-            android:text="奇妙動漫" />-->
+            android:text="奇妙" />
     </LinearLayout>
 
     <GridView

@@ -32,7 +32,7 @@ class QiMiaoBookParser(book: BookDTO, listener: BookParserListener) : BookParser
             if (m.matches()) {
                 val episodeUrl = "https://m.qimiaomh.com/Action/Play/AjaxLoadImgUrl?did=" + m.group(1) + "&sid=" +  m.group(2) + "&tmp="
                 val episodeTitle = chineseS2T(m.group(3))
-                Log.d("jComics", episodeTitle + " " + episodeUrl)
+                //Log.d("jComics", episodeTitle + " " + episodeUrl)
                 var found = false
                 for (e in episodes) {
                     if (e.episodeUrl.trim() == episodeUrl) {
