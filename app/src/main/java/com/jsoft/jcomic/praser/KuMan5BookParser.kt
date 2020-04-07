@@ -96,7 +96,8 @@ class KuMan5BookParser(book: BookDTO, listener: BookParserListener) : BookParser
                 book.bookTitle = chineseS2T(m.group(2).replace("&nbsp;", " ").replace("<.*?>".toRegex(), ""))
             }
 
-            p = Pattern.compile(".*javascript:jj_charpter\\(\\\"(\\d+)\\\",\\\"(\\d+)\\\",\\\"(\\d+)\\\"\\).*")
+            //p = Pattern.compile(".*javascript:jj_charpter\\(\\\"(\\d+)\\\",\\\"(\\d+)\\\",\\\"(\\d+)\\\"\\).*")
+            p = Pattern.compile(".*<a class=\\\"mm\\\" id=\\\"all_mores\\d+\\\" data-id=\\\"(\\d+)\\\" data-vid=\\\"(\\d+)\\\" data-aid=\\\"(\\d+)\\\">.*")
             m = p.matcher(s)
             if (m.matches()) {
                 if (!episodeList.keys.contains(m.group(2))) {
