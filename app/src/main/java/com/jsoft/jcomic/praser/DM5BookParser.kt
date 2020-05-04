@@ -79,7 +79,7 @@ class DM5BookParser(book: BookDTO, listener: BookParserListener) : BookParser(bo
             }
         }
 
-        p = Pattern.compile(".*<div class=\"detail-main-cover\"><img src=\"(.+?)\"></div>.*")
+        p = Pattern.compile(".*<div class=\"detail-main-cover\">.*?<img src=\"(.+?)\">.*?</div>.*")
         m = p.matcher(s)
         if (m.matches()) {
             book.bookImgUrl = m.group(1)

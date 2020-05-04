@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.AsyncTask
+import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
@@ -84,10 +85,10 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
         if (bookImgFile.exists()) {
             imageView.setImageBitmap(Utils.imageFromFile(bookImgFile))
         }
-        if (books[position].bookImg == null) {
-            imageView.setImageResource(R.mipmap.ic_launcher)
+        imageView.setImageResource(R.mipmap.ic_launcher)
+        if (books[position].bookImg == null && books[position].bookImgUrl != null) {
             DownloadImageTask(imageView, books[position]).executeOnExecutor(downloadImageTaskExecutor, books[position].bookImgUrl)
-        } else {
+        } else if (books[position].bookImg != null){
             imageView.setImageBitmap(books[position].bookImg)
         }
 
