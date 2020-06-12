@@ -18,8 +18,8 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
             var p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(\\d+),(\\d+)\\);return false;\" id=\".+\" class=\"(Vol|Ch)\" >\\s*(.+)</a>.*")
             var m = p.matcher(s)
             if (m.matches()) {
-                var baseurl = "http://m.comicbus.com"
-                baseurl += "/comic/finance_"
+                var baseurl = "https://i.mangabus.xyz"
+                baseurl += "/comic/comic-"
                 val episodeUrl = baseurl + m.group(1) + ".html?ch=" + m.group(2)
                 val episodeTitle = m.group(6).replace("<script>.*?</script>".toRegex(), "").replace("<.*?>".toRegex(), "")
                 var found = false
