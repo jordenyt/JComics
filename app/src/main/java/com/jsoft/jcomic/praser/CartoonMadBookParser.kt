@@ -19,7 +19,7 @@ class CartoonMadBookParser(book: BookDTO, listener: BookParserListener) : BookPa
     override fun getBookFromUrlResult(html: ArrayList<String>):Boolean {
         val episodes = ArrayList<EpisodeDTO>()
         for (s in html) {
-            var p = Pattern.compile("<td>.*?<a href=(.+?)>(.+?)</a></td>")
+            var p = Pattern.compile("<td>.*?<a href=(.+?\\d+\\.html)>(.+?)</a></td>")
             var m = p.matcher(s)
             while (m.find()) {
                 val episodeUrl = "https://www.cartoonmad.com" + m.group(1)
