@@ -1,6 +1,6 @@
 package com.jsoft.jcomic.praser
 
-import android.util.Log
+//import android.util.Log
 import com.jsoft.jcomic.helper.EpisodeDTO
 import java.util.*
 import java.util.regex.Pattern
@@ -15,7 +15,7 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
         var episodeId = 0
         var bookId = 0
         var code = ""
-        Log.e("jComics", "${episode.episodeUrl}")
+        //Log.e("jComics", "${episode.episodeUrl}")
         if (episode.episodeUrl.contains("8899.buzz")) {
             val p = Pattern.compile(".*i\\.8899\\.buzz/comic/[a-z]+-(\\d+)\\.html\\?ch=(\\d+)")
             val m = p.matcher(episode.episodeUrl)
