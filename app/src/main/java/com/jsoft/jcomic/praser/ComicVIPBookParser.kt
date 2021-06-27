@@ -19,7 +19,7 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
             var m = p.matcher(s)
             if (m.matches()) {
                 var baseurl = "https://i.8899.buzz"
-                baseurl += "/comic/comic-"
+                baseurl += "/comic/insurance_"
                 val episodeUrl = baseurl + m.group(1) + ".html?ch=" + m.group(2)
                 val episodeTitle = m.group(6).replace("<script>.*?</script>".toRegex(), "").replace("<.*?>".toRegex(), "")
                 var found = false

@@ -1,6 +1,7 @@
 package com.jsoft.jcomic.praser
 
 //import android.util.Log
+import android.util.Log
 import com.jsoft.jcomic.helper.EpisodeDTO
 import java.util.*
 import java.util.regex.Pattern
@@ -17,13 +18,14 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
         var code = ""
         //Log.e("jComics", "${episode.episodeUrl}")
         if (episode.episodeUrl.contains("8899.buzz")) {
-            val p = Pattern.compile(".*i\\.8899\\.buzz/comic/[a-z]+-(\\d+)\\.html\\?ch=(\\d+)")
+            val p = Pattern.compile(".*i\\.8899\\.buzz/comic/[a-z]+_(\\d+)\\.html\\?ch=(\\d+)")
             val m = p.matcher(episode.episodeUrl)
             if (m.matches()) {
                 bookId = Integer.parseInt(m.group(1))
                 episodeId = Integer.parseInt(m.group(2))
             }
         }
+        //Log.e("jComics", "$bookId, $episodeId")
         for (s in result) {
             val p = Pattern.compile(".*var chs=(\\d+);var ti=(\\d+);var cs='([a-z0-9]+)';eval.*")
             val m = p.matcher(s)
@@ -31,7 +33,7 @@ class ComicVIPEpisodeParser(episode: EpisodeDTO, listener: EpisodeParserListener
                 code = m.group(3)
             }
         }
-
+        //Log.e("jComics", code)
         var extractCode = ""
         if (code.isNotEmpty() && episodeId > 0 && bookId > 0) {
             for (i in 0 until code.length / 50) { // i = 0 to 399
