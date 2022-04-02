@@ -5,7 +5,7 @@ import com.jsoft.jcomic.helper.EpisodeDTO
 import java.util.*
 import java.util.regex.Pattern
 
-class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "BIG5") {
+class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "UTF-8") {
 
     //Call when URL is fetched
     override fun getBookFromUrlResult(html: ArrayList<String>):Boolean {
@@ -39,13 +39,17 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
             p = Pattern.compile(".*<p class=\"title\">(.+?)</p>.*")
             m = p.matcher(s)
             if (m.matches()) {
-                book.bookTitle = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
+                val bookTitle = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
+                //Log.e("jComics", "bookTitle = $bookTitle")
+                book.bookTitle = bookTitle
             }
 
             p = Pattern.compile(".*<div class=\"full_text\" style=\".+?\">(.+?)</div>.*")
             m = p.matcher(s)
             if (m.matches()) {
-                book.bookSynopsis = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
+                val bookSynopsis = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
+                //Log.e("jComics", "bookSynopsis = $bookSynopsis")
+                book.bookSynopsis =  bookSynopsis
             }
 
             p = Pattern.compile(".*<div class=\"cover\">.*<img src='(.+)'>.*")
