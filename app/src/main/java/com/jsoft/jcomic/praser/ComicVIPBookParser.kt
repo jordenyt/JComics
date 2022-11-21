@@ -1,5 +1,6 @@
 package com.jsoft.jcomic.praser
 
+//import android.util.Log
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.EpisodeDTO
 import java.util.*
@@ -18,7 +19,7 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
             var p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(\\d+),(\\d+)\\);return false;\" id=\".+\" class=\"(Vol|Ch)\" >\\s*(.+)</a>.*")
             var m = p.matcher(s)
             if (m.matches()) {
-                var baseurl = "https://i.8899.buzz"
+                var baseurl = "https://8.twobili.com"
                 baseurl += "/comic/insurance_"
                 val episodeUrl = baseurl + m.group(1) + ".html?ch=" + m.group(2)
                 val episodeTitle = m.group(6).replace("<script>.*?</script>".toRegex(), "").replace("<.*?>".toRegex(), "")
