@@ -8,7 +8,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.AsyncTask
 import android.os.Build
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import android.util.Log
 import com.google.gson.Gson
 import com.jsoft.jcomic.DownloadListActivity

@@ -4,7 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
@@ -36,7 +36,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         //Log.e("jComics", "get Intent!");
         val bookUrl: String
         val data = i.data
-        bookUrl = data?.toString() ?: i.getStringExtra("bookUrl")
+        bookUrl = (data?.toString() ?: i.getStringExtra("bookUrl")) as String
         bookmarkDb = BookmarkDb(this)
         loadBook(bookUrl)
         if (Utils.isInternetAvailable) {

@@ -7,8 +7,8 @@ import android.net.http.HttpResponseCache
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
@@ -159,6 +159,7 @@ class GridViewActivity : AppCompatActivity() {
         val webSettings = webView!!.settings
         webSettings.javaScriptEnabled = true
         webView!!.webViewClient = object : WebViewClient() {
+            @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 try {
                     if (url.contains("cartoonmad.com/m/comic/")
