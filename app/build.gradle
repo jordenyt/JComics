@@ -8,8 +8,8 @@ android {
         applicationId "com.jsoft.jcomic"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 20190515
-        versionName "3.5"
+        versionCode 20230330
+        versionName "4.8"
     }
     buildTypes {
         release {

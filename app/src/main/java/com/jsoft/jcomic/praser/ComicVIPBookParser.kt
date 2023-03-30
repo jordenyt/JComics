@@ -37,7 +37,7 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
 
             }
 
-            p = Pattern.compile(".*<p class=\"title\">(.+?)</p>.*")
+            p = Pattern.compile(".*<h6 class=\"title\">(.+?)</h6>.*")
             m = p.matcher(s)
             if (m.matches()) {
                 val bookTitle = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
@@ -53,7 +53,7 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
                 book.bookSynopsis =  bookSynopsis
             }
 
-            p = Pattern.compile(".*<div class=\"cover\">.*<img src='(.+)'>.*")
+            p = Pattern.compile(".*<li class=\"cover\">.*<img src='(.+)'>.*")
             m = p.matcher(s)
             if (m.matches()) {
                 book.bookImgUrl = "https://m.comicbus.com" + m.group(1)
