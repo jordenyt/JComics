@@ -2,7 +2,6 @@ package com.jsoft.jcomic.helper
 
 import android.content.Context
 import android.graphics.Matrix
-import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
@@ -10,13 +9,14 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 
 class TouchImageView: AppCompatImageView {
     internal var matrix: Matrix = Matrix()
 
     // Remember some things for zooming
     private var minScale = 1f
-    internal var maxScale = 3f
+    internal var maxScale = 4f
     private var m: FloatArray = FloatArray(9)
 
     internal var viewWidth: Int = 0
@@ -29,7 +29,6 @@ class TouchImageView: AppCompatImageView {
 
     private var mScaleDetector: ScaleGestureDetector = ScaleGestureDetector(context, ScaleListener())
     private var mGestureDetector: GestureDetector = GestureDetector(context, GestureListener())
-
 
     constructor(context: Context) : super(context) {
         sharedConstructing(context)
@@ -83,7 +82,7 @@ class TouchImageView: AppCompatImageView {
                 scaleImage(2f, e.x, e.y)
                 true
             } else {
-                scaleImage(0.1f, e.x, e.y)
+                resetView()
                 true
             }
         }
@@ -100,7 +99,7 @@ class TouchImageView: AppCompatImageView {
         }
 
         override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-            val ratio = 2.0
+            val ratio = 2f
             val diffX = (e2.x - e1.x).toDouble()
             val diffY = (e2.y - e1.y).toDouble()
             if (saveScale == 1f) {
@@ -147,11 +146,9 @@ class TouchImageView: AppCompatImageView {
         }
 
         if (origWidth * saveScale <= viewWidth || origHeight * saveScale <= viewHeight)
-            matrix.postScale(scaleFactor, scaleFactor, (viewWidth / 2).toFloat(),
-                    (viewHeight / 2).toFloat())
+            matrix.postScale(scaleFactor, scaleFactor, viewWidth / 2f, viewHeight / 2f)
         else
-            matrix.postScale(scaleFactor, scaleFactor,
-                    focusX, focusY)
+            matrix.postScale(scaleFactor, scaleFactor, focusX, focusY)
 
         fixTrans()
     }
@@ -166,6 +163,18 @@ class TouchImageView: AppCompatImageView {
 
         if (fixTransX != 0f || fixTransY != 0f)
             matrix.postTranslate(fixTransX, fixTransY)
+    }
+
+    fun resetView() {
+        scaleImage(0.1f, viewWidth/2f, viewHeight/2f)
+        matrix.getValues(m)
+        val transX = m[Matrix.MTRANS_X]
+        val transY = m[Matrix.MTRANS_Y]
+
+        val fixTransX = (viewWidth - origWidth) / 2f - transX
+        val fixTransY = (viewHeight - origHeight) / 2f - transY
+
+        if (fixTransX != 0f || fixTransY != 0f) matrix.postTranslate(fixTransX, fixTransY)
     }
 
     private fun getFixTrans(trans: Float, viewSize: Float, contentSize: Float): Float {
