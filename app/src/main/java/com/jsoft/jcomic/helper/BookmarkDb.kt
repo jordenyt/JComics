@@ -86,7 +86,7 @@ class BookmarkDb(context: Context) {
         //db.close();
     }
 
-    fun updateComicBus() {
+    fun update8Comic() {
         var bookList = getBooksWithUrl("comicgood")
         if (!bookList.isEmpty()) {
             bookList.forEach{

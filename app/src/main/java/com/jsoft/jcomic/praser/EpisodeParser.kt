@@ -45,7 +45,7 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
 
         fun parseEpisode(episode: EpisodeDTO, listener: EpisodeParserListener) {
             when {
-                episode.episodeUrl.contains("8.twobili.com") -> ComicVIPEpisodeParser(episode, listener)
+                episode.episodeUrl.contains("articles.onemoreplace.tw") -> Comic8EpisodeParser(episode, listener)
                 episode.episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(episode, listener)
                 episode.episodeUrl.contains("dm5.com") -> DM5EpisodeParser(episode, listener)
                 episode.episodeUrl.contains("qimiaomh.com") -> QiMiaoEpisodeParser(episode, listener)

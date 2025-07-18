@@ -75,7 +75,7 @@ class GridViewImageAdapter(private val activity: GridViewActivity, private val b
 
         when {
             books[position].bookUrl!!.contains("cartoonmad.com/m/comic/") -> {originViewItem.text = "動漫狂"}
-            books[position].bookUrl!!.contains("comicbus.com/comic/") -> {originViewItem.text = "無限動漫"}
+            books[position].bookUrl!!.contains("8comic.com/html/") -> {originViewItem.text = "無限動漫"}
             books[position].bookUrl!!.contains("dm5.com") -> {originViewItem.text = "動漫屋"}
             books[position].bookUrl!!.contains("qimiaomh.com/manhua/") -> {originViewItem.text = "奇妙動漫"}
             books[position].bookUrl!!.contains("kuman5.com") -> {originViewItem.text = "酷漫屋"}

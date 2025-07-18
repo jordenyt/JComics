@@ -6,7 +6,7 @@ import com.jsoft.jcomic.helper.EpisodeDTO
 import java.util.*
 import java.util.regex.Pattern
 
-class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "UTF-8") {
+class Comic8BookParser(book: BookDTO, listener: BookParserListener) : BookParser(book, listener, "UTF-8") {
 
     //Call when URL is fetched
     override fun getBookFromUrlResult(html: ArrayList<String>):Boolean {
@@ -16,11 +16,12 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
             var s = html[i - 3].trim { it <= ' '} + html[i - 2].trim { it <= ' '} + html[i - 1].trim { it <= ' ' } + html[i].trim { it <= ' ' }
             s = s.replace("\n", "")
 
-            var p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(\\d+),(\\d+)\\);return false;\" id=\".+\" class=\"(Vol|Ch)\" >\\s*(.+)</a>.*")
+            var p = Pattern.compile(".*<a href='#' onclick=\"cview\\('(.+)-(.+)\\.html',(\\d+),(\\d+)\\);return false;\" id=\".+\" class=\"(Vol|Ch) eps_a d-block\" >\\s*(.+)</a>.*")
             var m = p.matcher(s)
             if (m.matches()) {
-                var baseurl = "https://8.twobili.com"
-                baseurl += "/comic/insurance_"
+                // https://articles.onemoreplace.tw/online/new-13313.html?ch=1
+                var baseurl = "https://articles.onemoreplace.tw"
+                baseurl += "/online/new-"
                 val episodeUrl = baseurl + m.group(1) + ".html?ch=" + m.group(2)
                 val episodeTitle = m.group(6).replace("<script>.*?</script>".toRegex(), "").replace("<.*?>".toRegex(), "")
                 var found = false
@@ -37,7 +38,9 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
 
             }
 
-            p = Pattern.compile(".*<h6 class=\"title\">(.+?)</h6>.*")
+            //<meta name="name" content="關于我轉生後成為史萊姆的那件事" />
+            //p = Pattern.compile(".*<h6 class=\"title\">(.+?)</h6>.*")
+            p = Pattern.compile(".*<meta name=\"name\" content=\"(.+?)\" />.*")
             m = p.matcher(s)
             if (m.matches()) {
                 val bookTitle = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
@@ -45,7 +48,11 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
                 book.bookTitle = bookTitle
             }
 
-            p = Pattern.compile(".*<div class=\"full_text\" style=\".+?\">(.+?)</div>.*")
+            //<li class="item_info_detail">
+            //　　普通上班族三上悟(37,童貞)遇刺身亡.迎接他的,是轉生後的異世界史萊姆生活..
+            //<span class="gradient"></span>
+            //p = Pattern.compile(".*<div class=\"full_text\" style=\".+?\">(.+?)</div>.*")
+            p = Pattern.compile(".*<li class=\"item_info_detail\">(.*?)<span class=\"gradient\"></span>")
             m = p.matcher(s)
             if (m.matches()) {
                 val bookSynopsis = m.group(1).replace("&nbsp;", " ").replace("<.*?>".toRegex(), "")
@@ -53,10 +60,14 @@ class ComicVIPBookParser(book: BookDTO, listener: BookParserListener) : BookPars
                 book.bookSynopsis =  bookSynopsis
             }
 
-            p = Pattern.compile(".*<li class=\"cover\">.*<img src='(.+)'>.*")
+            //<div class="d-none d-md-block col-md-2 p-0 item-cover">
+            //<img src="/pics/0/13313.jpg">
+            //</div>
+            //p = Pattern.compile(".*<li class=\"cover\">.*<img src='(.+)'>.*")
+            p = Pattern.compile(".*<div class=\"d-none d-md-block col-md-2 p-0 item-cover\"><img src=\"(.+)\"></div>.*")
             m = p.matcher(s)
             if (m.matches()) {
-                book.bookImgUrl = "https://m.comicbus.com" + m.group(1)
+                book.bookImgUrl = "https://www.8comic.com" + m.group(1)
             }
 
         }

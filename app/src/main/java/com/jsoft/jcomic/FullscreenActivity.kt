@@ -162,7 +162,7 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
                 onEpisodeFetched(book!!.episodes[currEpisode])
             } else {
                 when {
-                    book!!.episodes[currEpisode].episodeUrl.contains("8.twobili.com") -> ComicVIPEpisodeParser(book!!.episodes[currEpisode], this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("8.twobili.com") -> Comic8EpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("dm5.com") -> DM5EpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("kuman5.com") -> KuMan5EpisodeParser(book!!.episodes[currEpisode], this)

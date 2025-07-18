@@ -14,7 +14,6 @@ import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.GridView
@@ -71,7 +70,7 @@ class GridViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         bookmarkDb = BookmarkDb(this)
 
-        bookmarkDb!!.updateComicBus()
+        bookmarkDb!!.update8Comic()
 
         enableHttpCaching()
         gridViewActivity = this
@@ -163,7 +162,7 @@ class GridViewActivity : AppCompatActivity() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 try {
                     if (url.contains("cartoonmad.com/m/comic/")
-                            || url.contains("comicbus.com/comic/")
+                            || url.contains("8comic.com/html/")
                             || url.contains("qimiaomh.com/manhua/")
                             || ".*kuman5.com\\/\\d+\\/.*".toRegex().matches(url)) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
@@ -224,7 +223,7 @@ class GridViewActivity : AppCompatActivity() {
     }
 
     fun goTo8Comic(view: View) {
-        openWebView("http://m.comicbus.com/")
+        openWebView("https://www.8comic.com/")
     }
 
     fun goToQiMiao(view: View) {
