@@ -188,4 +188,12 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
         episodeSwitch(1)
     }
 
+    fun refreshPage(view: View) {
+        val episode = book!!.episodes[currEpisode]
+        val currentPage = pager!!.currentItem
+        val adapter = FullScreenImageAdapter(this@FullscreenActivity, pager!!, episode, book!!)
+        pager!!.adapter = adapter
+        switchPageNum(currentPage)
+    }
+
 }

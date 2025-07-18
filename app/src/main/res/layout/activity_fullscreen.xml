@@ -20,7 +20,7 @@
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="0.15"
+            android:layout_weight="0.1"
             android:background="@android:color/transparent"
             android:drawableRight="@android:drawable/ic_media_previous"
             android:onClick="goPrev"
@@ -36,10 +36,19 @@
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="0.15"
+            android:layout_weight="0.1"
             android:background="@android:color/transparent"
             android:drawableLeft="@android:drawable/ic_media_next"
             android:onClick="goNext" />
+
+        <Button
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.1"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@android:drawable/ic_popup_sync"
+            android:onClick="refreshPage" />
 
 
     </LinearLayout>

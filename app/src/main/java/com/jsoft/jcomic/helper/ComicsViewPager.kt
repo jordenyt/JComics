@@ -55,4 +55,5 @@ class ComicsViewPager : ViewPager {
     fun exitActivity() {
         activity!!.onBackPressed()
     }
+
 }
