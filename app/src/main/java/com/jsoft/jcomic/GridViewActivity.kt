@@ -223,7 +223,7 @@ class GridViewActivity : AppCompatActivity() {
     }
 
     fun goTo8Comic(view: View) {
-        openWebView("https://www.8comic.com/")
+        openWebView("https://v.8comic.com/")
     }
 
     fun goToQiMiao(view: View) {

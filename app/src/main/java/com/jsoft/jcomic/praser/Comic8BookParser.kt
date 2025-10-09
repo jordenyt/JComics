@@ -67,7 +67,7 @@ class Comic8BookParser(book: BookDTO, listener: BookParserListener) : BookParser
             p = Pattern.compile(".*<div class=\"d-none d-md-block col-md-2 p-0 item-cover\"><img src=\"(.+)\"></div>.*")
             m = p.matcher(s)
             if (m.matches()) {
-                book.bookImgUrl = "https://www.8comic.com" + m.group(1)
+                book.bookImgUrl = "https://v.8comic.com" + m.group(1)
             }
 
         }
