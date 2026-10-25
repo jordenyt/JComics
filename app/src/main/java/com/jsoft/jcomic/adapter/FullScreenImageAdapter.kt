@@ -73,11 +73,7 @@ class FullScreenImageAdapter// constructor
     private inner class DownloadImageTask(internal var bmImage: ImageView, internal var progressText: TextView) : AsyncTask<String, Int, Bitmap>() {
 
         override fun doInBackground(vararg urls: String): Bitmap? {
-            var referrer = episode!!.episodeUrl
-            if (episode!!.episodeUrl.contains("cartoonmad")) {
-                referrer = referrer.replace("/m/", "/")
-            }
-            return Utils.downloadImage(urls[0], referrer)
+            return Utils.downloadImage(urls[0], episode!!.episodeUrl)
         }
 
         override fun onProgressUpdate(vararg progress: Int?) {

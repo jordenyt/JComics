@@ -23,6 +23,7 @@ import com.jsoft.jcomic.helper.AppConstant
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.BookmarkDb
 import com.jsoft.jcomic.helper.Comic8Url
+import com.jsoft.jcomic.helper.KalamSite
 import com.jsoft.jcomic.helper.Utils
 import java.io.File
 import java.io.IOException
@@ -162,16 +163,20 @@ class GridViewActivity : AppCompatActivity() {
             @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 try {
-                    if (url.contains("cartoonmad.com/m/comic/")
-                            || url.contains("8comic.com/html/")
+                    if (url.contains("8comic.com/html/")
+                            || url.contains("kalamanhua.com/comic/")
+                            || url.contains("kalamanhua.com/chapter/")
                             || url.contains("qimiaomh.com/manhua/")
                             || ".*kuman5.com\\/\\d+\\/.*".toRegex().matches(url)) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
                         // The site links to a host that cannot be reached on every network.
-                        var bookUrl = if (url.contains("8comic.com")) {
-                            Comic8Url.normalize(url) ?: url
-                        } else {
-                            url
+                        var bookUrl = when {
+                            url.contains("8comic.com") -> Comic8Url.normalize(url) ?: url
+                            url.contains("kalamanhua.com/chapter/") -> {
+                                val comicId = KalamSite.chapterIds(url)?.first
+                                if (comicId != null) KalamSite.bookUrl(comicId) else url
+                            }
+                            else -> url
                         }
                         i.putExtra("bookUrl", bookUrl)
                         startActivity(i)
@@ -224,12 +229,12 @@ class GridViewActivity : AppCompatActivity() {
 
     }
 
-    fun goToCartoonMad(view: View) {
-        openWebView("https://www.cartoonmad.com/m/?act=2")
-    }
-
     fun goTo8Comic(view: View) {
         openWebView("https://v.8comic.com/")
+    }
+
+    fun goToKalamanhua(view: View) {
+        openWebView("https://www.kalamanhua.com/")
     }
 
     fun goToQiMiao(view: View) {

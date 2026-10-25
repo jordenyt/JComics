@@ -1,5 +1,6 @@
 package com.jsoft.jcomic.praser
 
+import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.jsoft.jcomic.helper.BookDTO
@@ -71,10 +72,11 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
 
     companion object {
 
-        fun parseBook(book: BookDTO, listener: BookParserListener) {
+        fun parseBook(book: BookDTO, listener: BookParserListener, context: Context) {
             when {
                 book.bookUrl!!.contains("8comic") -> Comic8BookParser(book, listener)
-                book.bookUrl!!.contains("cartoonmad") -> CartoonMadBookParser(book, listener)
+                book.bookUrl!!.contains("manga.bilibili.com") -> BilibiliMangaBookParser(book, listener, context)
+                book.bookUrl!!.contains("kalamanhua.com") -> KalamBookParser(book, listener)
                 book.bookUrl!!.contains("dm5.com") -> DM5BookParser(book, listener)
                 book.bookUrl!!.contains("qimiaomh.com") -> QiMiaoBookParser(book, listener)
                 book.bookUrl!!.contains("kuman5.com") -> KuMan5BookParser(book, listener)

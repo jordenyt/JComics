@@ -180,8 +180,15 @@ class Utils// constructor
                 conn.readTimeout = READ_TIMEOUT
                 conn.useCaches = true
                 conn.setRequestProperty("User-Agent", USER_AGENT)
-                if (referer != null) {
-                    conn.setRequestProperty("Referer", referer)
+                // The picture host of kalamanhua.com only gives the pictures to a request that
+                // has the cookie of the site and a referer of it.
+                val cookie = KalamSite.cookieFor(imgUrl)
+                if (cookie != null) {
+                    conn.setRequestProperty("Cookie", cookie)
+                }
+                val siteReferer = referer ?: KalamSite.refererFor(imgUrl)
+                if (siteReferer != null) {
+                    conn.setRequestProperty("Referer", siteReferer)
                 }
 
                 val status = conn.responseCode

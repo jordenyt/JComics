@@ -39,7 +39,7 @@ class Downloader(internal var book: BookDTO, private val activity: Context) : Ep
     fun downloadEpisode(position: Int) {
         Log.d("jComics", "downloadEpisode")
         if (book.episodes.size > position) {
-            EpisodeParser.parseEpisode(book.episodes[position], this)
+            EpisodeParser.parseEpisode(book.episodes[position], this, activity)
         }
     }
 
@@ -120,11 +120,7 @@ class Downloader(internal var book: BookDTO, private val activity: Context) : Ep
             this.imgUrl = urls[0]
             var bitmap: Bitmap? = null
             try {
-                var referrer = episode.episodeUrl
-                if (episode.episodeUrl.contains("cartoonmad")) {
-                    referrer = referrer.replace("/m/", "/")
-                }
-                bitmap = Utils.downloadImage(imgUrl, referrer)
+                bitmap = Utils.downloadImage(imgUrl, episode.episodeUrl)
                 Thread.sleep(1000)
             } catch (e: Exception) {
                 Log.e("jComic", "Exception caught in Downloader.DownloadImageTask", e)

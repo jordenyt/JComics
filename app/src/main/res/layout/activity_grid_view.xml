@@ -25,16 +25,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.2"
-            android:onClick="goToCartoonMad"
-            android:text="動漫狂" />
+            android:layout_weight="0.3"
+            android:onClick="goToKalamanhua"
+            android:text="卡拉漫畫" />
 
         <Button
             style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.2"
+            android:layout_weight="0.3"
             android:onClick="goTo8Comic"
             android:text="無限動漫" />
 
@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.2"
+            android:layout_weight="0.3"
             android:onClick="goToDM5"
             android:text="動漫屋" />
 

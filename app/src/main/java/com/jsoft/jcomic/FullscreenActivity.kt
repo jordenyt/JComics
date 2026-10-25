@@ -46,7 +46,7 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
                     val savedEpisode = gson.fromJson(FileReader(episodeFile.absolutePath), EpisodeDTO::class.java)
                     onEpisodeFetched(savedEpisode)
                 }
-                Utils.isInternetAvailable -> EpisodeParser.parseEpisode(episode, this)
+                Utils.isInternetAvailable -> EpisodeParser.parseEpisode(episode, this, this)
                 else -> onEpisodeFetched(episode)
             }
         } catch (e: Exception) {
@@ -164,7 +164,8 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
                 when {
                     book!!.episodes[currEpisode].episodeUrl.contains("8comic.com")
                             || book!!.episodes[currEpisode].episodeUrl.contains("onemoreplace.tw") -> Comic8EpisodeParser(book!!.episodes[currEpisode], this)
-                    book!!.episodes[currEpisode].episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(book!!.episodes[currEpisode], this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("manga.bilibili.com") -> BilibiliMangaEpisodeParser(book!!.episodes[currEpisode], this, this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("kalamanhua.com") -> KalamEpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("dm5.com") -> DM5EpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("kuman5.com") -> KuMan5EpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("qimiaomh.com") -> QiMiaoEpisodeParser(book!!.episodes[currEpisode], this)

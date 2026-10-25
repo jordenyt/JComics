@@ -42,7 +42,7 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         bookmarkDb = BookmarkDb(this)
         loadBook(bookUrl)
         if (Utils.isInternetAvailable) {
-            BookParser.parseBook(book, this)
+            BookParser.parseBook(book, this, this)
         }
 
     }

@@ -1,5 +1,6 @@
 package com.jsoft.jcomic.praser
 
+import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.jsoft.jcomic.helper.EpisodeDTO
@@ -11,6 +12,10 @@ import java.util.*
  * Created by 01333855 on 02/10/2015.
  */
 abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var listener: EpisodeParserListener, encoding: String) {
+
+    // Parsers that need more than one request to read a chapter set this, the listener is then
+    // called as soon as the result is there.
+    private var resultPending = false
 
     init {
         try {
@@ -30,10 +35,13 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
         override fun onPostExecute(result: ArrayList<String>) {
             try {
                 getEpisodeFromUrlResult(result)
+                if (!resultPending) {
+                    listener.onEpisodeFetched(episode)
+                }
             } catch (e: Exception) {
                 Log.e("jComics", "Exception caught in EpisodeParser", e)
+                listener.onEpisodeFetched(episode)
             }
-            listener.onEpisodeFetched(episode)
         }
     }
 
@@ -45,13 +53,27 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
         return Utils.getURLResponse(url, episode.episodeUrl, encoding)
     }
 
+    /**
+     * The result is not ready when the request is done, the parser calls finishEpisodeResult()
+     * as soon as it has the images of the chapter.
+     */
+    protected fun postponeEpisodeResult() {
+        resultPending = true
+    }
+
+    protected fun finishEpisodeResult() {
+        resultPending = false
+        listener.onEpisodeFetched(episode)
+    }
+
     companion object {
 
-        fun parseEpisode(episode: EpisodeDTO, listener: EpisodeParserListener) {
+        fun parseEpisode(episode: EpisodeDTO, listener: EpisodeParserListener, context: Context) {
             when {
                 episode.episodeUrl.contains("8comic.com")
                         || episode.episodeUrl.contains("onemoreplace.tw") -> Comic8EpisodeParser(episode, listener)
-                episode.episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(episode, listener)
+                episode.episodeUrl.contains("manga.bilibili.com") -> BilibiliMangaEpisodeParser(episode, listener, context)
+                episode.episodeUrl.contains("kalamanhua.com") -> KalamEpisodeParser(episode, listener)
                 episode.episodeUrl.contains("dm5.com") -> DM5EpisodeParser(episode, listener)
                 episode.episodeUrl.contains("qimiaomh.com") -> QiMiaoEpisodeParser(episode, listener)
                 episode.episodeUrl.contains("kuman5.com") -> KuMan5EpisodeParser(episode, listener)
