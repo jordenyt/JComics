@@ -87,11 +87,15 @@ class BookmarkDb(context: Context) {
     }
 
     fun update8Comic() {
-        var bookList = getBooksWithUrl("www.8comic")
+        var bookList = getBooksWithUrl("8comic.com")
         if (!bookList.isEmpty()) {
             bookList.forEach{
-                updateBookUrl(it, it.bookUrl!!.replace("www.8comic", "v.8comic"),
-                    it.bookImgUrl!!.replace("www.8comic", "v.8comic"))
+                val oldUrl = it.bookUrl ?: return@forEach
+                val newUrl = Comic8Url.normalize(oldUrl) ?: return@forEach
+                if (newUrl == oldUrl) return@forEach
+                val oldImgUrl = it.bookImgUrl
+                val newImgUrl = if (oldImgUrl.isNullOrEmpty()) "" else Comic8Url.normalize(oldImgUrl) ?: oldImgUrl
+                updateBookUrl(it, newUrl, newImgUrl)
             }
         }
     }

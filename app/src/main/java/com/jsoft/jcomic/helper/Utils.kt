@@ -53,6 +53,14 @@ class Utils// constructor
         private var lastOnlineCheck: Date? = null
         private var isOnline: Boolean = false
 
+        private const val CONNECT_TIMEOUT = 15000
+        private const val READ_TIMEOUT = 15000
+
+        // 8comic (and other comic sites) reject requests that do not look like they come from a browser.
+        private const val USER_AGENT =
+            "Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) " +
+                    "Chrome/120.0.0.0 Mobile Safari/537.36"
+
         @JvmOverloads
         fun getHashCode(s: String?, length: Int = 16): String {
             try {
@@ -168,8 +176,10 @@ class Utils// constructor
             var bitmap: Bitmap? = null
             try {
                 val conn = java.net.URL(imgUrl).openConnection() as HttpURLConnection
-                conn.readTimeout = 5000
+                conn.connectTimeout = CONNECT_TIMEOUT
+                conn.readTimeout = READ_TIMEOUT
                 conn.useCaches = true
+                conn.setRequestProperty("User-Agent", USER_AGENT)
                 if (referer != null) {
                     conn.setRequestProperty("Referer", referer)
                 }
@@ -198,14 +208,16 @@ class Utils// constructor
             val result = ArrayList<String>()
             try {
                 val httpConnect = url.openConnection() as HttpURLConnection
-                httpConnect.readTimeout = 5000
+                httpConnect.connectTimeout = CONNECT_TIMEOUT
+                httpConnect.readTimeout = READ_TIMEOUT
                 httpConnect.useCaches = true
+                // Some sites (8comic) reject requests without a browser like user agent.
+                httpConnect.setRequestProperty("User-Agent", USER_AGENT)
                 if (referer != null)
                     httpConnect.setRequestProperty("Referer", referer)
                 if (cookies != null)
                     httpConnect.setRequestProperty("Cookie", cookies)
                 httpConnect.doInput = true
-                httpConnect.doOutput = true
 
                 httpConnect.connect()
 
@@ -216,6 +228,12 @@ class Utils// constructor
                         || status == HttpURLConnection.HTTP_SEE_OTHER) {
                     val newUrl = httpConnect.getHeaderField("Location")
                     return getURLResponse(URL(newUrl), referer, encoding, cookies)
+                }
+
+                if (status != HttpURLConnection.HTTP_OK) {
+                    Log.e("jComics", "getURLResponse got status " + status + " for " + url)
+                    httpConnect.disconnect()
+                    return result
                 }
 
                 val inputStream = httpConnect.inputStream

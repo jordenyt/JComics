@@ -22,6 +22,7 @@ import com.jsoft.jcomic.adapter.GridViewImageAdapter
 import com.jsoft.jcomic.helper.AppConstant
 import com.jsoft.jcomic.helper.BookDTO
 import com.jsoft.jcomic.helper.BookmarkDb
+import com.jsoft.jcomic.helper.Comic8Url
 import com.jsoft.jcomic.helper.Utils
 import java.io.File
 import java.io.IOException
@@ -166,7 +167,12 @@ class GridViewActivity : AppCompatActivity() {
                             || url.contains("qimiaomh.com/manhua/")
                             || ".*kuman5.com\\/\\d+\\/.*".toRegex().matches(url)) {
                         val i = Intent(gridViewActivity, EpisodeListActivity::class.java)
-                        var bookUrl = url
+                        // The site links to a host that cannot be reached on every network.
+                        var bookUrl = if (url.contains("8comic.com")) {
+                            Comic8Url.normalize(url) ?: url
+                        } else {
+                            url
+                        }
                         i.putExtra("bookUrl", bookUrl)
                         startActivity(i)
                         return true
