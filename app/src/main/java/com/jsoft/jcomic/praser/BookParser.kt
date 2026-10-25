@@ -12,7 +12,9 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
 
     init {
         try {
-            DownloadFilesTask(encoding).execute(URL(book.bookUrl))
+            val target = normalizeBookUrl(book.bookUrl ?: "")
+            book.bookUrl = target
+            DownloadFilesTask(encoding).execute(URL(target))
         } catch (e: MalformedURLException) {
             Log.e("jComics", "MalformedURLException: " + book.bookUrl!!)
         }
@@ -25,13 +27,21 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
         }
 
         override fun onPostExecute(result: ArrayList<String>) {
-            if (result.size > 0) {
-                val finished = getBookFromUrlResult(result)
-                if (finished) {
-                    loadedAllEpisodes();
+            try {
+                if (result.size > 0) {
+                    val finished = getBookFromUrlResult(result)
+                    if (finished) {
+                        loadedAllEpisodes()
+                    }
+                } else if (book.bookSynopsis == null) {
+                    book.bookSynopsis = "Cannot load page from Internet"
+                    listener.onBookFetched(book)
                 }
-            } else if (book.bookSynopsis == null) {
-                book.bookSynopsis = "Cannot load page from Internet"
+            } catch (e: Exception) {
+                Log.e("jComics", "Exception caught in BookParser", e)
+                if (book.bookSynopsis == null) {
+                    book.bookSynopsis = "Cannot load page from Internet"
+                }
                 listener.onBookFetched(book)
             }
         }
@@ -41,6 +51,14 @@ abstract class BookParser(protected var book: BookDTO, protected var listener: B
         val myBookFile = Utils.getBookFile(book)
         if (myBookFile.exists()) Utils.saveBook(book)
         listener.onBookFetched(book)
+    }
+
+    /**
+     * Sites that are served by more than one host can rewrite the url of the book here, the parser
+     * fetches the returned url and the book keeps it.
+     */
+    protected open fun normalizeBookUrl(url: String): String {
+        return url
     }
 
     protected open fun getURLResponse(url: URL, encoding: String): ArrayList<String> {

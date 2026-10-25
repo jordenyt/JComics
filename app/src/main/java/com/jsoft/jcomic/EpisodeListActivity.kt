@@ -36,7 +36,9 @@ class EpisodeListActivity : AppCompatActivity(), BookParserListener {
         //Log.e("jComics", "get Intent!");
         val bookUrl: String
         val data = i.data
-        bookUrl = (data?.toString() ?: i.getStringExtra("bookUrl")) as String
+        val rawUrl = (data?.toString() ?: i.getStringExtra("bookUrl")) as String
+        // The site links to a host that cannot be reached on every network, use the one that works.
+        bookUrl = Comic8Url.normalize(rawUrl) ?: rawUrl
         bookmarkDb = BookmarkDb(this)
         loadBook(bookUrl)
         if (Utils.isInternetAvailable) {

@@ -88,7 +88,7 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
         this.seekBarLayout = findViewById(R.id.seekbar_layout)
         this.seekBarLayout!!.visibility = View.GONE
         seekBar = findViewById(R.id.seekBar)
-        seekBar!!.max = episode.pageCount - 1
+        seekBar!!.max = if (episode.pageCount > 0) episode.pageCount - 1 else 0
         seekBar!!.setOnSeekBarChangeListener(this)
         pager = findViewById(R.id.pager)
         pager!!.setActivity(this)
@@ -162,7 +162,8 @@ class FullscreenActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener,
                 onEpisodeFetched(book!!.episodes[currEpisode])
             } else {
                 when {
-                    book!!.episodes[currEpisode].episodeUrl.contains("onemoreplace.tw") -> Comic8EpisodeParser(book!!.episodes[currEpisode], this)
+                    book!!.episodes[currEpisode].episodeUrl.contains("8comic.com")
+                            || book!!.episodes[currEpisode].episodeUrl.contains("onemoreplace.tw") -> Comic8EpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("dm5.com") -> DM5EpisodeParser(book!!.episodes[currEpisode], this)
                     book!!.episodes[currEpisode].episodeUrl.contains("kuman5.com") -> KuMan5EpisodeParser(book!!.episodes[currEpisode], this)

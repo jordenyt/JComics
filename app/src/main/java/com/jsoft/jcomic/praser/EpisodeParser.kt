@@ -28,7 +28,11 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
         }
 
         override fun onPostExecute(result: ArrayList<String>) {
-            getEpisodeFromUrlResult(result)
+            try {
+                getEpisodeFromUrlResult(result)
+            } catch (e: Exception) {
+                Log.e("jComics", "Exception caught in EpisodeParser", e)
+            }
             listener.onEpisodeFetched(episode)
         }
     }
@@ -45,7 +49,8 @@ abstract class EpisodeParser(protected var episode: EpisodeDTO, protected var li
 
         fun parseEpisode(episode: EpisodeDTO, listener: EpisodeParserListener) {
             when {
-                episode.episodeUrl.contains("articles.onemoreplace.tw") -> Comic8EpisodeParser(episode, listener)
+                episode.episodeUrl.contains("8comic.com")
+                        || episode.episodeUrl.contains("onemoreplace.tw") -> Comic8EpisodeParser(episode, listener)
                 episode.episodeUrl.contains("cartoonmad") -> CartoonMadEpisodeParser(episode, listener)
                 episode.episodeUrl.contains("dm5.com") -> DM5EpisodeParser(episode, listener)
                 episode.episodeUrl.contains("qimiaomh.com") -> QiMiaoEpisodeParser(episode, listener)
