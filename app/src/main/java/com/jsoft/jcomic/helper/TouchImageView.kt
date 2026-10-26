@@ -98,10 +98,10 @@ class TouchImageView: AppCompatImageView {
             return false
         }
 
-        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             val ratio = 2f
-            val diffX = (e2.x - e1.x).toDouble()
-            val diffY = (e2.y - e1.y).toDouble()
+            val diffX = (e2.x - (e1?.x ?: 0f)).toDouble()
+            val diffY = (e2.y - (e1?.y ?: 0f)).toDouble()
             if (saveScale == 1f) {
                 when {
                     diffY / Math.abs(diffX) < -ratio -> //Fling Up
@@ -122,7 +122,7 @@ class TouchImageView: AppCompatImageView {
             //return false;
         }
 
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             val fixTransX = getFixDragTrans(-distanceX, viewWidth.toFloat(),
                     origWidth * saveScale)
             val fixTransY = getFixDragTrans(-distanceY, viewHeight.toFloat(),
