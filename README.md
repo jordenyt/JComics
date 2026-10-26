@@ -6,7 +6,7 @@ browser, opens a comic as a list of chapters and reads the pages in a full scree
 | | |
 |---|---|
 | Package | `com.jsoft.jcomic` |
-| Version | 4.9 (`versionCode` 20230609) |
+| Version | 5.0 (`versionCode` 20261026) |
 | Android | 5.0 (API 21) and up, compiled against API 31 |
 | Toolchain | Kotlin 1.6.21, Android Gradle Plugin 8.13.2, Gradle 8.13 |
 
@@ -20,9 +20,6 @@ the browser of the site, the app takes over from the chapter list onwards.
 | 卡拉漫畫 Kalam | https://www.kalamanhua.com/ | button on the home screen |
 | 無限動漫 8Comic | https://www.8comic.com/ | button on the home screen |
 | 動漫屋 DM5 | http://www.dm5.com/ | button on the home screen |
-| 酷漫屋 KuMan5 | http://kuman5.com/ | parser only, the button is commented out |
-| 奇妙動漫 QiMiao | https://m.qimiaomh.com/ | parser only, the button is commented out |
-| 哔哩哔哩漫畫 Bilibili Manga | https://manga.bilibili.com/ | parser only, the button is hidden |
 
 The buttons of the hidden and commented out sites can be brought back in
 `app/src/main/res/layout/activity_grid_view.xml` - the parsers are still in place.
@@ -56,10 +53,6 @@ chapter. They live in `app/src/main/java/com/jsoft/jcomic/praser/`.
   the cookie `omo_token`, the app reads it and sends it with the following requests. The pictures
   live on a second host that only answers to a request with that cookie and a referer of the
   site. The tokens are short lived, the app gets a new one when the site asks for it.
-* **Bilibili Manga** only hands out its data through a signed api, only the javascript of the site
-  can read it. The app therefore runs the javascript of the site in a web view outside of the
-  screen and takes the chapter list from the state of the page. A guest only sees the preview
-  chapters, the rest needs a login of the site - the button of the site is hidden for that reason.
 
 ## Building
 
